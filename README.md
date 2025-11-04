@@ -1,1 +1,3 @@
-this is a java project for budget management
+# README file
+
+this is a java project for budget management!
