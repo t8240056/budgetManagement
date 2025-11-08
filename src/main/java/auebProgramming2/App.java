@@ -1,10 +1,8 @@
 package auebProgramming2;
 
-/**
- * Hello world!
- */
 public class App {
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        var link = new Links();
+        link.linkGovBudget();
     }
 }
