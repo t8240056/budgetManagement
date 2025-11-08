@@ -1,10 +1,24 @@
+package auebProgramming2;
+
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.text.PDFTextStripper;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+
 public class Links {
-    public String linkGovBuget() throws Exception {
+
+    // it gets the links for each year's budget
+    public void linkGovBudget() throws Exception {
         String url = "https://minfin.gov.gr/kratikos-proypologismos/";
         Document doc = Jsoup.connect(url).get();
 
@@ -14,6 +28,20 @@ public class Links {
             if (href.contains("kratikos-proypologismos")) {
                 System.out.println(href);
             }
+        }
+    } 
+
+    // Source - https://stackoverflow.com/q
+    // Posted by Dahlin, modified by community. See post 'Timeline' for change history
+    // Retrieved 2025-11-08, License - CC BY-SA 4.0
+
+    public final ArrayList<String> extractLines(final File pdf) throws IOException {
+        try (PDDocument doc = PDDocument.load(pdf)) {
+            PDFTextStripper strip = new PDFTextStripper();
+            String txt = strip.getText(doc);
+            String[] arr = txt.split("\n");
+            final ArrayList<String> lines = new ArrayList<>(Arrays.asList(arr));
+            return lines;
         }
     }
 }
