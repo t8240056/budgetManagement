@@ -4,7 +4,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
 public class Links {
-    public String linkGovBuget() throws Exception {
+    public String linkGovBudget() throws Exception {
         String url = "https://minfin.gov.gr/kratikos-proypologismos/";
         Document doc = Jsoup.connect(url).get();
 
