@@ -1,11 +1,12 @@
-package auebprogramming;
+ package auebprogramming;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class Links {
+public final class Links {
+    /** this is a method for getting the budget links */
     public String linkGovBudget() throws Exception {
         String url = "https://minfin.gov.gr/kratikos-proypologismos/";
         Document doc = Jsoup.connect(url).get();
