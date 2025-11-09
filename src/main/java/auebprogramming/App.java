@@ -1,4 +1,4 @@
-package auebProgramming2;
+package auebprogramming;
 
 public class App {
     public static void main(String[] args) {
