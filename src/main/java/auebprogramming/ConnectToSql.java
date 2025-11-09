@@ -5,8 +5,9 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-public class ConnectToSql {
-    public void getTableElements(){
+public final class ConnectToSql {
+    /** this is a method for printig the table elements */
+    public void getTableElements() {
         Elements tables = doc.select("table");
         for (Element table : tables) {
             Elements rows = table.select("tr");
