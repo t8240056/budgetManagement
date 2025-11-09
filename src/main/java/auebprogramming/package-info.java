@@ -13,4 +13,4 @@
  * @author Your Name
  * @version 1.0
  */
-package auebProgramming2;
+package auebprogramming;
