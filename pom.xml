@@ -16,6 +16,45 @@
     <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
+  <dependencies>
+    <!-- PDFBox for PDF processing -->
+    <dependency>
+      <groupId>org.apache.pdfbox</groupId>
+      <artifactId>pdfbox</artifactId>
+      <version>2.0.29</version>
+    </dependency>
+    
+    <!-- JSoup for HTML parsing -->
+    <dependency>
+      <groupId>org.jsoup</groupId>
+      <artifactId>jsoup</artifactId>
+      <version>1.21.2</version>
+    </dependency>
+    
+    <!-- MySQL connector -->
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>8.0.33</version>
+    </dependency>
+    
+    <!-- JUnit for testing -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.11.0</version>
+      <scope>test</scope>
+    </dependency>
+    
+    <!-- Optionally: parameterized tests support -->
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-params</artifactId>
+      <version>5.11.0</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -25,33 +64,13 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <dependency>
-        <!-- jsoup HTML parser library @ https://jsoup.org/ -->
-        <groupId>org.jsoup</groupId>
-        <artifactId>jsoup</artifactId>
-        <version>1.21.2</version>
-        </dependency>
     </dependencies>
   </dependencyManagement>
-
-  <dependencies>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <!-- Optionally: parameterized tests support -->
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-params</artifactId>
-      <scope>test</scope>
-    </dependency>
-  </dependencies>
 
   <build>
       <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
-        <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+          <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
           <version>3.4.0</version>
@@ -106,12 +125,13 @@
           </dependencies>
           <executions>
             <execution>
-            <phase>validate</phase>
-            <goals>
-            <goal>check</goal>
-            </goals>
+              <?m2e execute onConfiguration?>
+              <phase>validate</phase>
+              <goals>
+              <goal>check</goal>
+              </goals>
             </execution>
-            </executions>
+          </executions>
         </plugin>
         <plugin>
             <groupId>com.github.spotbugs</groupId>
