@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-package auebProgramming2;
-
-/**
- * Hello world!
- */
-public class App {
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
-    }
-=======
 package auebprogramming;
 
 /**entry point of the application */
