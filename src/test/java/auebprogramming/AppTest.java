@@ -1,4 +1,4 @@
-package auebProgramming2;
+package auebprogramming;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
