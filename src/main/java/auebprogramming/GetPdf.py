@@ -6,9 +6,3 @@ response = requests.get(url)
 with open("budget2025.pdf", "wb") as f:
     f.write(response.content)
 
-
-from pdfminer.high_level import extract_text
-import tabula
-
-# Εξαγωγή όλων των πινάκων από PDF
-tables = tabula.read_pdf("budget2025.pdf", pages='all')

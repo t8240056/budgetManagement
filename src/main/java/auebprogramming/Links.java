@@ -1,18 +1,5 @@
  package auebprogramming;
 
-
-
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.text.PDFTextStripper;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import java.net.URL;
-
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,20 +21,4 @@ public final class Links {
             }
         }
     } 
-
-    // Source - https://stackoverflow.com/q
-    // Posted by Dahlin, modified by community. See post 'Timeline' for change history
-    // Retrieved 2025-11-08, License - CC BY-SA 4.0
-
-    public final ArrayList<String> extractLines(URL pdfUrl) throws IOException {
-        try (InputStream inputStream = pdfUrl.openStream();
-            PDDocument doc = PDDocument.load(inputStream)) {
-
-            PDFTextStripper strip = new PDFTextStripper();
-            String txt = strip.getText(doc);
-            String[] arr = txt.split("\n");
-            final ArrayList<String> lines = new ArrayList<>(Arrays.asList(arr));
-            return lines;
-        }
-    }
 }
