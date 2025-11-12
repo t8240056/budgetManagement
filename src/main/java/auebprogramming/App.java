@@ -9,6 +9,4 @@ public class App {
         Links link = new Links();
         link.linkGovBudget();
     }
-
->>>>>>> sqlToJava
 }
