@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="9.3">
+<file name="/home/thanos_ilias/budgetManagement/src/main/java/auebprogramming/package-info.java">
+</file>
+<file name="/home/thanos_ilias/budgetManagement/src/main/java/auebprogramming/ReadPDF.java">
+<error line="1" severity="error" message="File does not end with a newline." source="com.puppycrawl.tools.checkstyle.checks.NewlineAtEndOfFileCheck"/>
+<error line="10" column="5" severity="error"
