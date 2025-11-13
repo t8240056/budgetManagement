@@ -1,6 +1,6 @@
 public class Printbudget{
     public static void printbudget() {
-        final String FILENAME = "budget_ministries.csv";
+        final String FILENAME = "/budget_ministries.csv";
         String [][] budgetData = CVSmanagement.loadCsvToArray(FILENAME);
         for (int i = 0; i < budgetData.length; i++) { // κάθε γραμμή
             for (int j = 0; j < budgetData[i].length; j++) { // κάθε στήλη
