@@ -3,31 +3,32 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class CVSmanagement {
     public static String[][] loadCsvToArray(String filename) {
     List<String[]> dataList = new ArrayList<>();
+    
+    try (InputStream input = CVSmanagement.class.getResourceAsStream(filename)) {
+            if (input == null) {
+                System.out.println("Σφάλμα: Το αρχείο δεν βρέθηκε (" + filename + ")");
+                return new String[0][0];
+            }
 
-    try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
-        String line;
-        
-        while ((line = br.readLine()) != null) {
-            
+            BufferedReader br = new BufferedReader(new InputStreamReader(input));
+            String line;
 
-            // Διαχωρισμός των πεδίων με βάση το κόμμα
-            String[] parts = line.split(",");
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                dataList.add(parts);
+            }
 
-            dataList.add(parts);
+            // Μετατροπή της λίστας σε δισδιάστατο πίνακα String[][]
+            return dataList.toArray(new String[0][]);
+
+        } catch (IOException e) {
+            System.out.println("Σφάλμα κατά τη φόρτωση του αρχείου: " + e.getMessage());
+            return new String[0][0];
         }
-        br.close();
-
-        // Μετατροπή της λίστας σε δισδιάστατο πίνακα String[][]
-        String[][] dataArray = new String[dataList.size()][];
-        return dataList.toArray(dataArray);
-
-    } catch (IOException e) {
-        System.out.println("Σφάλμα κατά τη φόρτωση του αρχείου: " + e.getMessage());
-        return null;
-    }
 }
 }
