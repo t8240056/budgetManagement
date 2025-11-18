@@ -52,7 +52,7 @@ public class BudgetDisplay {
     }
 
     public static void main(String[] args) {
-        List<String> lines = readFile("output.txt");
+        List<String> lines = readFile("../../../output.txt");
         if (lines == null) return;
 
         List<ExpenseCategory> generalExpenses = new ArrayList<>();
