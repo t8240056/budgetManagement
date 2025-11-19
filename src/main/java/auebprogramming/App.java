@@ -19,7 +19,7 @@ public class App {
         int year = input.nextInt(); 
         
         //getting the general link and downloading the pdf
-        String urlPdf =link.linkGovBudget(year);
+        String urlPdf =link.getUrlPdf(year); //not ready yet 
         download.fileDownloader(urlPdf);
         input.close();
     }
