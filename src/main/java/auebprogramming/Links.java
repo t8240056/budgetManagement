@@ -1,4 +1,4 @@
- package auebprogramming;
+package auebprogramming;
 
 // This class is used for getting the links for the year that the user chooses.
 public final class Links {    
@@ -6,7 +6,7 @@ public final class Links {
     String urlBudget = "";
 
     public String linksForBudget(int year) {
-        switch (year) {
+        try {switch (year) {
             case 2025: 
                 urlBudget = "https://minfin.gov.gr/wp-content/uploads/2024/11/%CE%9A%CF%81%CE%B1%CF%84%CE%B9%CE%BA%CF%8C%CF%82-%CE%A0%CF%81%CE%BF%CF%8B%CF%80%CE%BF%CE%BB%CE%BF%CE%B3%CE%B9%CF%83%CE%BC%CF%8C%CF%82-2025_%CE%9F%CE%95.pdf";
                 return urlBudget;
@@ -25,7 +25,11 @@ public final class Links {
             case 2020:
                 urlBudget = "https://minfin.gov.gr/wp-content/uploads/2019/11/21-11-2019-%CE%9A%CE%A1%CE%91%CE%A4%CE%99%CE%9A%CE%9F%CE%A3-%CE%A0%CE%A1%CE%9F%CE%A5%CE%A0%CE%9F%CE%9B%CE%9F%CE%93%CE%99%CE%A3%CE%9C%CE%9F%CE%A3-2020.pdf";
                 return urlBudget;
+            }
+        } catch (IllegalArgumentException e) {
+            return "wrong year, choose from 2020 - 2025";
         }
-        return "wrong year, choose from 2020 - 2025";
+        return "";
+        
     }
 }
