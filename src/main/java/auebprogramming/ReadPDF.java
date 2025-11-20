@@ -9,10 +9,10 @@ import org.apache.pdfbox.text.PDFTextStripper;
 public final class ReadPDF {
 
     /* this is a method that gets the downloaded file and converts it to a txt file */
-    public void getInFile() {
+    public void getInFile(int year) {
         try {
             // path to get the PDF file
-            File file = new File("budget2025.pdf");
+            File file = new File("budget" + year + ".pdf");
 
             // loading the file
             PDDocument document = PDDocument.load(file);
@@ -24,7 +24,7 @@ public final class ReadPDF {
                 String text = pdfStripper.getText(document);
 
            
-                FileWriter writer = new FileWriter("output.txt");
+                FileWriter writer = new FileWriter("output" + year + ".txt");
                 writer.write(text);
                 writer.close();
 

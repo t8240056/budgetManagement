@@ -9,9 +9,9 @@ import java.nio.file.StandardCopyOption;
 
 public class GetPdf {
 
-    public void fileDownloader(String urlPdf) {
-        String fileUrl = "https://minfin.gov.gr/wp-content/uploads/2024/11/Κρατικός-Προϋπολογισμός-2025_ΟΕ.pdf";
-        String destinationFile = "budget2025.pdf";
+    public void fileDownloader(String urlBudget, int year) {
+        String fileUrl = urlBudget;
+        String destinationFile = "budget" + year + ".pdf";
 
         try {
             URL url = new URL(fileUrl);
