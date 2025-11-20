@@ -1,7 +1,8 @@
 package auebprogramming;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BudgetDisplay {
 
@@ -22,100 +23,48 @@ public class BudgetDisplay {
         }
     }
 
-    static class Ministry {
-        String name;
-        long total;
-        List<ExpenseCategory> categories = new ArrayList<>();
-
-        Ministry(String name) {
-            this.name = name;
-        }
-
-        void addCategory(ExpenseCategory c) {
-            categories.add(c);
-        }
-
-        void setTotal(long total) {
-            this.total = total;
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder();
-            sb.append("==== ").append(name).append(" ====\n");
-            for (ExpenseCategory c : categories) {
-                sb.append(c).append("\n");
-            }
-            sb.append("Σύνολο: ").append(String.format("%,d", total)).append("\n");
-            return sb.toString();
-        }
-    }
-
     public static void main(String[] args) {
-        List<String> lines = readFile("../../../../output.txt");
-
+        List<String> lines = readFile("../../../output.txt");
         if (lines == null) return;
 
         List<ExpenseCategory> generalExpenses = new ArrayList<>();
-        List<Ministry> ministries = new ArrayList<>();
 
-        Ministry currentMinistry = null;
         boolean readingGeneral = false;
 
         for (String line : lines) {
+
             line = line.trim();
             if (line.isEmpty()) continue;
 
-            // Γενικά έξοδα
+            // Ξεκινάμε να διαβάζουμε τα "ΕΞΟΔΑ"
             if (line.startsWith("ΕΞΟΔΑ")) {
                 readingGeneral = true;
                 continue;
             }
 
             if (readingGeneral) {
+
+                // Στο PDF εμφανίζεται γραμμή σύνολο
                 if (line.startsWith("Σύνολο")) {
                     String[] parts = line.split(":");
                     if (parts.length > 1) {
                         long total = parseAmount(parts[1].trim());
                         generalExpenses.add(new ExpenseCategory("Σύνολο", "Σύνολο", total));
                     }
-                    readingGeneral = false;
-                } else {
-                    // Κωδικός + Όνομα + Ποσό
-                    ExpenseCategory cat = parseExpenseCategory(line);
-                    if (cat != null) generalExpenses.add(cat);
+                    readingGeneral = false; // τελειώνει η ενότητα
+                    continue;
                 }
-            }
 
-            // Υπουργεία
-            if (line.startsWith("ΥΠΟΥΡΓΕΙΟ")) {
-                currentMinistry = new Ministry(line);
-                ministries.add(currentMinistry);
-                continue;
-            }
-
-            if (currentMinistry != null) {
-                if (line.startsWith("Σύνολο")) {
-                    String[] parts = line.split(":");
-                    if (parts.length > 1) {
-                        currentMinistry.setTotal(parseAmount(parts[1].trim()));
-                    }
-                } else {
-                    ExpenseCategory cat = parseExpenseCategory(line);
-                    if (cat != null) currentMinistry.addCategory(cat);
-                }
+                // Προσπάθεια να κάνουμε parse μία κατηγορία εξόδων
+                ExpenseCategory cat = parseExpenseCategory(line);
+                if (cat != null) generalExpenses.add(cat);
             }
         }
 
-        // Εμφάνιση
-        System.out.println("==== ΓΕΝΙΚΑ ΕΞΟΔΑ ====");
+        // ==== ΕΜΦΑΝΙΣΗ ΜΟΝΟ ΕΞΟΔΩΝ ====
+        System.out.println("==== ΕΞΟΔΑ ΚΡΑΤΙΚΟΥ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ ====");
         for (ExpenseCategory c : generalExpenses) {
             System.out.println(c);
-        }
-        System.out.println();
-
-        for (Ministry m : ministries) {
-            System.out.println(m);
         }
     }
 
@@ -129,13 +78,21 @@ public class BudgetDisplay {
     }
 
     private static ExpenseCategory parseExpenseCategory(String line) {
-        String[] parts = line.split("\\s+", 3);
-        if (parts.length < 3) return null;
-        String code = parts[0];
-        String name = parts[1];
-        String amountStr = parts[2].replace(".", "").replace(",", "");
-        long amount = parseAmount(amountStr);
-        return new ExpenseCategory(code, name, amount);
+        try {
+            // Μορφή:   Κωδικός    Όνομα    Ποσό
+            String[] parts = line.split("\\s+", 3);
+            if (parts.length < 3) return null;
+
+            String code = parts[0];
+            String name = parts[1];
+            String amountStr = parts[2];
+
+            long amount = parseAmount(amountStr);
+            return new ExpenseCategory(code, name, amount);
+
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private static long parseAmount(String str) {
