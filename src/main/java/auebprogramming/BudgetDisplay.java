@@ -77,36 +77,36 @@ public class BudgetDisplay {
         }
     }
 
-    private static ExpenseCategory parseExpenseCategory(String line) {
-    // Χωρίζουμε την γραμμή με βάση το ":" (π.χ. "21 Παροχές: 34,741,365,000")
-    String[] mainParts = line.split(":");
-    if (mainParts.length < 2) return null;
+   private static ExpenseCategory parseExpenseCategory(String line) {
+    // Αφαιρούμε περιττά κενά
+    line = line.trim();
+    if (line.isEmpty()) return null;
 
-    String left = mainParts[0].trim();      // "21 Παροχές"
-    String amountStr = mainParts[1].trim(); // "34,741,365,000"
+    // Regex: πρώτα 1-4 ψηφία για κωδικό, μετά όνομα (ό,τι μένει), στο τέλος ποσό
+    // Ποσό: μόνο ψηφία και κόμματα/τελείες
+    // Παράδειγμα γραμμής: "21 Παροχές σε εργαζομένους 14.889.199.000"
+    // Pattern: (\d+)\s+(.*)\s+([\d\.,]+)
+    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(\\d+)\\s+(.*?)\\s+([\\d.,]+)$");
+    java.util.regex.Matcher matcher = pattern.matcher(line);
+    if (matcher.find()) {
+        String code = matcher.group(1);
+        String name = matcher.group(2);
+        String amountStr = matcher.group(3);
+        long amount = parseAmount(amountStr);
+        return new ExpenseCategory(code, name, amount);
+    }
 
-    // Καθαρίζουμε το ποσό από τελείες και κόμματα
-    amountStr = amountStr.replace(".", "").replace(",", "");
-
-    long amount = parseAmount(amountStr);
-
-    // Χωρίζουμε το αριστερό κομμάτι σε 2 μέρη: κωδικός + όνομα
-    String[] leftParts = left.split("\\s+", 2);
-    if (leftParts.length < 2) return null;
-
-    String code = leftParts[0];      // 21
-    String name = leftParts[1];      // Παροχές
-
-    return new ExpenseCategory(code, name, amount);
+    return null; // αν δεν ταιριάζει, επιστρέφουμε null
 }
 
-
-    private static long parseAmount(String str) {
-        try {
-            str = str.replace(".", "").replace(",", "");
-            return Long.parseLong(str);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+private static long parseAmount(String str) {
+    try {
+        // Αφαιρούμε τελείες και κόμματα
+        str = str.replace(".", "").replace(",", "");
+        return Long.parseLong(str);
+    } catch (NumberFormatException e) {
+        return 0;
     }
+}
+
 }
