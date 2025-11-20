@@ -77,30 +77,36 @@ public class ExpenseDisplay {
         }
     }
 
-    private static ExpenseCategory parseExpenseCategory(String line) {
-        try {
-            // Μορφή:   Κωδικός    Όνομα    Ποσό
-            String[] parts = line.split("\\s+", 3);
-            if (parts.length < 3) return null;
+   private static ExpenseCategory parseExpenseCategory(String line) {
+    // Αφαιρούμε περιττά κενά
+    line = line.trim();
+    if (line.isEmpty()) return null;
 
-            String code = parts[0];
-            String name = parts[1];
-            String amountStr = parts[2];
-
-            long amount = parseAmount(amountStr);
-            return new ExpenseCategory(code, name, amount);
-
-        } catch (Exception e) {
-            return null;
-        }
+    // Regex: πρώτα 1-4 ψηφία για κωδικό, μετά όνομα (ό,τι μένει), στο τέλος ποσό
+    // Ποσό: μόνο ψηφία και κόμματα/τελείες
+    // Παράδειγμα γραμμής: "21 Παροχές σε εργαζομένους 14.889.199.000"
+    // Pattern: (\d+)\s+(.*)\s+([\d\.,]+)
+    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(\\d+)\\s+(.*?)\\s+([\\d.,]+)$");
+    java.util.regex.Matcher matcher = pattern.matcher(line);
+    if (matcher.find()) {
+        String code = matcher.group(1);
+        String name = matcher.group(2);
+        String amountStr = matcher.group(3);
+        long amount = parseAmount(amountStr);
+        return new ExpenseCategory(code, name, amount);
     }
 
-    private static long parseAmount(String str) {
-        try {
-            str = str.replace(".", "").replace(",", "");
-            return Long.parseLong(str);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+    return null; // αν δεν ταιριάζει, επιστρέφουμε null
+}
+
+private static long parseAmount(String str) {
+    try {
+        // Αφαιρούμε τελείες και κόμματα
+        str = str.replace(".", "").replace(",", "");
+        return Long.parseLong(str);
+    } catch (NumberFormatException e) {
+        return 0;
     }
+}
+
 }
