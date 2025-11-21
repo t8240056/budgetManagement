@@ -20,26 +20,40 @@ public class Main {
             scanner.nextLine(); // Clear the buffer
 
             switch (choice) {
-                case 1:
-                    // TODO: Display budget
+                case 1: {
+                    System.out.println("\nΤι θα θέλατε να δείτε;");
+                    subMenu();
+                    int subChoice1 = scanner.nextInt();
+                    scanner.nextLine(); // Clear the buffer
+                    // TODO: Display budget based on subChoice1
                     break;
-                case 2:
-                    // TODO: Add change
+                }
+                case 2: {
+                    System.out.println("\nΤι θα θέλατε να αλλάξετε;");
+                    subMenu();
+                    int subChoice2 = scanner.nextInt();
+                    scanner.nextLine(); // Clear the buffer
+                    // TODO: Add change based on subChoice2
                     break;
-                case 3:
+                }
+                case 3: {
                     // TODO: Show changes
                     break;
-                case 4:
-                    System.out.println("Έξοδος από την εφαρμογή. Σας ευχαριστούμε για την επισκεψή σας.");
+                }
+                case 4: {
+                    System.out.println("\nΈξοδος από την εφαρμογή. Σας ευχαριστούμε για την επισκεψή σας.");
                     System.exit(0);
-                default:
-                    System.out.println("Μη έγκυρη επιλογή.");
+                    break;
+                }
+                default: {
+                    System.out.println("\nΜη έγκυρη επιλογή.");
+                }
             }
         }
     }
 
     /**
-     * Prints the user menu (in Greek).
+     * Prints the main menu to the user.
      */
     public static void printMenu() {
         System.out.println();
@@ -48,6 +62,15 @@ public class Main {
         System.out.println("2. Εισαγωγή αλλαγής");
         System.out.println("3. Εμφάνιση αλλαγών");
         System.out.println("4. Έξοδος");
+        System.out.print("Επιλέξτε επιλογή: ");
+    }
+
+    /**
+     * Prints the submenu to the user.
+     */
+    public static void subMenu() {
+        System.out.println("\n1. Γενικές πληροφορίες");
+        System.out.println("2. Συγκεκριμένο Υπουργείο");
         System.out.print("Επιλέξτε επιλογή: ");
     }
 }
