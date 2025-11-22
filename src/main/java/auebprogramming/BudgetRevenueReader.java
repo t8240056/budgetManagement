@@ -1,149 +1,211 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
- * Class for reading and parsing Greek state budget data from text files
+ * BudgetDataProcessor - Processes Greek budget data from text file to extract revenue data
  */
 public class BudgetRevenueReader {
     
-    private List<RevenueItem> revenueItems;
-    
     /**
-     * Represents a single revenue item with category and amount
+     * Main method - entry point of the application
      */
-    public static class RevenueItem {
-        private String categoryCode;
-        private String categoryName;
-        private long amount;
+    public static void main(String[] args) {
+        String inputFile = "output.txt";
+        String outputCsv = "revenues.csv";
         
-        public RevenueItem(String categoryCode, String categoryName, long amount) {
-            this.categoryCode = categoryCode;
-            this.categoryName = categoryName;
-            this.amount = amount;
-        }
-        
-        // Getters
-        public String getCategoryCode() { return categoryCode; }
-        public String getCategoryName() { return categoryName; }
-        public long getAmount() { return amount; }
-        
-        @Override
-        public String toString() {
-            return String.format("%s %s: %,d €", categoryCode, categoryName, amount);
+        try {
+            // Read all lines from the input file
+            List<String> lines = readFile(inputFile);
+            
+            // Extract revenue data from the file
+            List<RevenueRecord> revenues = extractRevenueData(lines);
+            
+            // Save revenue data to CSV file
+            saveToCsv(revenues, outputCsv);
+            
+            // Display revenue data
+            displayRevenueData(revenues);
+            
+            System.out.println("\nData successfully processed and saved to " + outputCsv);
+            
+        } catch (IOException e) {
+            System.err.println("Error processing file: " + e.getMessage());
+            e.printStackTrace();
         }
     }
     
     /**
-     * Constructor initializes the revenue items list
+     * Reads all lines from the specified file
      */
-    public BudgetRevenueReader() {
-        this.revenueItems = new ArrayList<>();
+    private static List<String> readFile(String filename) throws IOException {
+        return Files.readAllLines(Paths.get(filename));
     }
     
     /**
-     * Reads the budget file and extracts revenue data from Article 1
-     * @param filename Path to the budget file
-     * @throws IOException If file reading fails
+     * Extracts revenue data from the file lines
+     * Looks for the ΕΣΟΔΑ section and processes revenue records
      */
-    public void readBudgetFile(String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
-        String line;
-        boolean inArticle1 = false;
+    private static List<RevenueRecord> extractRevenueData(List<String> lines) {
+        List<RevenueRecord> revenues = new ArrayList<>();
         boolean inRevenueSection = false;
         
-        while ((line = reader.readLine()) != null) {
-            line = line.trim();
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i).trim();
             
-            // Check if we're entering Article 1
-            if (line.contains("Άρθρο 1")) {
-                inArticle1 = true;
-                continue;
-            }
-            
-            // Check if we're entering revenue section within Article 1
-            if (inArticle1 && line.contains("1. ΕΣΟΔΑ")) {
+            // Check if we've entered the ΕΣΟΔΑ section
+            if (line.contains("ΕΣΟΔΑ") && !inRevenueSection) {
                 inRevenueSection = true;
                 continue;
             }
             
-            // Check if we're leaving the revenue section
-            if (inRevenueSection && line.contains("2. ΕΞΟΔΑ")) {
+            // Check if we've left the revenue section
+            if (inRevenueSection && (line.contains("STOP") || line.contains("ΕΞΟΔΑ"))) {
                 break;
             }
             
-            // Process revenue lines
-            if (inRevenueSection && !line.isEmpty()) {
-                processRevenueLine(line);
+            // Process revenue data lines (lines that contain revenue codes and amounts)
+            if (inRevenueSection && isRevenueDataLine(line)) {
+                RevenueRecord record = parseRevenueLine(line);
+                if (record != null) {
+                    revenues.add(record);
+                }
             }
         }
         
-        reader.close();
+        return revenues;
     }
     
     /**
-     * Processes a single line to extract revenue data using regex patterns
-     * @param line The line to process
+     * Checks if a line contains revenue data (has a revenue code and amount)
      */
-    private void processRevenueLine(String line) {
-        // Pattern to match revenue items like "11. Φόροι » 62.055.000.000"
-        Pattern revenuePattern = Pattern.compile("(\\d+)\\.\\s+([^»]+)»\\s+([\\d.]+)");
-        Matcher matcher = revenuePattern.matcher(line);
+    private static boolean isRevenueDataLine(String line) {
+        // Revenue lines typically start with numbers (classification codes)
+        // and contain numeric amounts at the end
+        if (line.isEmpty()) return false;
         
-        if (matcher.find()) {
-            String categoryCode = matcher.group(1).trim();
-            String categoryName = matcher.group(2).trim();
-            String amountStr = matcher.group(3).trim().replace(".", "");
-            
-            try {
-                long amount = Long.parseLong(amountStr);
-                revenueItems.add(new RevenueItem(categoryCode, categoryName, amount));
-            } catch (NumberFormatException e) {
-                System.err.println("Error parsing amount: " + amountStr);
-            }
-        }
+        String[] parts = line.trim().split("\\s+");
+        if (parts.length < 2) return false;
+        
+        // Check if first part looks like a revenue code (starts with numbers)
+        String firstPart = parts[0];
+        if (!firstPart.matches("^\\d+.*")) return false;
+        
+        // Check if last part looks like a monetary amount
+        String lastPart = parts[parts.length - 1];
+        return lastPart.matches("[\\d.,]+");
     }
     
     /**
-     * Returns all extracted revenue items
-     * @return List of revenue items
+     * Parses a single line of revenue data into a RevenueRecord object
      */
-    public List<RevenueItem> getRevenueItems() {
-        return new ArrayList<>(revenueItems);
-    }
-    
-    /**
-     * Prints all revenue items to console
-     */
-    public void printRevenueItems() {
-        System.out.println("ΕΣΟΔΑ ΚΡΑΤΙΚΟΥ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ 2025");
-        System.out.println("==================================");
-        
-        long total = 0;
-        for (RevenueItem item : revenueItems) {
-            System.out.println(item);
-            total += item.getAmount();
-        }
-        
-        System.out.println("==================================");
-        System.out.printf("ΣΥΝΟΛΟ: %,d €%n", total);
-    }
-    
-    /**
-     * Main method for testing the class functionality
-     */
-    public static void main(String[] args) {
-        BudgetRevenueReader reader = new BudgetRevenueReader();
-        
+    private static RevenueRecord parseRevenueLine(String line) {
         try {
-            reader.readBudgetFile("output.txt");
-            reader.printRevenueItems();
-        } catch (IOException e) {
-            System.err.println("Error reading file: " + e.getMessage());
+            // Remove extra spaces and normalize the line
+            line = line.replaceAll("\\s+", " ").trim();
+            
+            // Find the last numeric value (the amount)
+            String[] parts = line.split(" ");
+            if (parts.length < 2) return null;
+            
+            String amountStr = parts[parts.length - 1].replace(".", "").replace(",", "");
+            long amount = Long.parseLong(amountStr);
+            
+            // Extract the code (first part)
+            String code = parts[0];
+            
+            // Extract description (everything between code and amount)
+            StringBuilder description = new StringBuilder();
+            for (int i = 1; i < parts.length - 1; i++) {
+                if (i > 1) description.append(" ");
+                description.append(parts[i]);
+            }
+            
+            return new RevenueRecord(code, description.toString(), amount);
+            
+        } catch (NumberFormatException e) {
+            System.err.println("Error parsing amount in line: " + line);
+            return null;
+        } catch (Exception e) {
+            System.err.println("Error processing line: " + line);
+            return null;
+        }
+    }
+    
+    /**
+     * Saves the revenue data to a CSV file
+     */
+    private static void saveToCsv(List<RevenueRecord> revenues, String filename) throws IOException {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            // Write CSV header
+            writer.println("Code,Description,Amount");
+            
+            // Write data rows
+            for (RevenueRecord record : revenues) {
+                writer.printf("%s,\"%s\",%d%n", 
+                    record.getCode(), 
+                    record.getDescription(), 
+                    record.getAmount());
+            }
+        }
+    }
+    
+    /**
+     * Displays the revenue data in a formatted table
+     */
+    private static void displayRevenueData(List<RevenueRecord> revenues) {
+        System.out.println("=== REVENUE DATA ===");
+        System.out.printf("%-10s %-60s %-15s%n", "Code", "Description", "Amount");
+        System.out.println("-".repeat(90));
+        
+        for (RevenueRecord record : revenues) {
+            // Format amount with thousand separators
+            String formattedAmount = String.format("%,d", record.getAmount());
+            System.out.printf("%-10s %-60s %-15s%n", 
+                record.getCode(), 
+                truncate(record.getDescription(), 55), 
+                formattedAmount);
+        }
+        
+        // Display summary
+        long total = revenues.stream().mapToLong(RevenueRecord::getAmount).sum();
+        System.out.println("-".repeat(90));
+        System.out.printf("%-71s %-,15d%n", "TOTAL:", total);
+    }
+    
+    /**
+     * Helper method to truncate long descriptions for display
+     */
+    private static String truncate(String text, int maxLength) {
+        if (text.length() <= maxLength) return text;
+        return text.substring(0, maxLength - 3) + "...";
+    }
+    
+    /**
+     * Inner class to represent a revenue record
+     */
+    static class RevenueRecord {
+        private String code;
+        private String description;
+        private long amount;
+        
+        public RevenueRecord(String code, String description, long amount) {
+            this.code = code;
+            this.description = description;
+            this.amount = amount;
+        }
+        
+        // Getters
+        public String getCode() { return code; }
+        public String getDescription() { return description; }
+        public long getAmount() { return amount; }
+        
+        @Override
+        public String toString() {
+            return String.format("RevenueRecord{code='%s', description='%s', amount=%,d}", 
+                code, description, amount);
         }
     }
 }
