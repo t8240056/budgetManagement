@@ -24,7 +24,7 @@ public final class ReadPDF {
                 String text = pdfStripper.getText(document);
 
            
-                FileWriter writer = new FileWriter("output" + year + ".txt");
+                FileWriter writer = new FileWriter("../../resources/output" + year + ".txt");
                 writer.write(text);
                 writer.close();
 
