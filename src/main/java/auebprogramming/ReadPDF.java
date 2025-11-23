@@ -28,7 +28,7 @@ public final class ReadPDF {
                 writer.write(text);
                 writer.close();
 
-                System.out.println("Το κείμενο αποθηκεύτηκε επιτυχώς στο αρχείο output.txt");
+                System.out.println("Το κείμενο αποθηκεύτηκε επιτυχώς στο αρχείο output" + year + ".txt");
             }
 
             
