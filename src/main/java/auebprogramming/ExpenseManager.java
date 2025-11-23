@@ -78,3 +78,20 @@ public final class ExpenseManager {
     }
 
 }
+
+
+
+
+
+
+
+/* Something like this can be used in main method
+
+ExpenseManager manager = new ExpenseManager();
+
+// Show all categories
+manager.showCategories();
+
+// Show details for selected codes
+manager.showExpenseDetails("21", "23");
+ */
