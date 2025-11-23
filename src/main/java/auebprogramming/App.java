@@ -1,4 +1,4 @@
-package auebProgramming2;
+package auebprogramming;
 
 /**
  * Hello world!
