@@ -9,7 +9,7 @@ import java.nio.file.StandardCopyOption;
 
 public class GetPdf {
 
-    public void fileDownloader(String urlBudget, int year) {
+    public void fileDownloader(final String urlBudget, final int year) {
         String fileUrl = urlBudget;
         String destinationFile = "budget" + year + ".pdf";
 
