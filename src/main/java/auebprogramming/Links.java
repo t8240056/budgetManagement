@@ -1,7 +1,7 @@
 package auebprogramming;
 
 // This class is used for getting the links for the year that the user chooses.
-public final class Links {    
+public final class Links {
 
     String urlBudget = "";
 
@@ -32,6 +32,6 @@ public final class Links {
             return "wrong year, choose from 2020 - 2025";
         }
         return "";
-        
+
     }
 }
