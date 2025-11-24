@@ -1,39 +1,36 @@
 package auebprogramming;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-// Final class because it is not intended to be inherited
 public final class ExpenseDisplay {
 
-    // Final static inner class that will not be inherited
     static final class ExpenseCategory {
         String code;
         String name;
         long amount;
 
-        // Constructor: Creates an expense category object
         ExpenseCategory(String code, String name, long amount) {
             this.code = code;
             this.name = name;
             this.amount = amount;
         }
 
-        // toString: Returns formatted string representation of a category
         @Override
         public String toString() {
             return code + " " + name + ": " + String.format("%,d", amount);
         }
     }
 
-    // main: Entry point of the program that reads file and prints parsed expenses
     public static void main(String[] args) {
-        List<String> lines = readFile("../../../output.txt");
+        // ✅ Load output.txt from src/main/resources
+        List<String> lines = readResourceFile("output.txt");
         if (lines == null) return;
 
         List<ExpenseCategory> generalExpenses = new ArrayList<>();
-
         boolean readingGeneral = false;
 
         for (String line : lines) {
@@ -41,7 +38,6 @@ public final class ExpenseDisplay {
             line = line.trim();
             if (line.isEmpty()) continue;
 
-            // Detect the start of expenses section
             if (line.startsWith("ΕΞΟΔΑ")) {
                 readingGeneral = true;
                 continue;
@@ -49,7 +45,6 @@ public final class ExpenseDisplay {
 
             if (readingGeneral) {
 
-                // Handle line with total
                 if (line.startsWith("Σύνολο")) {
                     String[] parts = line.split(":");
                     if (parts.length > 1) {
@@ -60,35 +55,44 @@ public final class ExpenseDisplay {
                     continue;
                 }
 
-                // Try to parse an expense category
                 ExpenseCategory cat = parseExpenseCategory(line);
                 if (cat != null) generalExpenses.add(cat);
             }
         }
 
-        // Display only expenses
         System.out.println("==== ΕΞΟΔΑ ΚΡΑΤΙΚΟΥ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ ====");
         for (ExpenseCategory c : generalExpenses) {
             System.out.println(c);
         }
     }
 
-    // readFile: Reads all lines of a text file and returns them as a list
-    private static List<String> readFile(String path) {
+    // ✅ NEW METHOD — reads from resources/
+    private static List<String> readResourceFile(String filename) {
         try {
-            return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(path));
-        } catch (IOException e) {
+            InputStream inputStream = ExpenseDisplay.class
+                .getClassLoader()
+                .getResourceAsStream(filename);
+
+            if (inputStream == null) {
+                System.err.println("Resource not found: " + filename);
+                return null;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
+            return reader.lines().toList();
+
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    // parseExpenseCategory: Parses a line into an ExpenseCategory object
     private static ExpenseCategory parseExpenseCategory(String line) {
         line = line.trim();
         if (line.isEmpty()) return null;
 
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(\\d+)\\s+(.*?)\\s+([\\d.,]+)$");
+        java.util.regex.Pattern pattern =
+            java.util.regex.Pattern.compile("^(\\d+)\\s+(.*?)\\s+([\\d.,]+)$");
         java.util.regex.Matcher matcher = pattern.matcher(line);
 
         if (matcher.find()) {
@@ -102,7 +106,6 @@ public final class ExpenseDisplay {
         return null;
     }
 
-    // parseAmount: Converts formatted number text to a long value
     private static long parseAmount(String str) {
         try {
             str = str.replace(".", "").replace(",", "");
