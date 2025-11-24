@@ -49,11 +49,13 @@ public class Main {
                                     System.out.println("\nΜη έγκυρη επιλογή.");
                                 }
                             }
-                            // TODO: Display general information
                             break;
                         }
                         case 2: {
                             ministriesMenu();
+                            int ministryChoice = SCANNER.nextInt();
+                            SCANNER.nextLine(); // Clear the buffer
+                            // TODO: Display general information
                             break;
                         }
                         case 3: {
