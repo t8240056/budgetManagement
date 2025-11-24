@@ -8,7 +8,7 @@ public class App {
     public static void main(final String[] args) {
         if (getFilesOnce == 0 ) {
             DownloadingOutputFiles.run();
-            getFilesOnce +=1;            
+            getFilesOnce +=1;           
         }
     }
 }
