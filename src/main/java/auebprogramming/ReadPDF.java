@@ -1,35 +1,33 @@
 package auebprogramming;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
-public class ReadPDF {
-    public void getInFile() {
-        try {
-            // Διαδρομή προς το αρχείο PDF
-            File file = new File("budget2025.pdf");
+public final class ReadPDF {
 
-            // Φόρτωση του PDF εγγράφου
+    //a method that gets the downloaded file and converts it to a txt file
+    public void getInFile(final int year) {
+        try {
+            // path to get the PDF file
+            File file = new File("budget" + year + ".pdf");
+
+            // loading the file
             PDDocument document = PDDocument.load(file);
 
-            // Έλεγχος αν είναι κρυπτογραφημένο
+            // checks if the doc is encrypted
             if (!document.isEncrypted()) {
-                // Εξαγωγή κειμένου
+
                 PDFTextStripper pdfStripper = new PDFTextStripper();
                 String text = pdfStripper.getText(document);
 
-                // Δημιουργία αρχείου εξόδου
-                FileWriter writer = new FileWriter("output.txt");
+                FileWriter writer = new FileWriter("src/main/java/auebprogramming/resources/output" + year + ".txt");
                 writer.write(text);
                 writer.close();
 
-                System.out.println("Το κείμενο αποθηκεύτηκε επιτυχώς στο αρχείο output.txt");
+                System.out.println("file saved as output" + year + ".txt");
             }
-
-            // Κλείσιμο του εγγράφου
             document.close();
 
         } catch (IOException e) {
