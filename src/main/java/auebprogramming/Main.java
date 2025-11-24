@@ -27,6 +27,28 @@ public class Main {
                     SCANNER.nextLine(); // Clear the buffer
                     switch (subChoice1) {
                         case 1: {
+                            incomeExpensesMenu();
+                            int incexpChoice = SCANNER.nextInt();
+                            SCANNER.nextLine(); // Clear the buffer
+                            switch (incexpChoice) {
+                                case 1: {
+                                    // TODO: Display general information
+                                    break;
+                                }
+                                case 2: {
+                                    // TODO: Display general information
+                                    break;
+                                }
+                                case 3: {
+                                    System.out.println("\nΈξοδος από την εφαρμογή. "
+                                    + "Σας ευχαριστούμε για την επισκεψή σας.");
+                                    System.exit(0);
+                                    break;
+                                }
+                                default: {
+                                    System.out.println("\nΜη έγκυρη επιλογή.");
+                                }
+                            }
                             // TODO: Display general information
                             break;
                         }
@@ -121,6 +143,13 @@ public class Main {
         System.out.println("19. Ministry of Citizen Protection");
         System.out.println("20. Ministry of Climate Crisis and Civil Protection");
         System.out.print("Select a Ministry: ");
+    }
+
+    public static void incomeExpensesMenu() {
+        System.out.println("1.Έσοδα");
+        System.out.println("2.Έξοδα");
+        System.out.println("3.Έξοδος");
+        System.out.print("Επιλέξτε επιλογή: ");
     }
 }
 
