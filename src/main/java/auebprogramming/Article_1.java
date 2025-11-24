@@ -5,7 +5,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.regex.*;
 
-public class BudgetSummary {
+public class Article_1 {
     
     public static void main(String[] args) {
         String filePath = "output.txt";
