@@ -1,0 +1,33 @@
+package auebprogramming;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
+
+public class ExpenseDisplayTest {
+
+    @Test
+    void testParseAmount() {
+        assertEquals(123456789, BudgetDisplay.parseAmount("123.456.789"));
+        assertEquals(123456789, BudgetDisplay.parseAmount("123,456,789"));
+        assertEquals(0, BudgetDisplay.parseAmount("abc")); // λάθος input
+    }
+
+    @Test
+    void testParseExpenseCategory() {
+        BudgetDisplay.ExpenseCategory cat = BudgetDisplay.parseExpenseCategory("21 Παροχές 14889199000");
+        assertNotNull(cat);
+        assertEquals("21", cat.code);
+        assertEquals("Παροχές", cat.name);
+        assertEquals(14889199000L, cat.amount);
+    }
+
+    @Test
+    void testReadFile() {
+        List<String> lines = BudgetDisplay.readFile("src/test/resources/mock_output.txt");
+        assertNotNull(lines);
+        assertTrue(lines.size() > 0);
+        assertEquals("21 Παροχές 14889199000", lines.get(0).trim());
+    }
+}
