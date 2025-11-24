@@ -1,4 +1,7 @@
 target/
+<<<<<<< HEAD
 *.class
 .idea/
 *.iml
+=======
+>>>>>>> ba9fcd6 (Add .gitignore)
