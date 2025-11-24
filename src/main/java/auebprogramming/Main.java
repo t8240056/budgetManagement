@@ -78,6 +78,50 @@ public class Main {
                     subMenu();
                     int subChoice2 = SCANNER.nextInt();
                     SCANNER.nextLine();
+
+                    switch (subChoice2) {
+                        case 1:
+                            incomeExpensesMenu();
+                            int incExpChoice = SCANNER.nextInt();
+                            SCANNER.nextLine();
+
+                            switch (incExpChoice) {
+                                case 1:
+                                    // TODO: Display income info
+                                    break;
+                                case 2:
+                                    // TODO: Display expenses info
+                                    break;
+                                case 3:
+                                    System.out.println(
+                                            "\nΈξοδος από την εφαρμογή. "
+                                                    + "Σας ευχαριστούμε για την επίσκεψή σας.");
+                                    System.exit(0);
+                                    break;
+                                default:
+                                    System.out.println("\nΜη έγκυρη επιλογή.");
+                                    break;
+                            }
+                            break;
+
+                        case 2:
+                            ministriesMenu();
+                            int ministryChoice = SCANNER.nextInt();
+                            SCANNER.nextLine();
+                            // TODO: Display ministry info
+                            break;
+
+                        case 3:
+                            System.out.println(
+                                    "\nΈξοδος από την εφαρμογή. "
+                                            + "Σας ευχαριστούμε για την επίσκεψή σας.");
+                            System.exit(0);
+                            break;
+
+                        default:
+                            System.out.println("\nΜη έγκυρη επιλογή.");
+                            break;
+                    }
                     // TODO: Apply changes
                     break;
 
