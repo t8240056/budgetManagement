@@ -159,7 +159,7 @@ public class Main {
         System.out.println("\n1. Γενικές πληροφορίες");
         System.out.println("2. Συγκεκριμένο Υπουργείο");
         System.out.println("3. Έξοδος");
-        System.out.print("Επιλέξτε επιλογή: ");
+        System.out.println("Επιλέξτε επιλογή: ");
     }
 
     /** Prints the ministries menu. */
