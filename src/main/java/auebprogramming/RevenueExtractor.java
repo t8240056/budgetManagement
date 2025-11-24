@@ -73,6 +73,6 @@ public class RevenueExtractor {
     }
 
     public static void main(String[] args) {
-        extractRevenues("output.txt");
+        extractRevenues("src/main/java/auebprogramming/resources/output2025.txt");
     }
 }

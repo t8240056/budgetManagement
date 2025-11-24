@@ -15,5 +15,7 @@ public class App {
         int year = scanner.nextInt();
         article1.getArticle1(year); 
 
+        Printbudget.printbudget();
+
     }
 }
