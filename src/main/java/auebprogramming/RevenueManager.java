@@ -50,7 +50,7 @@ public final class RevenueManager {
      * Display details for one or more revenue codes
      * User can input multiple codes, e.g., "21", "23"
     //*/
-    public void showRevenueDetails(String..codes) {
+    public void showRevenueDetails(String[]codes) {
         System.out.println("CODE\tNAME\tSTATE\tREGULAR\tINVESTMENTS");
         for (String code : codes) {
             int index = findIndexByCode(code);
