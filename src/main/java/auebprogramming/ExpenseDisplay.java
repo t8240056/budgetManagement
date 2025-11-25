@@ -2,14 +2,23 @@ package auebprogramming;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * ExpenseDisplay reads CSV files containing state budget expenses
+ * and displays them categorized by category and by agency.
+ * 
+ * NOTE: Currently works only for the year 2025.
+ */
 public final class ExpenseDisplay {
 
-    // === INNER CLASSES ===
+    // ---------------------------
+    // INNER CLASSES
+    // ---------------------------
+
+    /** Represents an expense category */
     static final class ExpenseCategory {
         String category;
         String code;
@@ -29,103 +38,123 @@ public final class ExpenseDisplay {
         }
     }
 
+    /** Represents an agency expense */
     static final class AgencyExpense {
         String code;
-        String agencyName;
-        long regularBudget;
-        long investmentBudget;
+        String agency;
+        long regular;
+        long investment;
         long total;
 
-        AgencyExpense(String code, String agencyName, long regularBudget, long investmentBudget, long total) {
+        AgencyExpense(String code, String agency, long regular, long investment, long total) {
             this.code = code;
-            this.agencyName = agencyName;
-            this.regularBudget = regularBudget;
-            this.investmentBudget = investmentBudget;
+            this.agency = agency;
+            this.regular = regular;
+            this.investment = investment;
             this.total = total;
         }
 
         @Override
         public String toString() {
-            return code + " - " + agencyName +
-                    " | Τακτικός: " + String.format("%,d €", regularBudget) +
-                    " | ΠΔΕ: " + String.format("%,d €", investmentBudget) +
-                    " | Σύνολο: " + String.format("%,d €", total);
+            return code + " - " + agency +
+                    " | Regular: " + String.format("%,d €", regular) +
+                    " | Investment: " + String.format("%,d €", investment) +
+                    " | Total: " + String.format("%,d €", total);
         }
     }
 
-    // === MAIN ===
+    // ---------------------------
+    // MAIN
+    // ---------------------------
     public static void main(String[] args) {
+
         Scanner scanner = new Scanner(System.in);
-        System.out.println(" Which year do you want to see ?");
+        System.out.println("Which year do you want to see?");
         int year = scanner.nextInt();
         scanner.close();
 
+        // Only 2025 is available for now
+        if (year != 2025) {
+            System.out.println("Only the year 2025 is available at the moment.");
+            return;
+        }
+
+        // Direct path to CSV files inside java folder
         String basePath = "src/main/java/auebprogramming/resources/";
+        String categoriesFile = basePath + "categories2025.csv";
+        String agenciesFile = basePath + "agencies2025.csv";
 
-        String categoriesPath = basePath + "categories.csv";
-        String agenciesPath = basePath + "agencies.csv";
+        // Read CSV files
+        List<ExpenseCategory> categories = readCategoriesCSV(categoriesFile);
+        List<AgencyExpense> agencies = readAgenciesCSV(agenciesFile);
 
-        List<ExpenseCategory> categories = readCategoriesCSV(categoriesPath);
-        List<AgencyExpense> agencies = readAgenciesCSV(agenciesPath);
-
-        System.out.println("\n==== ΕΞΟΔΑ ΑΝΑ ΚΑΤΗΓΟΡΙΑ ====");
+        // Display results
+        System.out.println("\n==== EXPENSES BY CATEGORY ====");
         categories.forEach(System.out::println);
 
-        System.out.println("\n==== ΕΞΟΔΑ ΑΝΑ ΦΟΡΕΑ ====");
+        System.out.println("\n==== EXPENSES BY AGENCY ====");
         agencies.forEach(System.out::println);
     }
 
-    // === CSV PARSING ===
+    // ---------------------------
+    // CSV READERS
+    // ---------------------------
 
+    /**
+     * Reads expense categories CSV and returns a list of ExpenseCategory objects.
+     */
     private static List<ExpenseCategory> readCategoriesCSV(String path) {
         List<ExpenseCategory> list = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            br.readLine(); // skip header
+            br.readLine(); // skip header line
 
             String line;
             while ((line = br.readLine()) != null) {
-                // Σπάει σωστά το CSV, ακόμη κι αν έχει ελληνικά
                 String[] parts = line.split(",", 4);
+                if (parts.length < 4) continue;
 
-                String category = parts[0];
-                String code = parts[1];
-                String description = parts[2];
-                long amount = Long.parseLong(parts[3]);
+                String category = parts[0].trim();
+                String code = parts[1].trim();
+                String description = parts[2].trim();
+                long amount = Long.parseLong(parts[3].trim());
 
                 list.add(new ExpenseCategory(category, code, description, amount));
             }
 
-        } catch (IOException e) {
-            System.err.println("Error reading categories CSV.");
+        } catch (Exception e) {
+            System.err.println("Error reading categories CSV: " + path);
             e.printStackTrace();
         }
 
         return list;
     }
 
+    /**
+     * Reads agency expenses CSV and returns a list of AgencyExpense objects.
+     */
     private static List<AgencyExpense> readAgenciesCSV(String path) {
         List<AgencyExpense> list = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            br.readLine(); // skip header
+            br.readLine(); // skip header line
 
             String line;
             while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 5);
+                if (parts.length < 5) continue;
 
-                String[] p = line.split(",", 5);
-
-                String code = p[0];
-                String agency = p[1];
-                long regular = Long.parseLong(p[2].trim());
-                long investment = Long.parseLong(p[3].trim());
-                long total = Long.parseLong(p[4].trim());
+                String code = parts[0].trim();
+                String agency = parts[1].trim();
+                long regular = Long.parseLong(parts[2].trim());
+                long investment = Long.parseLong(parts[3].trim());
+                long total = Long.parseLong(parts[4].trim());
 
                 list.add(new AgencyExpense(code, agency, regular, investment, total));
             }
 
-        } catch (IOException e) {
-            System.err.println("Error reading agencies CSV.");
+        } catch (Exception e) {
+            System.err.println("Error reading agencies CSV: " + path);
             e.printStackTrace();
         }
 
