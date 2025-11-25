@@ -53,21 +53,25 @@ public final class ExpenseManager {
      * User can input multiple codes, e.g., "21", "23"
     //*/
     public void showExpenseDetails(String... codes) {
-        System.out.println("CODE\tNAME\tSTATE\tREGULAR\tINVESTMENTS");
-        for (String code : codes) {
-            int index = findIndexByCode(code);
-            if (index != -1) {
-                System.out.printf("%s\t%s\t%,d\t%,d\t%,d%n",
-                        CATEGORIES[index][0],
-                        CATEGORIES[index][1],
-                        AMOUNTS[index][0],
-                        AMOUNTS[index][1],
-                        AMOUNTS[index][2]);
-            } else {
-                System.out.println(code + " : Invalid code");
-            }
+    for (String code : codes) {
+        int index = findIndexByCode(code);
+
+        if (index != -1) {
+            System.out.println("\n==============================");
+            System.out.println("CODE: " + CATEGORIES[index][0]);
+            System.out.println("NAME: " + CATEGORIES[index][1]);
+            System.out.println("------------------------------");
+            System.out.printf("State Budget       : %,d%n", AMOUNTS[index][0]);
+            System.out.printf("Regular Budget     : %,d%n", AMOUNTS[index][1]);
+            System.out.printf("Investment Budget  : %,d%n", AMOUNTS[index][2]);
+            System.out.println("==============================");
+
+        } else {
+            System.out.println("\n" + code + " : Invalid code");
         }
     }
+}
+
 
     /**
      * Display all expense categories with their code, name, and State Budget amount.
