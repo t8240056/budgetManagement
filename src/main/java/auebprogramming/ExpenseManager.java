@@ -80,11 +80,6 @@ public final class ExpenseManager {
 }
 
 
-
-
-
-
-
 /* Something like this can be used in main method
 
 ExpenseManager manager = new ExpenseManager();

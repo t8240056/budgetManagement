@@ -1,0 +1,27 @@
+@startuml
+!theme plain
+
+
+package "Data Processing Layer" {
+  class Article_1 {
+    + getArticle1(year: int): void
+    + parseBudgetData(filePath: String): BudgetData
+  }
+  
+  class BudgetRevenueReader {
+    + main(args: String[]): void
+    + extractRevenueData(lines: List<String>): List<RevenueRecord>
+  }
+  
+  class RevenueExtractor {
+    + extractRevenues(filePath: String): void
+  }
+  
+  class CVSmanagement {
+    + loadCsvToArray(filename: String): String[][]
+  }
+}
+
+' ========== ΚΥΡΙΕΣ ΣΧΕΣΕΙΣ ==========
+Article_1 --> BudgetData : creates
+BudgetRevenueReader --> RevenueRecord : creates

@@ -69,10 +69,10 @@ public class RevenueExtractor {
      * Determine if a token is a valid numeric amount.
      */
     private static boolean isAmount(String token) {
-        return token.matches("^[0-9]{1,3}(\\.[0-9]{3})*(\\.[0-9]+)?$");
+        return token.matches("^[0-9]{1,3}(\\\\.[0-9]{3})*(\\\\.[0-9]+)?$");
     }
 
-    public static void main(String[] args) {
-        extractRevenues("output.txt");
+    public void printRevenues() {
+        extractRevenues("src/main/java/auebprogramming/resources/output2025.txt");
     }
 }

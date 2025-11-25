@@ -7,8 +7,8 @@ import java.util.regex.*;
 
 public class Article_1 {
     
-    public static void main(String[] args) {
-        String filePath = "output.txt";
+    public void getArticle1(int year) {
+        String filePath = "src/main/java/auebprogramming/resources/output" + year + ".txt";
         BudgetData budgetData = parseBudgetData(filePath);
         printBudgetAnalysis(budgetData);
     }

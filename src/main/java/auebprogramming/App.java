@@ -1,14 +1,26 @@
 package auebprogramming;
 
+import java.util.Scanner;
+
 /**entry point of the application */
 public class App {
 
-    //we dont want everytime we run the main to download the files from the start
-    static int getFilesOnce = 0;
     public static void main(final String[] args) {
-        if (getFilesOnce == 0 ) {
-            DownloadingOutputFiles.run();
-            getFilesOnce +=1;           
-        }
+        /*// DownloadingOutputFiles.run();  run only once 
+        
+        Scanner scanner = new Scanner(System.in);
+        var article1 = new Article_1();
+        
+        System.out.println(" Which year do you want to see ?");
+        int year = scanner.nextInt();
+        article1.getArticle1(year); 
+
+        //Printbudget.printbudget();
+
+        scanner.close();*/
+
+        RevenueExtractor re = new RevenueExtractor();
+        re.printRevenues();
+
     }
 }

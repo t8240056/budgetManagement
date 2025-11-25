@@ -11,7 +11,7 @@ public final class ReadPDF {
     public void getInFile(final int year) {
         try {
             // path to get the PDF file
-            File file = new File("budget" + year + ".pdf");
+            File file = new File("src/main/java/auebprogramming/resources/budget" + year + ".pdf");
 
             // loading the file
             PDDocument document = PDDocument.load(file);
