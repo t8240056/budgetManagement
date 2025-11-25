@@ -16,7 +16,7 @@ public final class ExpenseManager {
         {"33", "Τιμαλφή"},
         {"44", "Δάνεια"},
         {"45", "Συμμετοχικοί τίτλοι και μερίδια"},
-        {"53", "Χρεωστικοί τίτλοι (υποχρεώσεις)"},
+        {"53", "Χρεωστικοί τίτιλοι (υποχρεώσεις)"},
         {"54", "Δάνεια"}
     };
 
@@ -41,7 +41,7 @@ public final class ExpenseManager {
     /*//
      * Display all available expense categories with their codes
     //*/
-    public void showCategories() {
+    public static void showCategories() {
         System.out.println("CODE\tEXPENSE NAME");
         for (String[] category : CATEGORIES) {
             System.out.printf("%s\t%s%n", category[0], category[1]);
@@ -53,25 +53,43 @@ public final class ExpenseManager {
      * User can input multiple codes, e.g., "21", "23"
     //*/
     public void showExpenseDetails(String... codes) {
-    for (String code : codes) {
-        int index = findIndexByCode(code);
-
-        if (index != -1) {
-            System.out.println("\n==============================");
-            System.out.println("CODE: " + CATEGORIES[index][0]);
-            System.out.println("NAME: " + CATEGORIES[index][1]);
-            System.out.println("------------------------------");
-            System.out.printf("State Budget       : %,d%n", AMOUNTS[index][0]);
-            System.out.printf("Regular Budget     : %,d%n", AMOUNTS[index][1]);
-            System.out.printf("Investment Budget  : %,d%n", AMOUNTS[index][2]);
-            System.out.println("==============================");
-
-        } else {
-            System.out.println("\n" + code + " : Invalid code");
+        System.out.println("CODE\tNAME\tSTATE\tREGULAR\tINVESTMENTS");
+        for (String code : codes) {
+            int index = findIndexByCode(code);
+            if (index != -1) {
+                System.out.printf("%s\t%s\t%,d\t%,d\t%,d%n",
+                        CATEGORIES[index][0],
+                        CATEGORIES[index][1],
+                        AMOUNTS[index][0],
+                        AMOUNTS[index][1],
+                        AMOUNTS[index][2]);
+            } else {
+                System.out.println(code + " : Invalid code");
+            }
         }
     }
-}
 
+    /**
+     * Display all expense categories with their code, name, and State Budget amount.
+     * This method fulfills the request based on the image format.
+     */
+    public void showExpenses() {
+        System.out.println("CODE\tEXPENSE NAME\t\t\tSTATE BUDGET");
+        System.out.println("-------------------------------------------------------------------");
+        
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            // CATEGORIES[i][0] -> Κωδικός
+            // CATEGORIES[i][1] -> Όνομα Δαπάνης
+            // AMOUNTS[i][0]    -> Ποσό Κρατικού Προϋπολογισμού (StateBudget)
+            
+            // Χρησιμοποιούμε System.out.printf με %-40s για ευθυγράμμιση,
+            // και %,-15d για τη μορφοποίηση του αριθμού (κόμμα ως διαχωριστικό χιλιάδων).
+            System.out.printf("%s\t%-40s%,d%n",
+                    CATEGORIES[i][0], 
+                    CATEGORIES[i][1], 
+                    AMOUNTS[i][0]);
+        }
+    }
 
     // Helper method to find the index in CATEGORIES by code
     private int findIndexByCode(String code) {
@@ -82,20 +100,3 @@ public final class ExpenseManager {
     }
 
 }
-
-
-
-
-
-
-
-/* Something like this can be used in main method
-
-ExpenseManager manager = new ExpenseManager();
-
-// Show all categories
-manager.showCategories();
-
-// Show details for selected codes
-manager.showExpenseDetails("21", "23");
- */
