@@ -1,1 +1,20 @@
 target/
+#Compiled class files
+*.class
+
+#Build direcotries
+target/
+bin/
+build/
+out/
+
+#IDE files 
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+
+# System files
+.DS_Store
+Thumbs.db
