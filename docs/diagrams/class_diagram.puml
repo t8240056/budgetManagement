@@ -145,11 +145,11 @@ BudgetRevenueReader ..> RevenueManager : feeds
 RevenueExtractor ..> RevenueManager : feeds
 
 note right of DownloadingOutputFiles
-  Orchestrator - Controls entire\nworkflow from URL to text extraction
+  Orchestrator - Controls entire workflow from URL to text extraction
 end note
 
 note left of BudgetAnalyzer
-  Core analyzer with hardcoded\nGreek ministry budget data
+  Core analyzer with hardcoded Greek ministry budget data
 end note
 
 @enduml
