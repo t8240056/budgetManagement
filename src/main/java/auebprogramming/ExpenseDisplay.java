@@ -8,9 +8,9 @@ import java.util.Scanner;
 
 /**
  * ExpenseDisplay reads CSV files containing state budget expenses
- * and displays them categorized by category and by agency.
+ * and displays them categorized by category and by ministry/agency.
  * 
- * NOTE: Currently works only for the year 2025.
+ * Currently only supports the year 2025.
  */
 public final class ExpenseDisplay {
 
@@ -20,13 +20,11 @@ public final class ExpenseDisplay {
 
     /** Represents an expense category */
     static final class ExpenseCategory {
-        String category;
         String code;
         String description;
         long amount;
 
-        ExpenseCategory(String category, String code, String description, long amount) {
-            this.category = category;
+        ExpenseCategory(String code, String description, long amount) {
             this.code = code;
             this.description = description;
             this.amount = amount;
@@ -38,33 +36,33 @@ public final class ExpenseDisplay {
         }
     }
 
-    /** Represents an agency expense */
-    static final class AgencyExpense {
+    /** Represents a ministry/agency expense */
+    static final class MinistryExpense {
         String code;
-        String agency;
-        long regular;
-        long investment;
+        String ministry;
+        long regularBudget;
+        long investmentBudget;
         long total;
 
-        AgencyExpense(String code, String agency, long regular, long investment, long total) {
+        MinistryExpense(String code, String ministry, long regularBudget, long investmentBudget, long total) {
             this.code = code;
-            this.agency = agency;
-            this.regular = regular;
-            this.investment = investment;
+            this.ministry = ministry;
+            this.regularBudget = regularBudget;
+            this.investmentBudget = investmentBudget;
             this.total = total;
         }
 
         @Override
         public String toString() {
-            return code + " - " + agency +
-                    " | Regular: " + String.format("%,d €", regular) +
-                    " | Investment: " + String.format("%,d €", investment) +
+            return code + " - " + ministry +
+                    " | Regular: " + String.format("%,d €", regularBudget) +
+                    " | Investment: " + String.format("%,d €", investmentBudget) +
                     " | Total: " + String.format("%,d €", total);
         }
     }
 
     // ---------------------------
-    // MAIN
+    // MAIN METHOD
     // ---------------------------
     public static void main(String[] args) {
 
@@ -73,27 +71,27 @@ public final class ExpenseDisplay {
         int year = scanner.nextInt();
         scanner.close();
 
-        // Only 2025 is available for now
         if (year != 2025) {
-            System.out.println("Only the year 2025 is available at the moment.");
+            System.out.println("Only the year 2025 is currently available.");
             return;
         }
 
         // Direct path to CSV files inside java folder
         String basePath = "src/main/java/auebprogramming/resources/";
-        String categoriesFile = basePath + "categories2025.csv";
-        String agenciesFile = basePath + "agencies2025.csv";
+        String categoriesFile = basePath + "expense_categories_2025.csv";
+        String ministriesFile = basePath + "expense_ministries_2025.csv";
 
         // Read CSV files
         List<ExpenseCategory> categories = readCategoriesCSV(categoriesFile);
-        List<AgencyExpense> agencies = readAgenciesCSV(agenciesFile);
+        List<MinistryExpense> ministries = readMinistriesCSV(ministriesFile);
 
-        // Display results
+        // Display expenses by category
         System.out.println("\n==== EXPENSES BY CATEGORY ====");
         categories.forEach(System.out::println);
 
-        System.out.println("\n==== EXPENSES BY AGENCY ====");
-        agencies.forEach(System.out::println);
+        // Display expenses by ministry/agency
+        System.out.println("\n==== EXPENSES BY MINISTRY/AGENCY ====");
+        ministries.forEach(System.out::println);
     }
 
     // ---------------------------
@@ -107,19 +105,18 @@ public final class ExpenseDisplay {
         List<ExpenseCategory> list = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            br.readLine(); // skip header line
+            br.readLine(); // skip header
 
             String line;
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(",", 4);
                 if (parts.length < 4) continue;
 
-                String category = parts[0].trim();
                 String code = parts[1].trim();
                 String description = parts[2].trim();
                 long amount = Long.parseLong(parts[3].trim());
 
-                list.add(new ExpenseCategory(category, code, description, amount));
+                list.add(new ExpenseCategory(code, description, amount));
             }
 
         } catch (Exception e) {
@@ -131,13 +128,13 @@ public final class ExpenseDisplay {
     }
 
     /**
-     * Reads agency expenses CSV and returns a list of AgencyExpense objects.
+     * Reads ministries/agencies CSV and returns a list of MinistryExpense objects.
      */
-    private static List<AgencyExpense> readAgenciesCSV(String path) {
-        List<AgencyExpense> list = new ArrayList<>();
+    private static List<MinistryExpense> readMinistriesCSV(String path) {
+        List<MinistryExpense> list = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
-            br.readLine(); // skip header line
+            br.readLine(); // skip header
 
             String line;
             while ((line = br.readLine()) != null) {
@@ -145,16 +142,16 @@ public final class ExpenseDisplay {
                 if (parts.length < 5) continue;
 
                 String code = parts[0].trim();
-                String agency = parts[1].trim();
-                long regular = Long.parseLong(parts[2].trim());
-                long investment = Long.parseLong(parts[3].trim());
+                String ministry = parts[1].trim();
+                long regularBudget = Long.parseLong(parts[2].trim());
+                long investmentBudget = Long.parseLong(parts[3].trim());
                 long total = Long.parseLong(parts[4].trim());
 
-                list.add(new AgencyExpense(code, agency, regular, investment, total));
+                list.add(new MinistryExpense(code, ministry, regularBudget, investmentBudget, total));
             }
 
         } catch (Exception e) {
-            System.err.println("Error reading agencies CSV: " + path);
+            System.err.println("Error reading ministries CSV: " + path);
             e.printStackTrace();
         }
 
