@@ -52,7 +52,14 @@ public class BudgetDisplay {
     }
 
     public static void main(String[] args) {
-        List<String> lines = readFile("src/main/java/auebprogramming/resources/output.txt");
+        Scanner scanner = new Scanner(System.in);
+                
+        System.out.println(" Which year do you want to see ?");
+        int year = scanner.nextInt();
+       
+        
+        scanner.close();
+        List<String> lines = readFile("src/main/java/auebprogramming/resources/output" + year + ".txt");
 
         if (lines == null) return;
 
