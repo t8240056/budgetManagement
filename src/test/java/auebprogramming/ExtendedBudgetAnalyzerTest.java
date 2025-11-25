@@ -260,3 +260,46 @@ private BudgetAnalyzer.TaktikosProupologismos[] getTaktikosTable(BudgetAnalyzer 
 private BudgetAnalyzer.DimosiesEpendiseis[] getDimosiesTable(BudgetAnalyzer analyzer) {
     return new BudgetAnalyzer.DimosiesEpendiseis[0];
 }
+package auebprogramming;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
+import static org.junit.jupiter.api.Assertions.*;
+
+/**
+ * Comprehensive test suite for BudgetAnalyzer class
+ * Testing Greek government budget analysis functionality including:
+ * - Ministry code validation
+ * - Budget amount lookups (regular budget and public investments)  
+ * - Ministry name resolution
+ * - Display functionality
+ * - Data consistency across budget tables
+ * 
+ * @author YourName
+ * @version 1.0
+ */
+@DisplayName("Budget Analyzer Test Suite")
+public class BudgetAnalyzerTest {
+    
+    private BudgetAnalyzer budgetAnalyzer;
+    
+    @BeforeEach
+    void setUp() {
+        budgetAnalyzer = new BudgetAnalyzer();
+    }
+    
+    // ... όλα τα tests από πριν ...
+    
+    @Test
+    @DisplayName("Should handle all predefined ministry codes correctly")
+    void testAllPredefinedMinistryCodes_AreValid() {
+        // Test a sample of important ministry codes
+        String[] importantCodes = {"1001", "1004", "1011", "1015", "1020", "1024", "1032"};
+        
+        for (String code : importantCodes) {
+            assertTrue(budgetAnalyzer.isValidKodikos(code), 
+                      "Important ministry code " + code + " should be valid");
+        }
+    }
+}
