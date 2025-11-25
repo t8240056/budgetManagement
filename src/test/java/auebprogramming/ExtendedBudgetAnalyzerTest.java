@@ -169,3 +169,43 @@ void testDisplaySynola_WithNullCode_ReturnsFalse() {
     // Then
     assertFalse(result, "Should return false for null code");
 }
+@Test
+void testCompleteBudgetScenario_WithMinistryHavingBothBudgets() {
+    // Given - Ministry with both regular budget and public investments
+    String kodikos = "1015"; // Υπουργείο Υγείας
+    String expectedName = "YPOURGEIO YGEIAS";
+    Double expectedTaktikos = 6608424000.0;
+    Double expectedDimosies = 569000000.0;
+    
+    // When & Then - Test individual components
+    assertTrue(budgetAnalyzer.isValidKodikos(kodikos));
+    assertEquals(expectedName, budgetAnalyzer.findOnomaForea(kodikos));
+    assertEquals(expectedTaktikos, budgetAnalyzer.findTaktikosSynolo(kodikos));
+    assertEquals(expectedDimosies, budgetAnalyzer.findDimosiesSynolo(kodikos));
+    assertTrue(budgetAnalyzer.displaySynola(kodikos));
+}
+
+@Test
+void testCompleteBudgetScenario_WithMinistryHavingOnlyRegularBudget() {
+    // Given - Ministry with only regular budget (zero public investments)
+    String kodikos = "1001"; // Προεδρία Δημοκρατίας
+    
+    // When & Then
+    assertTrue(budgetAnalyzer.isValidKodikos(kodikos));
+    assertNotNull(budgetAnalyzer.findOnomaForea(kodikos));
+    assertNotNull(budgetAnalyzer.findTaktikosSynolo(kodikos));
+    assertEquals(0.0, budgetAnalyzer.findDimosiesSynolo(kodikos));
+    assertTrue(budgetAnalyzer.displaySynola(kodikos));
+}
+
+@Test
+void testRegionalAdministrations_HaveValidData() {
+    // Test that regional administrations have proper data
+    String[] regionalCodes = {"1901", "1902", "1903", "1904", "1905", "1906", "1907"};
+    
+    for (String code : regionalCodes) {
+        assertTrue(budgetAnalyzer.isValidKodikos(code), "Regional code " + code + " should be valid");
+        assertNotNull(budgetAnalyzer.findOnomaForea(code), "Should have name for regional code " + code);
+        assertNotNull(budgetAnalyzer.findTaktikosSynolo(code), "Should have regular budget for regional code " + code);
+    }
+}
