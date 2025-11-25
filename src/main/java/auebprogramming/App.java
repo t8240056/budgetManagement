@@ -13,7 +13,7 @@ public class App {
         
         System.out.println(" Which year do you want to see ?");
         int year = scanner.nextInt();
-        article1.getArticle1(year); 
+        article1.printArticle1(year); 
 
         //Printbudget.printbudget();
 
@@ -21,7 +21,7 @@ public class App {
 
         //RevenueExtractor re = new RevenueExtractor();
         //re.printRevenues();
-        RevenueManager.showRevenues();
+        //RevenueManager.showRevenues();
         
     }
 }
