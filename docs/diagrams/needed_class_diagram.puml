@@ -1,0 +1,97 @@
+@startuml
+!theme plain
+
+title Greek Budget Management System\nClass Diagram
+
+class BudgetManager {
+  - startYear: int = 2020
+  - endYear: int = 2026
+  - budgetAnalyzer: BudgetAnalyzer
+  - fileProcessor: FileProcessor
+  - budgetDisplay: BudgetDisplay
+  + run(): void
+  + processYear(year: int): void
+  + getMinistryBudget(kodikos: String): BudgetData
+  + generateReport(year: int): void
+}
+
+class FileProcessor {
+  - BASE_URLS: Map<Integer, String>
+  + downloadBudgetPDF(year: int): void
+  + convertPDFToText(year: int): void
+  + parseBudgetData(filePath: String): BudgetData
+  + extractRevenueData(content: String): List<RevenueRecord>
+  + extractExpenseData(content: String): List<ExpenseCategory>
+}
+
+class BudgetAnalyzer {
+  - taktikosProupologismosTable: Ministry[]
+  - dimosiesEpendiseisTable: Ministry[]
+  + BudgetAnalyzer()
+  + analyzeBudget(data: BudgetData): AnalysisResult
+  + findMinistryBudget(kodikos: String): Ministry
+  + calculateDeficit(data: BudgetData): double
+  + compareYears(year1: int, year2: int): void
+}
+
+class BudgetDisplay {
+  + displayBudget(data: BudgetData): void
+  + displayRevenue(data: BudgetData): void
+  + displayExpenses(data: BudgetData): void
+  + displayMinistryDetails(ministry: Ministry): void
+  + exportToCSV(data: BudgetData, filename: String): void
+  + formatAmount(amount: double): String
+}
+
+class BudgetData {
+  - year: int
+  - totalRevenue: double
+  - totalExpenses: double
+  - deficit: double
+  - revenueCategories: Map<String, Double>
+  - expenseCategories: Map<String, Double>
+  - ministries: List<Ministry>
+  + BudgetData(year: int)
+  + calculateTotals(): void
+  + addRevenue(category: String, amount: double): void
+  + addExpense(category: String, amount: double): void
+}
+
+class Ministry {
+  - kodikos: String
+  - onoma: String
+  - taktikosProupologismos: double
+  - dimosiesEpendiseis: double
+  + Ministry(kodikos: String, onoma: String)
+  + getSynolikoBudget(): double
+  + toString(): String
+}
+
+' ========== ΣΧΕΣΕΙΣ ==========
+BudgetManager --> FileProcessor : uses
+BudgetManager --> BudgetAnalyzer : uses
+BudgetManager --> BudgetDisplay : uses
+BudgetManager --> BudgetData : creates/manages
+
+FileProcessor --> BudgetData : creates
+BudgetAnalyzer --> Ministry : analyzes
+BudgetAnalyzer --> BudgetData : analyzes
+
+BudgetDisplay --> BudgetData : displays
+BudgetDisplay --> Ministry : displays
+
+BudgetData *-- "many" Ministry : contains
+
+note right of BudgetManager
+  Main orchestrator - controls \n entire workflow process \n for years 2020-2026
+end note
+
+note left of FileProcessor
+  Handles all file operations: \n PDF downloading, text conversion,\n data parsing with regex
+end note
+
+note bottom of BudgetAnalyzer
+  Contains hardcoded data for \n Greek ministries and regions \n with budget analysis logic
+end note
+
+@enduml

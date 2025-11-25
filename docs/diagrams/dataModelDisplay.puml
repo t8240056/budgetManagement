@@ -1,0 +1,33 @@
+@startuml
+class BudgetData {
+  - year: int
+  - totalRevenue: double
+  - totalExpenses: double
+  - deficit: double
+  - revenueCategories: Map<String, Double>
+  - expenseCategories: Map<String, Double>
+  - ministries: List<Ministry>
+  --
+  + calculateTotals(): void
+  + addRevenue(category, amount): void
+  + addExpense(category, amount): void
+  + getRevenueTotal(): double
+  + getExpenseTotal(): double
+  + getDeficit(): double
+}
+
+class Ministry {
+  - kodikos: String
+  - onoma: String
+  - taktikosProupologismos: double
+  - dimosiesEpendiseis: double
+  --
+  + Ministry(kodikos, onoma)
+  + getSynolikoBudget(): double
+  + toString(): String
+  + getKodikos(): String
+  + getOnoma(): String
+}
+
+BudgetData "1" *-- "many" Ministry : contains
+@enduml

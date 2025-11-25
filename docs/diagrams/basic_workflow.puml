@@ -1,0 +1,15 @@
+@startuml
+title Budget Processing Workflow
+
+start
+:User runs BudgetManager;
+repeat :For each year (2020-2026);
+  :FileProcessor.downloadBudgetPDF();
+  :FileProcessor.convertPDFToText();
+  :FileProcessor.parseBudgetData();
+  :BudgetAnalyzer.analyzeBudget();
+  :BudgetDisplay.displayResults();
+backward :Next year;
+stop
+
+@enduml
