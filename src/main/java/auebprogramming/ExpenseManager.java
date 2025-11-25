@@ -70,14 +70,16 @@ public final class ExpenseManager {
     }
 
     /**
-     * Display all expense categories with their code, name, and State Budget amount, 
-     * including the total amount, using a format similar to the user's income example.
+     * Display all expense categories with their code, name, and State Budget amount,
+     * using the exact formatting style of the showRevenues method (code. Name Amount).
      */
-    public static void showExpenses() {
+    public void showExpenses() {
         long totalStateBudget = 0;
 
-        System.out.println("1. ΕΞΟΔΑ\n");
+        System.out.println("1. ΕΞΟΔΑ"); // Αλλάζουμε την κεφαλίδα σε ΕΞΟΔΑ
+        System.out.println();
 
+        // Print each row in the requested format
         for (int i = 0; i < CATEGORIES.length; i++) {
             String code = CATEGORIES[i][0];
             String name = CATEGORIES[i][1];
@@ -85,22 +87,22 @@ public final class ExpenseManager {
 
             totalStateBudget += amount;
 
-            // Χρησιμοποιούμε System.out.printf για ευθυγράμμιση:
-            // %2s. - Κωδικός (2 χαρακτήρες, δεξιά στοίχιση)
-            // %-50s - Όνομα (50 χαρακτήρες, αριστερή στοίχιση)
-            // %,-15d - Ποσό (διαχωριστικό κόμμα, 15 χαρακτήρες, δεξιά στοίχιση)
-            System.out.printf("%2s. %-50s%,d%n",
-                    code,
+            // Χρησιμοποιούμε ακριβώς την ίδια μορφοποίηση (printf arguments) με τη showRevenues:
+            // %-5s: Κωδικός με τελεία (π.χ. "21."), αριστερή στοίχιση
+            // %-60s: Όνομα, αριστερή στοίχιση
+            // %,15d: Ποσό, δεξιά στοίχιση, με κόμμα για διαχωριστικό χιλιάδων
+            System.out.printf("%-5s %-60s %,15d%n",
+                    code + ".",
                     name,
-                    amount);
+                    amount
+            );
         }
 
-        System.out.println("\n--------------------------------------------------------------");
+        System.out.println();
         // Εμφάνιση του συνολικού ποσού των εξόδων (State Budget)
-        System.out.printf("%54s%,d Ευρώ%n",
-                "Σύνολο: ",
-                totalStateBudget);
+        System.out.printf("Σύνολο: %,d Ευρώ%n", totalStateBudget);
     }
+    
     // Helper method to find the index in CATEGORIES by code
     private int findIndexByCode(String code) {
         for (int i = 0; i < CATEGORIES.length; i++) {
