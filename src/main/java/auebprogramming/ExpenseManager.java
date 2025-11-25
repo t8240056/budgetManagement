@@ -70,27 +70,37 @@ public final class ExpenseManager {
     }
 
     /**
-     * Display all expense categories with their code, name, and State Budget amount.
-     * This method fulfills the request based on the image format.
+     * Display all expense categories with their code, name, and State Budget amount, 
+     * including the total amount, using a format similar to the user's income example.
      */
-    public static void showExpenses() {
-        System.out.println("CODE\tEXPENSE NAME\t\t\tSTATE BUDGET");
-        System.out.println("-------------------------------------------------------------------");
-        
-        for (int i = 0; i < CATEGORIES.length; i++) {
-            // CATEGORIES[i][0] -> Κωδικός
-            // CATEGORIES[i][1] -> Όνομα Δαπάνης
-            // AMOUNTS[i][0]    -> Ποσό Κρατικού Προϋπολογισμού (StateBudget)
-            
-            // Χρησιμοποιούμε System.out.printf με %-40s για ευθυγράμμιση,
-            // και %,-15d για τη μορφοποίηση του αριθμού (κόμμα ως διαχωριστικό χιλιάδων).
-            System.out.printf("%s\t%-40s%,d%n",
-                    CATEGORIES[i][0], 
-                    CATEGORIES[i][1], 
-                    AMOUNTS[i][0]);
-        }
-    }
+    public void showExpenses() {
+        long totalStateBudget = 0;
 
+        System.out.println("1. ΕΞΟΔΑ\n");
+
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            String code = CATEGORIES[i][0];
+            String name = CATEGORIES[i][1];
+            long amount = AMOUNTS[i][0]; // State Budget amount
+
+            totalStateBudget += amount;
+
+            // Χρησιμοποιούμε System.out.printf για ευθυγράμμιση:
+            // %2s. - Κωδικός (2 χαρακτήρες, δεξιά στοίχιση)
+            // %-50s - Όνομα (50 χαρακτήρες, αριστερή στοίχιση)
+            // %,-15d - Ποσό (διαχωριστικό κόμμα, 15 χαρακτήρες, δεξιά στοίχιση)
+            System.out.printf("%2s. %-50s%,d%n",
+                    code,
+                    name,
+                    amount);
+        }
+
+        System.out.println("\n--------------------------------------------------------------");
+        // Εμφάνιση του συνολικού ποσού των εξόδων (State Budget)
+        System.out.printf("%54s%,d Ευρώ%n",
+                "Σύνολο: ",
+                totalStateBudget);
+    }
     // Helper method to find the index in CATEGORIES by code
     private int findIndexByCode(String code) {
         for (int i = 0; i < CATEGORIES.length; i++) {
