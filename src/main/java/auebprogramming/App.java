@@ -15,7 +15,7 @@ public class App {
         int year = scanner.nextInt();
       
 
-        Printbudget.printbudget();
+        PrintExpensesArticle2.printbudget();
 
         scanner.close();
 
