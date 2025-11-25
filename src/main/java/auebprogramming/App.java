@@ -13,15 +13,11 @@ public class App {
         
         System.out.println(" Which year do you want to see ?");
         int year = scanner.nextInt();
-        article1.printArticle1(year); 
-
-        //Printbudget.printbudget();
-
+        article1.getArticle1(year); 
+        
         scanner.close();
 
-        //RevenueExtractor re = new RevenueExtractor();
-        //re.printRevenues();
-        //RevenueManager.showRevenues();
+        Article_1new.printArticle1New(year);
         
     }
 }
