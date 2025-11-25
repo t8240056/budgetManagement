@@ -75,13 +75,26 @@
          */
         public static void showExpenses() {
             long totalStateBudget = 0;
+    /**
+     * Display all expense categories with their code, name, and State Budget amount,
+     * using the exact formatting style of the showRevenues method (code. Name Amount).
+     */
+    public void showExpenses() {
+        long totalStateBudget = 0;
 
             System.out.println("1. ΕΞΟΔΑ\n");
+        System.out.println("1. ΕΞΟΔΑ"); // Αλλάζουμε την κεφαλίδα σε ΕΞΟΔΑ
+        System.out.println();
 
             for (int i = 0; i < CATEGORIES.length; i++) {
                 String code = CATEGORIES[i][0];
                 String name = CATEGORIES[i][1];
                 long amount = AMOUNTS[i][0]; // State Budget amount
+        // Print each row in the requested format
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            String code = CATEGORIES[i][0];
+            String name = CATEGORIES[i][1];
+            long amount = AMOUNTS[i][0]; // State Budget amount
 
                 totalStateBudget += amount;
 
@@ -94,6 +107,16 @@
                         name,
                         amount);
             }
+            // Χρησιμοποιούμε ακριβώς την ίδια μορφοποίηση (printf arguments) με τη showRevenues:
+            // %-5s: Κωδικός με τελεία (π.χ. "21."), αριστερή στοίχιση
+            // %-60s: Όνομα, αριστερή στοίχιση
+            // %,15d: Ποσό, δεξιά στοίχιση, με κόμμα για διαχωριστικό χιλιάδων
+            System.out.printf("%-5s %-60s %,15d%n",
+                    code + ".",
+                    name,
+                    amount
+            );
+        }
 
             System.out.println("\n--------------------------------------------------------------");
             // Εμφάνιση του συνολικού ποσού των εξόδων (State Budget)
@@ -108,5 +131,17 @@
             }
             return -1;
         }
+        System.out.println();
+        // Εμφάνιση του συνολικού ποσού των εξόδων (State Budget)
+        System.out.printf("Σύνολο: %,d Ευρώ%n", totalStateBudget);
+    }
+    
+    // Helper method to find the index in CATEGORIES by code
+    private int findIndexByCode(String code) {
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            if (CATEGORIES[i][0].equals(code)) return i;
+        }
+        return -1;
+    }
 
     }
