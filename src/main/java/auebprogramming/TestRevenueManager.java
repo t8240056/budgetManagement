@@ -1,4 +1,4 @@
-
+package auebprogramming;
 import auebprogramming.RevenueManager;
 
 public class TestRevenueManager {
