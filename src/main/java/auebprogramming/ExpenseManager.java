@@ -73,7 +73,7 @@ public final class ExpenseManager {
      * Display all expense categories with their code, name, and State Budget amount.
      * This method fulfills the request based on the image format.
      */
-    public void showExpenses() {
+    public static void showExpenses() {
         System.out.println("CODE\tEXPENSE NAME\t\t\tSTATE BUDGET");
         System.out.println("-------------------------------------------------------------------");
         
