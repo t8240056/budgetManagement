@@ -7,11 +7,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class  ExpensesArticle2 {
+public class  CsvToArray {
     public static String[][] loadCsvToArray(String filename) {
     List<String[]> dataList = new ArrayList<>();
     
-    try (InputStream input = ExpensesArticle2.class.getClassLoader().getResourceAsStream(filename)) {
+    try (InputStream input = CsvToArray.class.getClassLoader().getResourceAsStream(filename)) {
             if (input == null) {
                 System.out.println("Σφάλμα: Το αρχείο δεν βρέθηκε (" + filename + ")");
                 return new String[0][0];
