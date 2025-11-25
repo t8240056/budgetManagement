@@ -75,8 +75,7 @@ public final class RevenueManager {
         return -1;
     }
 
-    /*Main method
-    public static void showRevenues(String[] args) {
+    public static void showRevenues() {
 
     RevenueManager rm = new RevenueManager();
 
@@ -102,5 +101,5 @@ public final class RevenueManager {
 
     System.out.println();
     System.out.printf("Σύνολο: %,d Ευρώ%n", total);
-    } */
-} 
+    } 
+}

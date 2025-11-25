@@ -1,0 +1,26 @@
+@startuml
+!theme plain
+
+
+package "Data Acquisition Layer" {
+  class DownloadingOutputFiles {
+    + run(): void
+  }
+  
+  class Links {
+    + linksForBudget(year: int): String
+  }
+  
+  class GetPdf {
+    + fileDownloader(url: String, year: int): void
+  }
+  
+  class ReadPDF {
+    + getInFile(year: int): void
+  }
+}
+
+' ========== ΚΥΡΙΕΣ ΣΧΕΣΕΙΣ ==========
+DownloadingOutputFiles --> Links : uses
+DownloadingOutputFiles --> GetPdf : uses
+DownloadingOutputFiles --> ReadPDF : creates

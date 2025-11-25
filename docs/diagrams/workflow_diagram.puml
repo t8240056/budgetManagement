@@ -1,0 +1,16 @@
+@startuml
+title Budget System Complete Workflow
+
+start
+:User runs DownloadingOutputFiles;
+repeat
+  :Get URL from Links;
+  :Download PDF with GetPdf;
+  :Convert to text with ReadPDF;
+  :Process with Article_1/BudgetRevenueReader;
+  :Analyze with BudgetAnalyzer;
+  :Display with BudgetDisplay/ExpenseDisplay;
+repeat while (Years 2020-2026?)
+stop
+
+@enduml

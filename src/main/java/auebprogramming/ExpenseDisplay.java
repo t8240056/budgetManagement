@@ -3,6 +3,7 @@ package auebprogramming;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 // Final class because it is not intended to be inherited
 public final class ExpenseDisplay {
@@ -29,7 +30,15 @@ public final class ExpenseDisplay {
 
     // main: Entry point of the program that reads file and prints parsed expenses
     public static void main(String[] args) {
-        List<String> lines = readFile("../../../target/classes/output.txt");
+        Scanner scanner = new Scanner(System.in);
+                
+        System.out.println(" Which year do you want to see ?");
+        int year = scanner.nextInt();
+       
+        
+        scanner.close();
+        
+        List<String> lines = readFile("src/main/java/auebprogramming/resources/output" + year + ".txt");
         if (lines == null) return;
 
         List<ExpenseCategory> generalExpenses = new ArrayList<>();

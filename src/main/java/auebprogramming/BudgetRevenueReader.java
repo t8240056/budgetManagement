@@ -11,7 +11,7 @@ import java.util.List;
  */
 public class BudgetRevenueReader {
     
-    /**
+    /*
      * Main method - entry point of the application
      
     public static void printRevenueReader(String[] args) {
