@@ -1,139 +1,134 @@
 package auebprogramming;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-// Final class because it is not intended to be inherited
 public final class ExpenseDisplay {
 
-    // Final static inner class that will not be inherited
+    // === INNER CLASSES ===
     static final class ExpenseCategory {
+        String category;
         String code;
-        String name;
+        String description;
         long amount;
 
-        // Constructor: Creates an expense category object
-        ExpenseCategory(String code, String name, long amount) {
+        ExpenseCategory(String category, String code, String description, long amount) {
+            this.category = category;
             this.code = code;
-            this.name = name;
+            this.description = description;
             this.amount = amount;
         }
 
-        // toString: Returns formatted string representation of a category
         @Override
         public String toString() {
-            return code + " " + name + ": " + String.format("%,d", amount);
+            return code + " - " + description + ": " + String.format("%,d €", amount);
         }
     }
 
-    // main: Entry point of the program that reads file and prints parsed expenses
+    static final class AgencyExpense {
+        String code;
+        String agencyName;
+        long regularBudget;
+        long investmentBudget;
+        long total;
+
+        AgencyExpense(String code, String agencyName, long regularBudget, long investmentBudget, long total) {
+            this.code = code;
+            this.agencyName = agencyName;
+            this.regularBudget = regularBudget;
+            this.investmentBudget = investmentBudget;
+            this.total = total;
+        }
+
+        @Override
+        public String toString() {
+            return code + " - " + agencyName +
+                    " | Τακτικός: " + String.format("%,d €", regularBudget) +
+                    " | ΠΔΕ: " + String.format("%,d €", investmentBudget) +
+                    " | Σύνολο: " + String.format("%,d €", total);
+        }
+    }
+
+    // === MAIN ===
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-                
         System.out.println(" Which year do you want to see ?");
         int year = scanner.nextInt();
-       
-        
         scanner.close();
 
-        List<String> lines = readFile("src/main/java/auebprogramming/resources/output" + year + ".txt");
-        if (lines == null) return;
+        String basePath = "src/main/java/auebprogramming/resources/";
 
-        List<ExpenseCategory> generalExpenses = new ArrayList<>();
+        String categoriesPath = basePath + "categories.csv";
+        String agenciesPath = basePath + "agencies.csv";
 
-        boolean readingGeneral = false;
-        int times = 1;
-        for (String line : lines) {
+        List<ExpenseCategory> categories = readCategoriesCSV(categoriesPath);
+        List<AgencyExpense> agencies = readAgenciesCSV(agenciesPath);
 
-            line = line.trim();
-            if (line.isEmpty()) continue;
+        System.out.println("\n==== ΕΞΟΔΑ ΑΝΑ ΚΑΤΗΓΟΡΙΑ ====");
+        categories.forEach(System.out::println);
 
-            // Detect the start of expenses section
-            if (line.startsWith("ΕΞΟΔΑ")) {
-                readingGeneral = true;
-                continue;
-            }
-
-            if (readingGeneral) {
-
-                // Handle line with total
-                if (line.startsWith("Σύνολο")) {
-                    String[] parts = line.split(":");
-                    
-                    if (parts.length > 1) {
-                        long total = parseAmount(parts[1].trim());
-                        generalExpenses.add(new ExpenseCategory("Σύνολο", "", total));
-                        switch (times) {
-                        case 1: 
-                            generalExpenses.add(parseExpenseCategory("ΚΡΑΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
-                        case 2: 
-                            generalExpenses.add(parseExpenseCategory("ΤΑΚΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
-                        case 3: 
-                            generalExpenses.add(parseExpenseCategory("ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ"));
-                        case 4:
-                            generalExpenses.add(parseExpenseCategory("ΚΡΑΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
-                        case 5: 
-                            generalExpenses.add(parseExpenseCategory("ΤΑΚΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
-                        case 6: 
-                            generalExpenses.add(parseExpenseCategory("ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ"));
-                    }
-                        times +=1;
-                    }
-                    readingGeneral = false;
-                    continue;
-                }
-
-                // Try to parse an expense category
-                ExpenseCategory cat = parseExpenseCategory(line);
-                if (cat != null) generalExpenses.add(cat);
-            }
-        }
-
-        // Display only expenses
-        System.out.println("==== ΕΞΟΔΑ ΚΡΑΤΙΚΟΥ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ ====");
-        for (ExpenseCategory c : generalExpenses) {
-            System.out.println(c);
-        }
+        System.out.println("\n==== ΕΞΟΔΑ ΑΝΑ ΦΟΡΕΑ ====");
+        agencies.forEach(System.out::println);
     }
 
-    // readFile: Reads all lines of a text file and returns them as a list
-    private static List<String> readFile(String path) {
-        try {
-            return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(path));
+    // === CSV PARSING ===
+
+    private static List<ExpenseCategory> readCategoriesCSV(String path) {
+        List<ExpenseCategory> list = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            br.readLine(); // skip header
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                // Σπάει σωστά το CSV, ακόμη κι αν έχει ελληνικά
+                String[] parts = line.split(",", 4);
+
+                String category = parts[0];
+                String code = parts[1];
+                String description = parts[2];
+                long amount = Long.parseLong(parts[3]);
+
+                list.add(new ExpenseCategory(category, code, description, amount));
+            }
+
         } catch (IOException e) {
+            System.err.println("Error reading categories CSV.");
             e.printStackTrace();
-            return null;
         }
+
+        return list;
     }
 
-    // parseExpenseCategory: Parses a line into an ExpenseCategory object
-    private static ExpenseCategory parseExpenseCategory(String line) {
-        line = line.trim();
-        if (line.isEmpty()) return null;
+    private static List<AgencyExpense> readAgenciesCSV(String path) {
+        List<AgencyExpense> list = new ArrayList<>();
 
-        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(\\d+)\\s+(.*?)\\s+([\\d.,]+)$");
-        java.util.regex.Matcher matcher = pattern.matcher(line);
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            br.readLine(); // skip header
 
-        if (matcher.find()) {
-            String code = matcher.group(1);
-            String name = matcher.group(2);
-            String amountStr = matcher.group(3);
-            long amount = parseAmount(amountStr);
-            return new ExpenseCategory(code, name, amount);
+            String line;
+            while ((line = br.readLine()) != null) {
+
+                String[] p = line.split(",", 5);
+
+                String code = p[0];
+                String agency = p[1];
+                long regular = Long.parseLong(p[2].trim());
+                long investment = Long.parseLong(p[3].trim());
+                long total = Long.parseLong(p[4].trim());
+
+                list.add(new AgencyExpense(code, agency, regular, investment, total));
+            }
+
+        } catch (IOException e) {
+            System.err.println("Error reading agencies CSV.");
+            e.printStackTrace();
         }
 
-        return null;
-    }
-
-    // parseAmount: Converts formatted number text to a long value
-    private static long parseAmount(String str) {
-        try {
-            str = str.replace(".", "").replace(",", "");
-            return Long.parseLong(str);
-        } catch (NumberFormatException e) {
-            return 0;
-        }
+        return list;
     }
 }
