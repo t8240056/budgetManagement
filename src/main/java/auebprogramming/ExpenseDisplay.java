@@ -37,14 +37,14 @@ public final class ExpenseDisplay {
        
         
         scanner.close();
-        
+
         List<String> lines = readFile("src/main/java/auebprogramming/resources/output" + year + ".txt");
         if (lines == null) return;
 
         List<ExpenseCategory> generalExpenses = new ArrayList<>();
 
         boolean readingGeneral = false;
-
+        int times = 1;
         for (String line : lines) {
 
             line = line.trim();
@@ -61,9 +61,25 @@ public final class ExpenseDisplay {
                 // Handle line with total
                 if (line.startsWith("Σύνολο")) {
                     String[] parts = line.split(":");
+                    
                     if (parts.length > 1) {
                         long total = parseAmount(parts[1].trim());
                         generalExpenses.add(new ExpenseCategory("Σύνολο", "", total));
+                        switch (times) {
+                        case 1: 
+                            generalExpenses.add(parseExpenseCategory("ΚΡΑΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
+                        case 2: 
+                            generalExpenses.add(parseExpenseCategory("ΤΑΚΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
+                        case 3: 
+                            generalExpenses.add(parseExpenseCategory("ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ"));
+                        case 4:
+                            generalExpenses.add(parseExpenseCategory("ΚΡΑΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
+                        case 5: 
+                            generalExpenses.add(parseExpenseCategory("ΤΑΚΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ"));
+                        case 6: 
+                            generalExpenses.add(parseExpenseCategory("ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ"));
+                    }
+                        times +=1;
                     }
                     readingGeneral = false;
                     continue;
