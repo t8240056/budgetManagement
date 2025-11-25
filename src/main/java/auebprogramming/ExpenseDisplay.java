@@ -29,7 +29,7 @@ public final class ExpenseDisplay {
 
     // main: Entry point of the program that reads file and prints parsed expenses
     public static void main(String[] args) {
-        List<String> lines = readFile("../../../output.txt");
+        List<String> lines = readFile("../../../target/classes/output.txt");
         if (lines == null) return;
 
         List<ExpenseCategory> generalExpenses = new ArrayList<>();
@@ -54,7 +54,7 @@ public final class ExpenseDisplay {
                     String[] parts = line.split(":");
                     if (parts.length > 1) {
                         long total = parseAmount(parts[1].trim());
-                        generalExpenses.add(new ExpenseCategory("", "Σύνολο", total));
+                        generalExpenses.add(new ExpenseCategory("Σύνολο", "", total));
                     }
                     readingGeneral = false;
                     continue;

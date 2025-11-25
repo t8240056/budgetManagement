@@ -16,7 +16,7 @@ public final class ExpenseManager {
         {"33", "Τιμαλφή"},
         {"44", "Δάνεια"},
         {"45", "Συμμετοχικοί τίτλοι και μερίδια"},
-        {"53", "Χρεωστικοί τίτλοι (υποχρεώσεις)"},
+        {"53", "Χρεωστικοί τίτιλοι (υποχρεώσεις)"},
         {"54", "Δάνεια"}
     };
 
@@ -41,7 +41,7 @@ public final class ExpenseManager {
     /*//
      * Display all available expense categories with their codes
     //*/
-    public void showCategories() {
+    public static void showCategories() {
         System.out.println("CODE\tEXPENSE NAME");
         for (String[] category : CATEGORIES) {
             System.out.printf("%s\t%s%n", category[0], category[1]);
@@ -66,6 +66,28 @@ public final class ExpenseManager {
             } else {
                 System.out.println(code + " : Invalid code");
             }
+        }
+    }
+
+    /**
+     * Display all expense categories with their code, name, and State Budget amount.
+     * This method fulfills the request based on the image format.
+     */
+    public void showExpenses() {
+        System.out.println("CODE\tEXPENSE NAME\t\t\tSTATE BUDGET");
+        System.out.println("-------------------------------------------------------------------");
+        
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            // CATEGORIES[i][0] -> Κωδικός
+            // CATEGORIES[i][1] -> Όνομα Δαπάνης
+            // AMOUNTS[i][0]    -> Ποσό Κρατικού Προϋπολογισμού (StateBudget)
+            
+            // Χρησιμοποιούμε System.out.printf με %-40s για ευθυγράμμιση,
+            // και %,-15d για τη μορφοποίηση του αριθμού (κόμμα ως διαχωριστικό χιλιάδων).
+            System.out.printf("%s\t%-40s%,d%n",
+                    CATEGORIES[i][0], 
+                    CATEGORIES[i][1], 
+                    AMOUNTS[i][0]);
         }
     }
 

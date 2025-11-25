@@ -2,11 +2,17 @@ package auebprogramming;
 
 /**entry point of the application */
 public class App {
-    public static void main(final String[] args) throws Exception {
-        ReadPDF read = new ReadPDF();
-        read.getInFile();
 
-        Links link = new Links();
-        link.linkGovBudget();
+    //we dont want everytime we run the main to download the files from the start
+    static int getFilesOnce = 0;
+    public static void main(final String[] args) {
+        /*if (getFilesOnce == 0 ) {
+            DownloadingOutputFiles.run();
+            getFilesOnce +=1;           
+        }
+        */
+
+        RevenueExtractor re = new RevenueExtractor();
+        re.printRevenues();
     }
 }

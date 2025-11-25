@@ -1,3 +1,5 @@
+package auebprogramming;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -67,10 +69,10 @@ public class RevenueExtractor {
      * Determine if a token is a valid numeric amount.
      */
     private static boolean isAmount(String token) {
-        return token.matches("^[0-9]{1,3}(\\.[0-9]{3})*(\\.[0-9]+)?$");
+        return token.matches("^[0-9]{1,3}");
     }
 
-    public static void main(String[] args) {
+    public void printRevenues() {
         extractRevenues("output.txt");
     }
 }

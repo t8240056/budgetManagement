@@ -1,3 +1,5 @@
+package auebprogramming;
+
 public class Printbudget{
     public static void printbudget() {
         final String FILENAME = "/budget_ministries.csv";
