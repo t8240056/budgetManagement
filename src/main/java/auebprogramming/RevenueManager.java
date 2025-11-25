@@ -102,4 +102,4 @@ public final class RevenueManager {
     System.out.println();
     System.out.printf("Σύνολο: %,d Ευρώ%n", total);
     } 
-} 
+}

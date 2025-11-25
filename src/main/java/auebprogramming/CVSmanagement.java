@@ -32,5 +32,5 @@ public class CVSmanagement {
             System.out.println("Σφάλμα κατά τη φόρτωση του αρχείου: " + e.getMessage());
             return new String[0][0];
         }
-}
+    }
 }

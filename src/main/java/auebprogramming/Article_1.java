@@ -7,6 +7,11 @@ import java.util.regex.*;
 
 public class Article_1 {
     
+    public void getArticle1(int year) {
+        String filePath = "src/main/java/auebprogramming/resources/output" + year + ".txt";
+        BudgetData budgetData = parseBudgetData(filePath);
+        printBudgetAnalysis(budgetData);
+    }
     
     // Parse budget data from text file
     public static BudgetData parseBudgetData(String filePath) {
@@ -22,15 +27,35 @@ public class Article_1 {
         return data;
     }
     
-    public void printArticle1(int year) {
-       String filePath = "src/main/java/auebprogramming/resources/output" + year + ".txt";
-        BudgetData budgetData = parseBudgetData(filePath);
-        printBudgetAnalysis(budgetData);
-        RevenueManager.showRevenues();
-        ExpenseManager.showCategories();
+    // Extract revenue categories and amounts
+    public static void extractRevenueData(String content, BudgetData data) {
+        // Find revenue section using Greek keywords
+        Pattern revenuePattern = Pattern.compile("1\\.\\s*ΕΣΟΔΑ\\s*Ευρώ\\s*([\\d.,]+)(.*?)2\\.\\s*ΕΞΟΔΑ", Pattern.DOTALL);
+        Matcher revenueMatcher = revenuePattern.matcher(content);
+        
+        if (revenueMatcher.find()) {
+            data.totalRevenue = parseAmount(revenueMatcher.group(1));
+            String revenueDetails = revenueMatcher.group(2);
+            
+            // Extract individual revenue categories
+            extractRevenueCategories(revenueDetails, data);
+        }
     }
-
-   
+    
+    // Extract expense categories and amounts
+    public static void extractExpenseData(String content, BudgetData data) {
+        // Find expense section using Greek keywords
+        Pattern expensePattern = Pattern.compile("2\\.\\s*ΕΞΟΔΑ\\s*»\\s*([\\d.,]+)(.*?)3\\.\\s*ΑΠΟΤΕΛΕΣΜΑ", Pattern.DOTALL);
+        Matcher expenseMatcher = expensePattern.matcher(content);
+        
+        if (expenseMatcher.find()) {
+            data.totalExpenses = parseAmount(expenseMatcher.group(1));
+            String expenseDetails = expenseMatcher.group(2);
+            
+            // Extract individual expense categories
+            extractExpenseCategories(expenseDetails, data);
+        }
+    }
     
     // Parse individual revenue categories
     public static void extractRevenueCategories(String revenueText, BudgetData data) {

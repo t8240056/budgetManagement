@@ -16,7 +16,7 @@ public final class ExpenseManager {
         {"33", "Τιμαλφή"},
         {"44", "Δάνεια"},
         {"45", "Συμμετοχικοί τίτλοι και μερίδια"},
-        {"53", "Χρεωστικοί τίτλοι (υποχρεώσεις)"},
+        {"53", "Χρεωστικοί τίτιλοι (υποχρεώσεις)"},
         {"54", "Δάνεια"}
     };
 
@@ -69,6 +69,40 @@ public final class ExpenseManager {
         }
     }
 
+    /**
+     * Display all expense categories with their code, name, and State Budget amount,
+     * using the exact formatting style of the showRevenues method (code. Name Amount).
+     */
+    public static void showExpenses() {
+        long totalStateBudget = 0;
+
+        System.out.println("1. ΕΞΟΔΑ"); // Αλλάζουμε την κεφαλίδα σε ΕΞΟΔΑ
+        System.out.println();
+
+        // Print each row in the requested format
+        for (int i = 0; i < CATEGORIES.length; i++) {
+            String code = CATEGORIES[i][0];
+            String name = CATEGORIES[i][1];
+            long amount = AMOUNTS[i][0]; // State Budget amount
+
+            totalStateBudget += amount;
+
+            // Χρησιμοποιούμε ακριβώς την ίδια μορφοποίηση (printf arguments) με τη showRevenues:
+            // %-5s: Κωδικός με τελεία (π.χ. "21."), αριστερή στοίχιση
+            // %-60s: Όνομα, αριστερή στοίχιση
+            // %,15d: Ποσό, δεξιά στοίχιση, με κόμμα για διαχωριστικό χιλιάδων
+            System.out.printf("%-5s %-60s %,15d%n",
+                    code + ".",
+                    name,
+                    amount
+            );
+        }
+
+        System.out.println();
+        // Εμφάνιση του συνολικού ποσού των εξόδων (State Budget)
+        System.out.printf("Σύνολο: %,d Ευρώ%n", totalStateBudget);
+    }
+    
     // Helper method to find the index in CATEGORIES by code
     private int findIndexByCode(String code) {
         for (int i = 0; i < CATEGORIES.length; i++) {
@@ -78,15 +112,3 @@ public final class ExpenseManager {
     }
 
 }
-
-
-/* Something like this can be used in main method
-
-ExpenseManager manager = new ExpenseManager();
-
-// Show all categories
-manager.showCategories();
-
-// Show details for selected codes
-manager.showExpenseDetails("21", "23");
- */

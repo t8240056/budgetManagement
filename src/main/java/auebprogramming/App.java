@@ -9,19 +9,14 @@ public class App {
         // DownloadingOutputFiles.run();  run only once 
         
         Scanner scanner = new Scanner(System.in);
-        var article1 = new Article_1();
-        
+                
         System.out.println(" Which year do you want to see ?");
         int year = scanner.nextInt();
-        article1.printArticle1(year); 
-
-        //Printbudget.printbudget();
-
+       
+        
         scanner.close();
 
-        //RevenueExtractor re = new RevenueExtractor();
-        //re.printRevenues();
-        //RevenueManager.showRevenues();
+        Article_1new.printArticle1New(year);
         
     }
 }
