@@ -14,7 +14,7 @@ public class BudgetRevenueReader {
     /**
      * Main method - entry point of the application
      */
-    public static void main(String[] args) {
+    public static void printRevenueReader(String[] args) {
         String inputFile = "output.txt";
         String outputCsv = "revenues.csv";
         
