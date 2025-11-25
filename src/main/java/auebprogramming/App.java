@@ -19,5 +19,8 @@ public class App {
 
         scanner.close();
 
+        RevenueExtractor re = new RevenueExtractor();
+        re.printRevenues();
+
     }
 }

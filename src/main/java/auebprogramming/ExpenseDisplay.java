@@ -54,7 +54,7 @@ public final class ExpenseDisplay {
                     String[] parts = line.split(":");
                     if (parts.length > 1) {
                         long total = parseAmount(parts[1].trim());
-                        generalExpenses.add(new ExpenseCategory("", "Σύνολο", total));
+                        generalExpenses.add(new ExpenseCategory("Σύνολο", "", total));
                     }
                     readingGeneral = false;
                     continue;
