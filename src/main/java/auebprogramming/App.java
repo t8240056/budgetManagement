@@ -17,5 +17,7 @@ public class App {
 
         Printbudget.printbudget();
 
+        scanner.close();
+
     }
 }
