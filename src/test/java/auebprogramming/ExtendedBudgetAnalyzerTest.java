@@ -134,3 +134,38 @@ void testFindDimosiesSynolo_WithZeroInvestment_ReturnsZero() {
     // Then
     assertEquals(expectedAmount, actualAmount, "Should return zero for ministries with no public investments");
 }
+@Test
+void testDisplaySynola_WithValidCode_ReturnsTrue() {
+    // Given
+    String validKodikos = "1007"; // Υπουργείο Εσωτερικών
+    
+    // When
+    boolean result = budgetAnalyzer.displaySynola(validKodikos);
+    
+    // Then
+    assertTrue(result, "Should return true for valid ministry code");
+}
+
+@Test
+void testDisplaySynola_WithInvalidCode_ReturnsFalse() {
+    // Given
+    String invalidKodikos = "9999";
+    
+    // When
+    boolean result = budgetAnalyzer.displaySynola(invalidKodikos);
+    
+    // Then
+    assertFalse(result, "Should return false for invalid ministry code");
+}
+
+@Test
+void testDisplaySynola_WithNullCode_ReturnsFalse() {
+    // Given
+    String nullKodikos = null;
+    
+    // When
+    boolean result = budgetAnalyzer.displaySynola(nullKodikos);
+    
+    // Then
+    assertFalse(result, "Should return false for null code");
+}
