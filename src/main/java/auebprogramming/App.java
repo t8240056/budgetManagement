@@ -9,13 +9,19 @@ public class App {
         // DownloadingOutputFiles.run();  run only once 
         
         Scanner scanner = new Scanner(System.in);
-                
-        System.out.println(" Which year do you want to see ?");
-        int year = scanner.nextInt();
        
         
+        System.out.println(" Which year do you want to see ?");
+        int year = scanner.nextInt();
+      
+
+        Printbudget.printbudget();
+
         scanner.close();
 
+        //RevenueExtractor re = new RevenueExtractor();
+        //re.printRevenues();
+        //RevenueManager.showRevenues();
         Article_1new.printArticle1New(year);
         
     }

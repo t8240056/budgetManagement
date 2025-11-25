@@ -6,11 +6,7 @@ package "Data Processing Layer" {
   class Article_1new {
     + printArticle1New(): void
   }
-  
-  class BudgetRevenueReader {
-    + main(args: String[]): void
-    + extractRevenueData(lines: List<String>): List<RevenueRecord>
-  }
+ 
   class ExpenseManager {
     {static} {final} - CATEGORIES : String[][]
     {static} {final} - AMOUNTS : long[][]
@@ -29,6 +25,8 @@ package "Data Processing Layer" {
     - findIndexByCode(code : String) : int
     + showRevenues() : void
   }
+
+  
 
 }
 
