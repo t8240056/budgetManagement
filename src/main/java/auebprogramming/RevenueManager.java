@@ -76,7 +76,7 @@ public final class RevenueManager {
     }
 
     //Main method
-    public static void main(String[] args) {
+    public static void showRevenues(String[] args) {
 
     RevenueManager rm = new RevenueManager();
 
