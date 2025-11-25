@@ -50,7 +50,7 @@ public final class RevenueManager {
      * Display details for one or more revenue codes
      * User can input multiple codes, e.g., "21", "23"
     //*/
-    public void showRevenueDetails(String..codes) {
+    public void showRevenueDetails(String[] codes) {
         System.out.println("CODE\tNAME\tSTATE\tREGULAR\tINVESTMENTS");
         for (String code : codes) {
             int index = findIndexByCode(code);
@@ -75,8 +75,8 @@ public final class RevenueManager {
         return -1;
     }
 
-    //Main method
-    public static void main(String[] args) {
+    /*Main method
+    public static void showRevenues(String[] args) {
 
     RevenueManager rm = new RevenueManager();
 
@@ -102,5 +102,5 @@ public final class RevenueManager {
 
     System.out.println();
     System.out.printf("Σύνολο: %,d Ευρώ%n", total);
-    }
-}
+    } */
+} 
