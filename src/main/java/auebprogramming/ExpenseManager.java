@@ -73,7 +73,7 @@ public final class ExpenseManager {
      * Display all expense categories with their code, name, and State Budget amount, 
      * including the total amount, using a format similar to the user's income example.
      */
-    public void showExpenses() {
+    public static void showExpenses() {
         long totalStateBudget = 0;
 
         System.out.println("1. ΕΞΟΔΑ\n");
