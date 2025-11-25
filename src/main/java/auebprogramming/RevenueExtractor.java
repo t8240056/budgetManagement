@@ -72,7 +72,7 @@ public class RevenueExtractor {
         return token.matches("^[0-9]{1,3}(\\.[0-9]{3})*(\\.[0-9]+)?$");
     }
 
-    public static void main(String[] args) {
+    public static void printRevenues(String[] args) {
         extractRevenues("output.txt");
     }
 }
