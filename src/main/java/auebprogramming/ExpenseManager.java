@@ -41,7 +41,7 @@ public final class ExpenseManager {
     /*//
      * Display all available expense categories with their codes
     //*/
-    public void showCategories() {
+    public static void showCategories() {
         System.out.println("CODE\tEXPENSE NAME");
         for (String[] category : CATEGORIES) {
             System.out.printf("%s\t%s%n", category[0], category[1]);
