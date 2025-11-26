@@ -6,12 +6,13 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 public final class ReadPDF {
-
-    //a method that gets the downloaded file and converts it to a txt file
-    public void getInFile(final int year) {
+    /*
+        a method that gets the downloaded file and converts it to a txt file
+    */
+    public void outpulFile(final int year) {
         try {
             // path to get the PDF file
-            File file = new File("src/main/java/auebprogramming/resources/budget" + year + ".pdf");
+            File file = new File("src/main/resources/budget" + year + ".pdf");
 
             // loading the file
             PDDocument document = PDDocument.load(file);
@@ -22,7 +23,7 @@ public final class ReadPDF {
                 PDFTextStripper pdfStripper = new PDFTextStripper();
                 String text = pdfStripper.getText(document);
 
-                FileWriter writer = new FileWriter("src/main/java/auebprogramming/resources/output" + year + ".txt");
+                FileWriter writer = new FileWriter("src/main/resources/output" + year + ".csv");
                 writer.write(text);
                 writer.close();
 
