@@ -55,11 +55,14 @@ public class GetPdf {
             case 2020:
                 urlBudget = "https://minfin.gov.gr/wp-content/uploads/2019/11/21-11-2019-%CE%9A%CE%A1%CE%91%CE%A4%CE%99%CE%9A%CE%9F%CE%A3-%CE%A0%CE%A1%CE%9F%CE%A5%CE%A0%CE%9F%CE%9B%CE%9F%CE%93%CE%99%CE%A3%CE%9C%CE%9F%CE%A3-2020.pdf";
                 return urlBudget;
+            default:
+                if (year < 2020 || year > 2026){
+                    return "wrong year, choose from 2020 - 2025";
+                }
+                return "";
             }
         } catch (IllegalArgumentException e) {
             return "wrong year, choose from 2020 - 2025";
         }
-        return "";
-
     }
 }

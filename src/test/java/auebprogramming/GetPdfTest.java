@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -63,7 +62,7 @@ class GetPdfTest {
     void testLinksForBudget_InvalidYear_High() {
         // Arrange
         int year = 2027;
-        String expectedMessage = ""; // Η μέθοδος επιστρέφει κενό string αν δεν πιάσει το IllegalArgumentException στο switch
+        String expectedMessage = "wrong year, choose from 2020 - 2025"; // Η μέθοδος επιστρέφει κενό string αν δεν πιάσει το IllegalArgumentException στο switch
 
         // Act
         String actualMessage = GetPdf.linksForBudget(year);
