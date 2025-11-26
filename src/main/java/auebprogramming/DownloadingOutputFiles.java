@@ -5,10 +5,11 @@ import java.util.logging.Logger;
 
 public final class DownloadingOutputFiles{
     public static void run(){
-        
+
         //making objects to work with
-        Links link = new Links();
         GetPdf download = new GetPdf();
+        ReadTxtoutputsCompleteCSV n = new ReadTxtoutputsCompleteCSV();
+        ReadPDF read = new ReadPDF();
         //
 
         // in order to avoid seeing warning for trying to load ariel font and have a clearer output
@@ -19,12 +20,10 @@ public final class DownloadingOutputFiles{
 
         for (int year = startYear ; year <= endYear ; year++ ) {
 
-            //getting the general link and downloading the pdf
-            String urlBudget =link.linksForBudget(year); 
-            download.fileDownloader(urlBudget , year);
-
-            ReadPDF read = new ReadPDF();
-            read.getInFile(year);
+            download.fileDownloader(year);
+            read.outpulFile(year);
+            n.processTxtFileToCsv("src/main/resources/output" + year + ".txt", "src/main/resources/output" + year + ".csv");;
+            
         }
     }
 }
