@@ -23,7 +23,7 @@ public class ExpenseManagerTest {
 
     @Test
     void testShowCategoriesPrintsAll() {
-        manager.showCategories();
+        ExpenseManager.showCategories();
 
         String output = outContent.toString();
 
