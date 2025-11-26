@@ -8,7 +8,6 @@ public final class DownloadingOutputFiles{
 
         //making objects to work with
         GetPdf download = new GetPdf();
-        ReadTxtoutputsCompleteCSV n = new ReadTxtoutputsCompleteCSV();
         ReadPDF read = new ReadPDF();
         //
 
@@ -19,11 +18,8 @@ public final class DownloadingOutputFiles{
         int endYear = 2026;
 
         for (int year = startYear ; year <= endYear ; year++ ) {
-
             download.fileDownloader(year);
             read.outpulFile(year);
-            n.processTxtFileToCsv("src/main/resources/output" + year + ".txt", "src/main/resources/output" + year + ".csv");;
-            
         }
     }
 }
