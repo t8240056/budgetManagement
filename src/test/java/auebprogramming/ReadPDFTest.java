@@ -17,9 +17,8 @@ class ReadPDFTest {
     @Test
     void testGetInFile_Success() throws IOException {
         // Arrange
-        ReadPDF readPDF = new ReadPDF();
         int year = 2024;
-        
+
         // Create a mock PDF file in temp directory for testing
         File pdfFile = new File(tempDir.toFile(), "budget" + year + ".pdf");
         Files.createFile(pdfFile.toPath());
@@ -49,13 +48,9 @@ class ReadPDFTest {
 
     @Test
     void testGetInFile_WithMockedDependencies() throws Exception {
-        // Arrange
-        ReadPDF readPDF = new ReadPDF();
-        int year = 2023;
-        
         // This would require PowerMock or similar since PDFBox has static methods
         // Alternative: Refactor to make it more testable
-        
+
         // Act & Assert
         assertDoesNotThrow(() -> {
             // Since the method handles exceptions internally,
