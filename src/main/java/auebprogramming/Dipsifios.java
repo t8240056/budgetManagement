@@ -4,7 +4,7 @@ import java.util.*;
 
 
 public class Dipsifios {
-    private Map<String, List<BudgetItem>> budgetMap;
+    private Map<String, List<RevenueItem>> budgetMap;
     private Scanner scanner;
     
     // Constructor initializes the data structure and scanner
@@ -98,7 +98,7 @@ public class Dipsifios {
     private String getUserInput() {
         String input;
         while (true) {
-            System.out.print("Enter two-digit code (or 'quit' to exit): ");
+            System.out.print("Συμπληρώστε διψήφιο κωδικό (ή quit για έξοδο): ");
             input = scanner.nextLine().trim();
             
             if (input.equalsIgnoreCase("quit")) {
@@ -119,7 +119,7 @@ public class Dipsifios {
      * @param twoDigitCode the parent code to display subcategories for
      */
     private void displaySubcategories(String twoDigitCode) {
-        System.out.println("\n=== Subcategories for code " + twoDigitCode + " ===");
+        System.out.println("\n=== Υποκατηγορίες για κωδικό " + twoDigitCode + " ===");
         
         List<RevenueItem> items = budgetMap.get(twoDigitCode);
         
@@ -128,20 +128,19 @@ public class Dipsifios {
              .sorted(Comparator.comparing(RevenueItem::getCode))
              .forEach(item -> {
                  if (item.getCode().equals(twoDigitCode)) {
-                     System.out.println("MAIN CATEGORY: " + item);
+                     System.out.println("Κύρια Κατηγορία: " + item);
                  } else {
                      System.out.println("  - " + item);
                  }
              });
         
-        System.out.println("=== Total items: " + (items.size() - 1) + " subcategories ===\n");
+        System.out.println("=== Συνολικά αντικείμενα: " + (items.size() - 1) + " υποκατηγορίες ===\n");
     }
     
     /**
      * Main method that runs the budget manager application
      */
     public void run() {
-        System.out.println("=== Budget Manager ===");
         System.out.println("Available two-digit codes: " + String.join(", ", budgetMap.keySet()));
         
         while (true) {
@@ -155,7 +154,6 @@ public class Dipsifios {
         }
         
         scanner.close();
-        System.out.println("Thank you for using Budget Manager!");
     }
     
     /* Main method to start the application
