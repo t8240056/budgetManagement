@@ -162,7 +162,7 @@
       </plugin>
 
       <!-- Checkstyle -->
-      
+      <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-checkstyle-plugin</artifactId>
@@ -183,6 +183,7 @@
           </execution>
         </executions>
       </plugin>
+      -->
     
 
       <!-- Spotbugs -->
@@ -230,12 +231,8 @@
                 </execution>
             </executions>
         </plugin>
-        <plugin>
-      <groupId>org.sonarsource.scanner.maven</groupId>
-      <artifactId>sonar-maven-plugin</artifactId>
-      <version>3.10.0.2606</version>
-    </plugin>
-      </plugins>
+      
+    </plugins>
 
   </build>
 

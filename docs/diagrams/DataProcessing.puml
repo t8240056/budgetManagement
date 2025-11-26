@@ -1,16 +1,12 @@
 @startuml
 !theme plain
-
-
-package "Data Processing Layer" {
-  class Article_1new {
+class Article_1new {
     + printArticle1New(): void
   }
-  
-  class BudgetRevenueReader {
-    + main(args: String[]): void
-    + extractRevenueData(lines: List<String>): List<RevenueRecord>
-  }
+ 
+
+package "Data Management" {
+
   class ExpenseManager {
     {static} {final} - CATEGORIES : String[][]
     {static} {final} - AMOUNTS : long[][]
@@ -29,12 +25,52 @@ package "Data Processing Layer" {
     - findIndexByCode(code : String) : int
     + showRevenues() : void
   }
-
+}
+package "Data Acquisition Layer" {
+  class DownloadingOutputFiles {
+    + run(): void
+  }
+  
+  class Links {
+    + linksForBudget(year: int): String
+  }
+  
+  class GetPdf {
+    + fileDownloader(url: String, year: int): void
+  }
+  
+  class ReadPDF {
+    + getInFile(year: int): void
+  }
+}
+package "Presentation Layer" {
+  class Printbudget {
+    + printbudget(): void
+  }
+  class Article_1new {
+    + printArticle1New(): void
+  }
+  class ExpenseDisplay {
+    .. Static Methods ..
+    + {static} main(args: String[]): void
+    - {static} readFile(path: String): List<String>
+    - {static} parseExpenseCategory(line: String): ExpenseCategory
+    - {static} parseAmount(str: String): long
+    ..
+    .. Fields ..
+    - {static} scanner: Scanner
+    - {static} generalExpenses: List<ExpenseCategory>
+    - {static} readingGeneral: boolean
+    - {static} times: int
+  }
 }
 
 ' ========== ΚΥΡΙΕΣ ΣΧΕΣΕΙΣ ==========
-Article_1new --> BudgetData : creates
-BudgetRevenueReader --> RevenueRecord : creates
-
+DownloadingOutputFiles --> Links : uses
+DownloadingOutputFiles --> GetPdf : uses
+DownloadingOutputFiles --> ReadPDF : creates
 Article_1new --> RevenueManager : uses 
 Article_1new --> ExpenseManager : uses
+
+ExpenseManager --> DownloadingOutputFile : uses
+RevenueManager --> DownloadingOutputFile : uses
