@@ -1,0 +1,32 @@
+@startuml
+actor User
+participant BudgetManager
+participant FileProcessor
+participant BudgetAnalyzer
+participant BudgetDisplay
+participant BudgetData
+
+User -> BudgetManager: run()
+activate BudgetManager
+
+loop for each year 2020-2026
+  BudgetManager -> FileProcessor: downloadBudgetPDF(year)
+  FileProcessor --> BudgetManager: PDF downloaded
+  
+  BudgetManager -> FileProcessor: convertPDFToText(year)
+  FileProcessor --> BudgetManager: text converted
+  
+  BudgetManager -> FileProcessor: parseBudgetData(year)
+  FileProcessor -> BudgetData: new BudgetData(year)
+  FileProcessor --> BudgetManager: budgetData
+  
+  BudgetManager -> BudgetAnalyzer: analyzeBudget(budgetData)
+  BudgetAnalyzer --> BudgetManager: analysisResult
+  
+  BudgetManager -> BudgetDisplay: displayBudget(budgetData)
+  BudgetDisplay --> User: formatted output
+end
+
+BudgetManager --> User: Process completed
+deactivate BudgetManager
+@enduml

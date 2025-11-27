@@ -1,112 +1,124 @@
 package auebprogramming;
 
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExpenseDisplay {
+/**
+ * ExpenseDisplay reads CSV files containing state budget expenses
+ * and provides methods to get expenses by category and by ministry/agency.
+ */
+public final class ExpenseDisplay {
 
-    static class ExpenseCategory {
-        String code;
-        String name;
-        long amount;
+    // ---------------------------
+    // INNER CLASSES
+    // ---------------------------
 
-        ExpenseCategory(String code, String name, long amount) {
+    /** Represents an expense category */
+    public static final class ExpenseCategory {
+        public String code;
+        public String description;
+        public long amount;
+
+        public ExpenseCategory(String code, String description, long amount) {
             this.code = code;
-            this.name = name;
+            this.description = description;
             this.amount = amount;
         }
 
         @Override
         public String toString() {
-            return code + " " + name + ": " + String.format("%,d", amount);
+            return code + " - " + description + ": " + String.format("%,d €", amount);
         }
     }
 
-    public static void main(String[] args) {
-        List<String> lines = readFile("../../../output.txt");
-        if (lines == null) return;
+    /** Represents a ministry/agency expense */
+    public static final class MinistryExpense {
+        public String code;
+        public String ministry;
+        public long regularBudget;
+        public long investmentBudget;
+        public long total;
 
-        List<ExpenseCategory> generalExpenses = new ArrayList<>();
-
-        boolean readingGeneral = false;
-
-        for (String line : lines) {
-
-            line = line.trim();
-            if (line.isEmpty()) continue;
-
-            // Ξεκινάμε να διαβάζουμε τα "ΕΞΟΔΑ"
-            if (line.startsWith("ΕΞΟΔΑ")) {
-                readingGeneral = true;
-                continue;
-            }
-
-            if (readingGeneral) {
-
-                // Στο PDF εμφανίζεται γραμμή σύνολο
-                if (line.startsWith("Σύνολο")) {
-                    String[] parts = line.split(":");
-                    if (parts.length > 1) {
-                        long total = parseAmount(parts[1].trim());
-                        generalExpenses.add(new ExpenseCategory("Σύνολο", "Σύνολο", total));
-                    }
-                    readingGeneral = false; // τελειώνει η ενότητα
-                    continue;
-                }
-
-                // Προσπάθεια να κάνουμε parse μία κατηγορία εξόδων
-                ExpenseCategory cat = parseExpenseCategory(line);
-                if (cat != null) generalExpenses.add(cat);
-            }
+        public MinistryExpense(String code, String ministry, long regularBudget, long investmentBudget, long total) {
+            this.code = code;
+            this.ministry = ministry;
+            this.regularBudget = regularBudget;
+            this.investmentBudget = investmentBudget;
+            this.total = total;
         }
 
-        // ==== ΕΜΦΑΝΙΣΗ ΜΟΝΟ ΕΞΟΔΩΝ ====
-        System.out.println("==== ΕΞΟΔΑ ΚΡΑΤΙΚΟΥ ΠΡΟΫΠΟΛΟΓΙΣΜΟΥ ====");
-        for (ExpenseCategory c : generalExpenses) {
-            System.out.println(c);
+        @Override
+        public String toString() {
+            return code + " - " + ministry +
+                    " | Regular: " + String.format("%,d €", regularBudget) +
+                    " | Investment: " + String.format("%,d €", investmentBudget) +
+                    " | Total: " + String.format("%,d €", total);
         }
     }
 
-    private static List<String> readFile(String path) {
-        try {
-            return java.nio.file.Files.readAllLines(java.nio.file.Paths.get(path));
-        } catch (IOException e) {
+    // ---------------------------
+    // PUBLIC METHODS
+    // ---------------------------
+
+    /**
+     * Reads expense categories CSV and returns a list of ExpenseCategory objects.
+     */
+    public List<ExpenseCategory> readCategoriesCSV(String path) {
+        List<ExpenseCategory> list = new ArrayList<>();
+
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            br.readLine(); // skip header
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 4);
+                if (parts.length < 4) continue;
+
+                String code = parts[1].trim();
+                String description = parts[2].trim();
+                long amount = Long.parseLong(parts[3].trim());
+
+                list.add(new ExpenseCategory(code, description, amount));
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error reading categories CSV: " + path);
             e.printStackTrace();
-            return null;
         }
+
+        return list;
     }
 
-   private static ExpenseCategory parseExpenseCategory(String line) {
-    // Αφαιρούμε περιττά κενά
-    line = line.trim();
-    if (line.isEmpty()) return null;
+    /**
+     * Reads ministries/agencies CSV and returns a list of MinistryExpense objects.
+     */
+    public List<MinistryExpense> readMinistriesCSV(String path) {
+        List<MinistryExpense> list = new ArrayList<>();
 
-    // Regex: πρώτα 1-4 ψηφία για κωδικό, μετά όνομα (ό,τι μένει), στο τέλος ποσό
-    // Ποσό: μόνο ψηφία και κόμματα/τελείες
-    // Παράδειγμα γραμμής: "21 Παροχές σε εργαζομένους 14.889.199.000"
-    // Pattern: (\d+)\s+(.*)\s+([\d\.,]+)
-    java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("^(\\d+)\\s+(.*?)\\s+([\\d.,]+)$");
-    java.util.regex.Matcher matcher = pattern.matcher(line);
-    if (matcher.find()) {
-        String code = matcher.group(1);
-        String name = matcher.group(2);
-        String amountStr = matcher.group(3);
-        long amount = parseAmount(amountStr);
-        return new ExpenseCategory(code, name, amount);
+        try (BufferedReader br = new BufferedReader(new FileReader(path))) {
+            br.readLine(); // skip header
+
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",", 5);
+                if (parts.length < 5) continue;
+
+                String code = parts[0].trim();
+                String ministry = parts[1].trim();
+                long regularBudget = Long.parseLong(parts[2].trim());
+                long investmentBudget = Long.parseLong(parts[3].trim());
+                long total = Long.parseLong(parts[4].trim());
+
+                list.add(new MinistryExpense(code, ministry, regularBudget, investmentBudget, total));
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error reading ministries CSV: " + path);
+            e.printStackTrace();
+        }
+
+        return list;
     }
-
-    return null; // αν δεν ταιριάζει, επιστρέφουμε null
-}
-
-private static long parseAmount(String str) {
-    try {
-        // Αφαιρούμε τελείες και κόμματα
-        str = str.replace(".", "").replace(",", "");
-        return Long.parseLong(str);
-    } catch (NumberFormatException e) {
-        return 0;
-    }
-}
-
 }
