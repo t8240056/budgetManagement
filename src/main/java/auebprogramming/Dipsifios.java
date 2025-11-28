@@ -108,8 +108,8 @@ public class Dipsifios {
             if (validateTwoDigitCode(input)) {
                 return input;
             } else {
-                System.out.println("Invalid code! Please enter a valid two-digit code.");
-                System.out.println("Available codes: " + String.join(", ", budgetMap.keySet()));
+                System.out.println("Λάθος κωδικός! Please enter a valid two-digit code.");
+                System.out.println("Διαθέσιμοι κωδικοί: " + String.join(", ", budgetMap.keySet()));
             }
         }
     }
@@ -141,7 +141,7 @@ public class Dipsifios {
      * Main method that runs the budget manager application
      */
     public void run() {
-        System.out.println("Available two-digit codes: " + String.join(", ", budgetMap.keySet()));
+        System.out.println("Διαθέσιμοι διψήφιοι κωδικοί: " + String.join(", ", budgetMap.keySet()));
         
         while (true) {
             String userInput = getUserInput();
