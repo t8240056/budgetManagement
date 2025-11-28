@@ -1,5 +1,6 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive",
-    "python-envs.defaultEnvManager": "ms-python.python:system",
-    "python-envs.pythonProjects": []
+  "java.configuration.updateBuildConfiguration": "interactive",
+  "plantuml.diagramsRoot": "docs/diagrams",
+  "plantuml.exportOutDir": "docs/diagrams/export",
+  "plantuml.server": "http://www.plantuml.com/plantuml"
 }

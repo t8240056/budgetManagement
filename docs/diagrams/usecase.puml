@@ -1,0 +1,28 @@
+@startuml
+left to right direction
+
+actor User
+actor SystemAdmin
+
+rectangle "Greek Budget System" {
+  usecase "Download Budget PDFs" as UC1
+  usecase "Parse Budget Data" as UC2
+  usecase "Analyze Budget Information" as UC3
+  usecase "Display Budget Results" as UC4
+  usecase "Export to CSV" as UC5
+  usecase "Compare Yearly Budgets" as UC6
+}
+
+User --> UC1
+User --> UC4
+User --> UC5
+User --> UC6
+SystemAdmin --> UC2
+SystemAdmin --> UC3
+
+UC1 --> UC2
+UC2 --> UC3
+UC3 --> UC4
+UC3 --> UC5
+UC3 --> UC6
+@enduml
