@@ -1,17 +1,17 @@
 package auebprogramming;
 
 import java.io.BufferedReader;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CVSmanagement {
+public class  CsvToArray {
     public static String[][] loadCsvToArray(String filename) {
     List<String[]> dataList = new ArrayList<>();
     
-    try (InputStream input = CVSmanagement.class.getResourceAsStream(filename)) {
+    try (InputStream input = CsvToArray.class.getClassLoader().getResourceAsStream(filename)) {
             if (input == null) {
                 System.out.println("Σφάλμα: Το αρχείο δεν βρέθηκε (" + filename + ")");
                 return new String[0][0];

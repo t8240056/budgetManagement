@@ -4,13 +4,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
 
 /**
  * ExpenseDisplay reads CSV files containing state budget expenses
- * and displays them categorized by category and by ministry/agency.
- * 
- * Currently only supports the year 2025.
+ * and provides methods to get expenses by category and by ministry/agency.
  */
 public final class ExpenseDisplay {
 
@@ -19,12 +16,12 @@ public final class ExpenseDisplay {
     // ---------------------------
 
     /** Represents an expense category */
-    static final class ExpenseCategory {
-        String code;
-        String description;
-        long amount;
+    public static final class ExpenseCategory {
+        public String code;
+        public String description;
+        public long amount;
 
-        ExpenseCategory(String code, String description, long amount) {
+        public ExpenseCategory(String code, String description, long amount) {
             this.code = code;
             this.description = description;
             this.amount = amount;
@@ -37,14 +34,14 @@ public final class ExpenseDisplay {
     }
 
     /** Represents a ministry/agency expense */
-    static final class MinistryExpense {
-        String code;
-        String ministry;
-        long regularBudget;
-        long investmentBudget;
-        long total;
+    public static final class MinistryExpense {
+        public String code;
+        public String ministry;
+        public long regularBudget;
+        public long investmentBudget;
+        public long total;
 
-        MinistryExpense(String code, String ministry, long regularBudget, long investmentBudget, long total) {
+        public MinistryExpense(String code, String ministry, long regularBudget, long investmentBudget, long total) {
             this.code = code;
             this.ministry = ministry;
             this.regularBudget = regularBudget;
@@ -62,46 +59,13 @@ public final class ExpenseDisplay {
     }
 
     // ---------------------------
-    // MAIN METHOD
-    // ---------------------------
-    public static void main(String[] args) {
-
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Which year do you want to see?");
-        int year = scanner.nextInt();
-        scanner.close();
-
-        if (year != 2025) {
-            System.out.println("Only the year 2025 is currently available.");
-            return;
-        }
-
-        // Direct path to CSV files inside java folder
-        String basePath = "src/main/java/auebprogramming/resources/";
-        String categoriesFile = basePath + "expense_categories_2025.csv";
-        String ministriesFile = basePath + "expense_ministries_2025.csv";
-
-        // Read CSV files
-        List<ExpenseCategory> categories = readCategoriesCSV(categoriesFile);
-        List<MinistryExpense> ministries = readMinistriesCSV(ministriesFile);
-
-        // Display expenses by category
-        System.out.println("\n==== EXPENSES BY CATEGORY ====");
-        categories.forEach(System.out::println);
-
-        // Display expenses by ministry/agency
-        System.out.println("\n==== EXPENSES BY MINISTRY/AGENCY ====");
-        ministries.forEach(System.out::println);
-    }
-
-    // ---------------------------
-    // CSV READERS
+    // PUBLIC METHODS
     // ---------------------------
 
     /**
      * Reads expense categories CSV and returns a list of ExpenseCategory objects.
      */
-    private static List<ExpenseCategory> readCategoriesCSV(String path) {
+    public List<ExpenseCategory> readCategoriesCSV(String path) {
         List<ExpenseCategory> list = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {
@@ -130,7 +94,7 @@ public final class ExpenseDisplay {
     /**
      * Reads ministries/agencies CSV and returns a list of MinistryExpense objects.
      */
-    private static List<MinistryExpense> readMinistriesCSV(String path) {
+    public List<MinistryExpense> readMinistriesCSV(String path) {
         List<MinistryExpense> list = new ArrayList<>();
 
         try (BufferedReader br = new BufferedReader(new FileReader(path))) {

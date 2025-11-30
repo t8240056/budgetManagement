@@ -12,10 +12,10 @@ import java.util.List;
 public class BudgetRevenueReader {
     
     /*
-     * Main method - entry point of the application
+     // Main method - entry point of the application
      
-    public static void printRevenueReader(String[] args) {
-        String inputFile = "output.txt";
+    public static void main(String[] args) {
+        String inputFile = "output" + "2025" + ".txt";
         String outputCsv = "revenues.csv";
         
         try {
