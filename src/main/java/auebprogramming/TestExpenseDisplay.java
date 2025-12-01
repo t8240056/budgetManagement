@@ -11,18 +11,30 @@ public final class TestExpenseDisplay {
      */
     public static void main(final String[] args) {
 
-        // Ορισμός των ονομάτων των αρχείων (στο src/main/resources).
         final String categoriesFile = "expense_categories_2025.csv";
         final String ministriesFile = "expense_ministries_2025.csv";
 
-        // Η ExpenseDisplay τώρα φορτώνει και αποθηκεύει τους πίνακες εσωτερικά.
+        // ΛΥΣΗ: Η κλήση πρέπει να έχει τα δύο ορίσματα (Strings)
         final ExpenseDisplay display = new ExpenseDisplay(categoriesFile, ministriesFile);
         
         // ----------------------------------------------------
-        // ΔΟΚΙΜΗ ΕΙΣΑΓΩΓΗΣ ΑΛΛΑΓΩΝ (UPDATE)
+        // ΔΙΟΡΘΩΣΗ: Αφαιρούμε τη δοκιμή update για να δούμε τα αρχικά δεδομένα
         // ----------------------------------------------------
+        /*
+        final String categoryCodeToUpdate = "24"; 
+        final long newAmount = 9876543210L; 
+        System.out.println(">>> ΔΟΚΙΜΗ: Ενημέρωση ποσού για την Κατηγορία " 
+            + categoryCodeToUpdate + " σε " + newAmount);
+            
+        final boolean success = display.updateCategoryAmount(categoryCodeToUpdate, newAmount);
         
+        if (success) {
+            System.out.println(">>> Η ενημέρωση ήταν επιτυχής.");
+        } else {
+            System.out.println(">>> Η ενημέρωση απέτυχε.");
+        }
         System.out.println("\n" + "-".repeat(60) + "\n");
+        */
         
         // ----------------------------------------------------
         // ΕΜΦΑΝΙΣΗ ΤΩΝ ΑΠΟΤΕΛΕΣΜΑΤΩΝ (με τις αλλαγές)
