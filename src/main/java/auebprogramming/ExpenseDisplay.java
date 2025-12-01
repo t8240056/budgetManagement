@@ -16,10 +16,17 @@ public final class ExpenseDisplay {
 
     /** The column index for the code in the ministries array. */
     private static final int MINISTRY_CODE_COLUMN = 0;
+    
+    // *** ΔΙΟΡΘΩΣΗ: Προστέθηκαν οι σταθερές που έλειπαν ***
+    /** The column index for the ministry name in the ministries array (Ministry/Agency). */
+    private static final int MINISTRY_NAME_COLUMN = 1; 
     /** The column index for the regular budget in the ministries array. */
     private static final int MINISTRY_REGULAR_COLUMN = 2;
+    /** The column index for the investment budget in the ministries array. */
+    private static final int MINISTRY_INVESTMENT_COLUMN = 3; 
     /** The column index for the total budget (Kratikos) in the ministries array. */
     private static final int MINISTRY_TOTAL_COLUMN = 4;
+    // *******************************************************
 
     /** Internal storage for expense categories data (String[][]). */
     private final String[][] categoriesData;
@@ -130,7 +137,8 @@ public final class ExpenseDisplay {
         System.out.println("==================================================");
         System.out.println(">> ΕΞΟΔΑ");
         System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
-        System.println(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ - ΕΤΟΥΣ " + BUDGET_YEAR);
+        // *** ΔΙΟΡΘΩΣΗ: Αλλαγή System.println σε System.out.println ***
+        System.out.println(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ - ΕΤΟΥΣ " + BUDGET_YEAR);
         System.out.println("==================================================");
         System.out.printf("%-10s %-50s %s%n", "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("--------------------------------------------------");
@@ -141,8 +149,9 @@ public final class ExpenseDisplay {
             
             // Έλεγχος για τη στήλη του Συνόλου
             if (row.length > MINISTRY_TOTAL_COLUMN) {
+                // *** ΔΙΟΡΘΩΣΗ: Χρήση MINISTRY_NAME_COLUMN ***
                 final String code = row[MINISTRY_CODE_COLUMN].trim();
-                final String ministry = row[MINISTRY_NAME_COLUMN].trim();
+                final String ministry = row[MINISTRY_NAME_COLUMN].trim(); 
                 long displayAmount = getMinistryAmount(row, budgetType);
 
                 if (displayAmount > 0) {
@@ -186,14 +195,16 @@ public final class ExpenseDisplay {
         } else if ("ΤΑΚΤΙΚΟΣ".equals(budgetType)) {
             columnIndex = MINISTRY_REGULAR_COLUMN;
         } else if ("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ".equals(budgetType)) {
-            columnIndex = MINISTRY_INVESTMENT_COLUMN;
+            // *** ΔΙΟΡΘΩΣΗ: Χρήση MINISTRY_INVESTMENT_COLUMN ***
+            columnIndex = MINISTRY_INVESTMENT_COLUMN; 
         } else {
             return 0;
         }
 
         try {
-            // Χρειάζεται να καθαρίσουμε την τιμή (π.χ. το "61 88000" από το CSV)
-            return Long.parseLong(row[columnIndex].trim().replace(" ", ""));
+            // Εδώ διατηρούμε το replace(" ", "") για να χειριστούμε τα ενδιάμεσα κενά αριθμών (π.χ. "61 88000")
+            // Τα περιφερειακά κενά έχουν αφαιρεθεί από την CsvToArray.
+            return Long.parseLong(row[columnIndex].replace(" ", ""));
         } catch (NumberFormatException e) {
             return 0;
         }
