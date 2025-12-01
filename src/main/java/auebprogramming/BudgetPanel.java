@@ -38,6 +38,7 @@ public class BudgetPanel extends JPanel {
 
         topPanel.add(revenueButton);
         topPanel.add(expenseButton);
+        topPanel.setPreferredSize(new java.awt.Dimension(300, 200));
         add(topPanel, BorderLayout.NORTH);
 
         final JPanel bottomPanel = new JPanel();
