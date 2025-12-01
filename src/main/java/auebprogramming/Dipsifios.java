@@ -1,5 +1,11 @@
 package auebprogramming;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
 
 
 
@@ -20,7 +26,7 @@ public class Dipsifios {
      */
     private void initializeData() {
         // Create all budget items
-        List<RevenuetItem> allItems = Arrays.asList(
+        List<RevenueItem> allItems = Arrays.asList(
             new RevenueItem("11", "Φόροι", 62055000000L),
             new RevenueItem("111", "Φόροι επί αγαθών και υπηρεσιών", 33667000000L),
             new RevenueItem("112", "Φόροι και δασμοί επί εισαγωγών", 362000000L),
