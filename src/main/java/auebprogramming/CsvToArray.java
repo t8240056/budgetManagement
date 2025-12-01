@@ -42,9 +42,16 @@ public final class CsvToArray {
             String line;
 
             while ((line = br.readLine()) != null) {
-                // Χωρισμός με κόμμα, με βάση τους περιορισμούς σας.
-                final String[] parts = line.split(",");
-                dataList.add(parts);
+                // Χωρισμός με κόμμα.
+                final String[] rawParts = line.split(",");
+                final String[] trimmedParts = new String[rawParts.length];
+                
+                // *** ΝΕΑ ΤΡΟΠΟΠΟΙΗΣΗ ***: Καθαρισμός κάθε στοιχείου από περιττά κενά.
+                for (int i = 0; i < rawParts.length; i++) {
+                    trimmedParts[i] = rawParts[i].trim();
+                }
+                
+                dataList.add(trimmedParts);
             }
 
             // Μετατροπή της λίστας σε δισδιάστατο πίνακα String[][]
