@@ -28,25 +28,25 @@ public final class CsvToArray {
     public static String[][] loadCsvToArray(final String filename) {
         final List<String[]> dataList = new ArrayList<>();
 
-        // Χρησιμοποιούμε getResourceAsStream για να διαβάσουμε από το Classpath (π.χ. src/main/resources)
+        // Use getResourceAsStream to read from the Classpath (e.g., src/main/resources)
         try (InputStream input = CsvToArray.class.getClassLoader()
             .getResourceAsStream(filename)) {
             if (input == null) {
-                System.err.println("Σφάλμα: Το αρχείο δεν βρέθηκε στο classpath (" + filename + ")");
+                System.err.println("Error: File not found in classpath (" + filename + ")");
                 return new String[0][0];
             }
 
-            // Χρησιμοποιούμε StandardCharsets.UTF_8 για σωστή ανάγνωση ελληνικών
+            // Use StandardCharsets.UTF_8 for correct reading of Greek characters
             final BufferedReader br = new BufferedReader(
                 new InputStreamReader(input, StandardCharsets.UTF_8));
             String line;
 
             while ((line = br.readLine()) != null) {
-                // Χωρισμός με κόμμα.
+                // Splitting by comma, based on your restrictions.
                 final String[] rawParts = line.split(",");
                 final String[] trimmedParts = new String[rawParts.length];
                 
-                // *** ΝΕΑ ΤΡΟΠΟΠΟΙΗΣΗ ***: Καθαρισμός κάθε στοιχείου από περιττά κενά.
+                // Trimming each element from surrounding whitespace.
                 for (int i = 0; i < rawParts.length; i++) {
                     trimmedParts[i] = rawParts[i].trim();
                 }
@@ -54,11 +54,11 @@ public final class CsvToArray {
                 dataList.add(trimmedParts);
             }
 
-            // Μετατροπή της λίστας σε δισδιάστατο πίνακα String[][]
+            // Convert the list to a two-dimensional String[][] array
             return dataList.toArray(new String[0][]);
 
         } catch (IOException e) {
-            System.err.println("Σφάλμα κατά τη φόρτωση του αρχείου: " + e.getMessage());
+            System.err.println("Error loading file: " + e.getMessage());
             return new String[0][0];
         }
     }
