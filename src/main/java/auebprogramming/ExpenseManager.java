@@ -33,7 +33,8 @@ public final class ExpenseManager {
      * Display all available expense categories with their codes.
      */
     public void showCategories() {
-        System.out.println("CODE\tEXPENSE NAME");
+        // Αλλαγή από "CODE\tEXPENSE NAME" σε Ελληνικά
+        System.out.println("ΚΩΔΙΚΟΣ\tΟΝΟΜΑ ΔΑΠΑΝΗΣ"); 
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
             final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
@@ -57,18 +58,21 @@ public final class ExpenseManager {
                 final String name = categoriesData[index][CATEGORY_DESCRIPTION_COLUMN];
                 
                 System.out.println("\n==============================");
-                System.out.println("CODE: " + categoriesData[index][CATEGORY_CODE_COLUMN]);
-                System.out.println("NAME: " + name);
+                // Αλλαγή από "CODE: " σε "ΚΩΔΙΚΟΣ: "
+                System.out.println("ΚΩΔΙΚΟΣ: " + categoriesData[index][CATEGORY_CODE_COLUMN]);
+                // Αλλαγή από "NAME: " σε "ΟΝΟΜΑ: "
+                System.out.println("ΟΝΟΜΑ: " + name);
                 System.out.println("------------------------------");
                 
-                // Use Locale.GERMAN for correct thousand separators
-                System.out.printf(Locale.GERMAN, "State Budget       : %,d €%n", amounts[0]);
-                System.out.printf(Locale.GERMAN, "Regular Budget     : %,d €%n", amounts[1]);
-                System.out.printf(Locale.GERMAN, "Investment Budget  : %,d €%n", amounts[2]);
+                // Αλλαγή των labels State, Regular, Investment σε Ελληνικά
+                System.out.printf(Locale.GERMAN, "Κρατικός Προϋπολογισμός: %,d €%n", amounts[0]);
+                System.out.printf(Locale.GERMAN, "Τακτικός Προϋπολογισμός : %,d €%n", amounts[1]);
+                System.out.printf(Locale.GERMAN, "Πρ. Δημοσίων Επενδύσεων: %,d €%n", amounts[2]);
                 System.out.println("==============================");
 
             } else {
-                System.out.println("\n" + code + " : Invalid code");
+                // Αλλαγή από "Invalid code" σε Ελληνικά
+                System.out.println("\n" + code + " : Μη έγκυρος κωδικός");
             }
         }
     }
@@ -80,10 +84,11 @@ public final class ExpenseManager {
     public void showExpenses() {
         long totalStateBudget = 0;
 
-        System.out.println("1. EXPENSES"); 
+        // Αλλαγή από "1. EXPENSES" σε Ελληνικά
+        System.out.println("1. ΕΞΟΔΑ"); 
         System.out.println();
-        // Adjust formatting to match showRevenues style (assuming width 60)
-        System.out.printf("%-5s %-60s %s%n", "CODE.", "DESCRIPTION", "AMOUNT (EUR)");
+        // Αλλαγή από "CODE.", "DESCRIPTION", "AMOUNT (EUR)" σε Ελληνικά
+        System.out.printf("%-5s %-60s %s%n", "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("----------------------------------------------------------------------------------");
 
 
@@ -104,13 +109,13 @@ public final class ExpenseManager {
         }
 
         System.out.println("----------------------------------------------------------------------------------");
-        // Display the total amount of expenses (State Budget)
-        System.out.printf(Locale.GERMAN, "Total: %,d EUR%n", totalStateBudget);
+        // Αλλαγή από "Total: %,d EUR" σε "Σύνολο: %,d Ευρώ"
+        System.out.printf(Locale.GERMAN, "Σύνολο: %,d Ευρώ%n", totalStateBudget);
         System.out.println();
     }
     
     // ---------------------------
-    // PRIVATE HELPER METHODS
+    // PRIVATE HELPER METHODS (Δεν έχουν εμφανιζόμενο κείμενο, οπότε παραμένουν ως έχουν)
     // ---------------------------
     
     /**
