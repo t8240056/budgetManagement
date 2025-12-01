@@ -22,19 +22,6 @@ public final class TestExpenseDisplay {
         // ΔΟΚΙΜΗ ΕΙΣΑΓΩΓΗΣ ΑΛΛΑΓΩΝ (UPDATE)
         // ----------------------------------------------------
         
-        final String categoryCodeToUpdate = "24"; // Αγορές αγαθών και υπηρεσιών
-        final long newAmount = 9876543210L; // Τιμή δοκιμής
-
-        System.out.println(">>> ΔΟΚΙΜΗ: Ενημέρωση ποσού για την Κατηγορία " 
-            + categoryCodeToUpdate + " σε " + newAmount);
-            
-        final boolean success = display.updateCategoryAmount(categoryCodeToUpdate, newAmount);
-        
-        if (success) {
-            System.out.println(">>> Η ενημέρωση ήταν επιτυχής. Το νέο ποσό θα εμφανιστεί παρακάτω.");
-        } else {
-            System.out.println(">>> Η ενημέρωση απέτυχε. Ο κωδικός ίσως δεν βρέθηκε.");
-        }
         System.out.println("\n" + "-".repeat(60) + "\n");
         
         // ----------------------------------------------------
