@@ -25,17 +25,19 @@ public final class TestExpenseManager {
         final Scanner scanner = new Scanner(System.in);
 
         // Display all categories first (Using the method that shows all details)
-        System.out.println("=== EXPENSES: STATE BUDGET ===");
-        manager.showExpenses(); // Displays the entire list of expenses (with total)
+        // Αλλαγή επικεφαλίδας
+        System.out.println("=== ΟΛΕΣ ΟΙ ΚΑΤΗΓΟΡΙΕΣ ΔΑΠΑΝΩΝ ===");
+        manager.showCategories(); 
 
         // Ask user for codes
-        System.out.println("\nEnter one or more expense codes (separated by space or comma) for details:");
+        System.out.println("\nΕισάγετε έναν ή περισσότερους κωδικούς δαπανών (διαχωρισμένοι με κενό ή κόμμα) για λεπτομέρειες:");
         final String input = scanner.nextLine().trim();
 
         // Split input by space or comma
         final String[] codes = input.split("[,\\s]+");
 
-        System.out.println("\n=== EXPENSE DETAILS (State, Regular, Investment) ===");
+        // Αλλαγή επικεφαλίδας
+        System.out.println("\n=== ΛΕΠΤΟΜΕΡΕΙΕΣ ΔΑΠΑΝΩΝ ===");
         manager.showExpenseDetails(codes);
 
         scanner.close();
