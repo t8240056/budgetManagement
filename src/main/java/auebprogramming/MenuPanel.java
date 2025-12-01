@@ -2,6 +2,7 @@ package auebprogramming;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -19,7 +20,7 @@ public class MenuPanel extends JPanel {
         setLayout(new GridLayout(6, 1, 10, 10));
 
         final JLabel titleLabel = new JLabel(
-                "=== Πρωθυπουργός για μια μέρα ===",
+                "Επιλέξτε λειτουργία παρακαλώ",
                 SwingConstants.CENTER
         );
         add(titleLabel);
