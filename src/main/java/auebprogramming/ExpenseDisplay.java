@@ -25,28 +25,24 @@ public final class ExpenseDisplay {
     /** The column index for the total budget (Kratikos) in the ministries array. */
     private static final int MINISTRY_TOTAL_COLUMN = 4;
     
-    // ΝΕΑ ΣΤΑΘΕΡΑ: Για καλύτερη μορφοποίηση (αύξηση πλάτους)
-    private static final int DISPLAY_COLUMN_WIDTH = 65;
-    
-    // ==========================================================
-    // !!! ΠΕΔΙΑ ΠΟΥ ΕΛΕΙΠΑΝ ΚΑΙ ΠΡΟΚΑΛΟΥΣΑΝ ΤΑ ERRORS !!!
-    // ==========================================================
+    // Constant for better formatting (increased width)
+    private static final int DISPLAY_COLUMN_WIDTH = 70; 
     
     /** The year of the budget data. */
-    private static final int BUDGET_YEAR = 2025; // <--- ΛΥΣΗ: cannot find symbol BUDGET_YEAR
+    private static final int BUDGET_YEAR = 2025; 
     
-    // Ειδικές τιμές για την κατηγορία 29
+    // Specific amounts for category 29
     private static final long AMOUNT_29_KRATIKOS = 17283053000L;
     private static final long AMOUNT_29_TAKTIKOS = 3183053000L;
     private static final long AMOUNT_29_EPENDYSEON = 14100000000L;
 
     /** Internal storage for expense categories data (String[][]). */
-    private final String[][] categoriesData; // <--- ΛΥΣΗ: cannot find symbol categoriesData
+    private final String[][] categoriesData; 
     /** Internal storage for ministry expenses data (String[][]). */
-    private final String[][] ministriesData; // <--- ΛΥΣΗ: cannot find symbol ministriesData
+    private final String[][] ministriesData; 
     
     // ---------------------------
-    // CONSTRUCTOR (ΛΥΣΗ: constructor cannot be applied to given types)
+    // CONSTRUCTOR
     // ---------------------------
     
     /**
@@ -71,15 +67,15 @@ public final class ExpenseDisplay {
      * @return true if the update was successful, false otherwise.
      */
     public boolean updateCategoryAmount(final String code, final long newAmount) {
-        // Ξεκινάμε από τη 2η γραμμή (index 1) για να παραλείψουμε το header.
+        // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
-            // Ο κωδικός βρίσκεται στη στήλη CATEGORY_CODE_COLUMN
+            // The code is in the CATEGORY_CODE_COLUMN
             if (categoriesData[i].length > CATEGORY_CODE_COLUMN
                 && categoriesData[i][CATEGORY_CODE_COLUMN].trim().equals(code)) {
                 
-                // Ενημερώνουμε τη στήλη του ποσού (CATEGORY_AMOUNT_COLUMN)
+                // Update the amount column (CATEGORY_AMOUNT_COLUMN)
                 if (categoriesData[i].length > CATEGORY_AMOUNT_COLUMN) {
-                    // Μετατροπή της long τιμής σε String για αποθήκευση
+                    // Convert the long value to a String for storage
                     categoriesData[i][CATEGORY_AMOUNT_COLUMN] = String.valueOf(newAmount);
                     return true;
                 }
@@ -108,7 +104,7 @@ public final class ExpenseDisplay {
             "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ ΔΑΠΑΝΗΣ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
-        // Ξεκινάμε από τη 2η γραμμή (index 1) για να παραλείψουμε το header.
+        // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
             final String[] row = categoriesData[i];
             
@@ -120,10 +116,10 @@ public final class ExpenseDisplay {
                 if ("29".equals(code)) {
                     amountToDisplay = getAmountForCategory29(budgetType);
                 } else if ("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ".equals(budgetType)) {
-                    // Όλες οι άλλες δαπάνες έχουν 0 Επενδύσεις
+                    // All other expenses have 0 Investments
                     amountToDisplay = 0;
                 } else {
-                    // Κανονική ανάγνωση για Κρατικό/Τακτικό
+                    // Normal reading for State/Regular Budget
                     try {
                         amountToDisplay = Long.parseLong(row[CATEGORY_AMOUNT_COLUMN].replace(" ", ""));
                     } catch (NumberFormatException e) {
@@ -131,7 +127,7 @@ public final class ExpenseDisplay {
                     }
                 }
                 
-                // Προσθήκη στο σύνολο
+                // Add to the total
                 grandTotal += amountToDisplay;
 
                 System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
@@ -141,10 +137,12 @@ public final class ExpenseDisplay {
             }
         }
         
-        // Εμφάνιση συνόλου
+        // Display total (Left alignment)
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
-            "", "**ΣΥΝΟΛΟ**", String.format(Locale.GERMAN, "%,d", grandTotal));
+            "", 
+            "**ΣΥΝΟΛΟ**", 
+            String.format(Locale.GERMAN, "%,d", grandTotal));
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println();
     }
@@ -165,7 +163,7 @@ public final class ExpenseDisplay {
             "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
-        // Ξεκινάμε από τη 2η γραμμή (index 1) για να παραλείψουμε το header.
+        // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < ministriesData.length; i++) {
             final String[] row = ministriesData[i];
             
@@ -184,10 +182,12 @@ public final class ExpenseDisplay {
             }
         }
         
-        // Εμφάνιση συνόλου
+        // Display total (Left alignment)
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
-            "", "**ΣΥΝΟΛΟ**", String.format(Locale.GERMAN, "%,d", grandTotal));
+            "", 
+            "**ΣΥΝΟΛΟ**", 
+            String.format(Locale.GERMAN, "%,d", grandTotal));
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println();
     }
@@ -197,7 +197,7 @@ public final class ExpenseDisplay {
      * @param budgetType The budget type.
      * @return The specific amount.
      */
-    private long getAmountForCategory29(final String budgetType) { // <--- ΛΥΣΗ: cannot find symbol getAmountForCategory29
+    private long getAmountForCategory29(final String budgetType) { 
         if ("ΚΡΑΤΙΚΟΣ".equals(budgetType)) {
             return AMOUNT_29_KRATIKOS;
         } else if ("ΤΑΚΤΙΚΟΣ".equals(budgetType)) {
@@ -227,7 +227,7 @@ public final class ExpenseDisplay {
         }
 
         try {
-            // Χρησιμοποιούμε replace(" ", "") για τα ενδιάμεσα κενά αριθμών (π.χ. "61 88000")
+            // We use replace(" ", "") to handle internal number spaces (e.g., "61 88000")
             return Long.parseLong(row[columnIndex].replace(" ", ""));
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             return 0;
