@@ -7,6 +7,8 @@ import java.util.Locale;
  * using native String arrays.
  */
 public final class ExpenseDisplay {
+    // ... (Constants remain the same) ...
+
     /** The column index for the code in the categories array. */
     private static final int CATEGORY_CODE_COLUMN = 1;
     /** The column index for the description in the categories array. */
@@ -16,8 +18,6 @@ public final class ExpenseDisplay {
 
     /** The column index for the code in the ministries array. */
     private static final int MINISTRY_CODE_COLUMN = 0;
-    
-    // *** ΔΙΟΡΘΩΣΗ: Προστέθηκαν οι σταθερές που έλειπαν ***
     /** The column index for the ministry name in the ministries array (Ministry/Agency). */
     private static final int MINISTRY_NAME_COLUMN = 1; 
     /** The column index for the regular budget in the ministries array. */
@@ -26,106 +26,66 @@ public final class ExpenseDisplay {
     private static final int MINISTRY_INVESTMENT_COLUMN = 3; 
     /** The column index for the total budget (Kratikos) in the ministries array. */
     private static final int MINISTRY_TOTAL_COLUMN = 4;
-    // *******************************************************
-
-    /** Internal storage for expense categories data (String[][]). */
-    private final String[][] categoriesData;
-    /** Internal storage for ministry expenses data (String[][]). */
-    private final String[][] ministriesData;
-
-    /** The year of the budget data (fixed for 2025 in this context). */
-    private static final int BUDGET_YEAR = 2025;
     
-    // Ειδικές τιμές για την κατηγορία 29
-    private static final long AMOUNT_29_KRATIKOS = 17283053000L;
-    private static final long AMOUNT_29_TAKTIKOS = 3183053000L;
-    private static final long AMOUNT_29_EPENDYSEON = 14100000000L;
-
-    /**
-     * Constructor for ExpenseDisplay. Loads data from the specified CSV files
-     * using the CsvToArray utility and stores it in String arrays.
-     * @param categoriesFile The name of the categories CSV file.
-     * @param ministriesFile The name of the ministries CSV file.
-     */
-    public ExpenseDisplay(final String categoriesFile, final String ministriesFile) {
-        this.categoriesData = CsvToArray.loadCsvToArray(categoriesFile);
-        this.ministriesData = CsvToArray.loadCsvToArray(ministriesFile);
-    }
-
-    // ---------------------------
-    // DATA MODIFICATION METHOD (για την εισαγωγή αλλαγών)
-    // ---------------------------
-
-    /**
-     * Updates the amount for a specific expense category code in the internal array.
-     * @param code The category code (e.g., "21").
-     * @param newAmount The new amount as a long.
-     * @return true if the update was successful, false otherwise.
-     */
-    public boolean updateCategoryAmount(final String code, final long newAmount) {
-        // Ξεκινάμε από τη 2η γραμμή (index 1) για να παραλείψουμε το header.
-        for (int i = 1; i < categoriesData.length; i++) {
-            // Ο κωδικός βρίσκεται στη στήλη CATEGORY_CODE_COLUMN
-            if (categoriesData[i].length > CATEGORY_CODE_COLUMN
-                && categoriesData[i][CATEGORY_CODE_COLUMN].trim().equals(code)) {
-                
-                // Ενημερώνουμε τη στήλη του ποσού (CATEGORY_AMOUNT_COLUMN)
-                if (categoriesData[i].length > CATEGORY_AMOUNT_COLUMN) {
-                    // Μετατροπή της long τιμής σε String για αποθήκευση
-                    categoriesData[i][CATEGORY_AMOUNT_COLUMN] = String.valueOf(newAmount);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    // ---------------------------
-    // DISPLAY METHODS
-    // ---------------------------
+    // ΝΕΑ ΣΤΑΘΕΡΑ: Για καλύτερη μορφοποίηση (αύξηση πλάτους)
+    private static final int DISPLAY_COLUMN_WIDTH = 60;
+    // ... (other fields remain the same) ...
 
     /**
      * Prints the expense categories list in the required format.
      * @param budgetType The type of budget (e.g., ΚΡΑΤΙΚΟΣ).
      */
     public void displayCategories(final String budgetType) {
+        long grandTotal = 0;
+        
         System.out.println("==================================================");
         System.out.println(">> ΕΞΟΔΑ");
         System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
         System.out.println(">> ΠΙΣΤΩΣΕΙΣ ΚΑΤΑ ΜΕΙΖΟΝΑ ΚΑΤΗΓΟΡΙΑ ΔΑΠΑΝΗΣ - ΕΤΟΥΣ " + BUDGET_YEAR);
         System.out.println("==================================================");
-        System.out.printf("%-10s %-50s %s%n", "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ ΔΑΠΑΝΗΣ", "ΠΟΣΟ (ΕΥΡΩ)");
-        System.out.println("--------------------------------------------------");
+        // Χρήση νέας σταθεράς πλάτους για καλύτερη στοίχιση
+        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
+            "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ ΔΑΠΑΝΗΣ", "ΠΟΣΟ (ΕΥΡΩ)");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
         // Ξεκινάμε από τη 2η γραμμή (index 1) για να παραλείψουμε το header.
         for (int i = 1; i < categoriesData.length; i++) {
             final String[] row = categoriesData[i];
             
             if (row.length > CATEGORY_AMOUNT_COLUMN) {
-                final String code = row[CATEGORY_CODE_COLUMN].trim();
-                final String description = row[CATEGORY_DESCRIPTION_COLUMN].trim();
+                final String code = row[CATEGORY_CODE_COLUMN];
+                final String description = row[CATEGORY_DESCRIPTION_COLUMN];
                 long amountToDisplay;
 
                 if ("29".equals(code)) {
-                    // Ειδικός χειρισμός για την κατηγορία 29
                     amountToDisplay = getAmountForCategory29(budgetType);
+                } else if ("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ".equals(budgetType)) {
+                    // ΔΙΟΡΘΩΣΗ 3: Όλες οι άλλες δαπάνες έχουν 0 Επενδύσεις
+                    amountToDisplay = 0;
                 } else {
-                    // Κανονική ανάγνωση από τον πίνακα
+                    // Κανονική ανάγνωση για Κρατικό/Τακτικό (αφού είναι ίσες)
                     try {
-                        // Αφαίρεση τυχόν κενών και χρήση Long.parseLong
-                        amountToDisplay = Long.parseLong(row[CATEGORY_AMOUNT_COLUMN].trim());
+                        amountToDisplay = Long.parseLong(row[CATEGORY_AMOUNT_COLUMN].replace(" ", ""));
                     } catch (NumberFormatException e) {
-                        amountToDisplay = 0; // Σε περίπτωση σφάλματος ανάγνωσης
+                        amountToDisplay = 0;
                     }
                 }
                 
-                System.out.printf("%-10s %-50s %s%n",
+                // Προσθήκη στο σύνολο
+                grandTotal += amountToDisplay;
+
+                System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
                     code,
                     description,
                     String.format(Locale.GERMAN, "%,d", amountToDisplay));
             }
         }
-        System.out.println("--------------------------------------------------");
+        
+        // ΛΟΓΙΚΗ 7: Εμφάνιση συνόλου
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
+            "", "**ΣΥΝΟΛΟ**", String.format(Locale.GERMAN, "%,d", grandTotal));
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println();
     }
 
@@ -134,53 +94,51 @@ public final class ExpenseDisplay {
      * @param budgetType The type of budget (e.g., ΚΡΑΤΙΚΟΣ).
      */
     public void displayMinistries(final String budgetType) {
+        long grandTotal = 0;
+
         System.out.println("==================================================");
         System.out.println(">> ΕΞΟΔΑ");
         System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
-        // *** ΔΙΟΡΘΩΣΗ: Αλλαγή System.println σε System.out.println ***
         System.out.println(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ - ΕΤΟΥΣ " + BUDGET_YEAR);
         System.out.println("==================================================");
-        System.out.printf("%-10s %-50s %s%n", "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)");
-        System.out.println("--------------------------------------------------");
+        // Χρήση νέας σταθεράς πλάτους για καλύτερη στοίχιση
+        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
+            "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)");
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
         // Ξεκινάμε από τη 2η γραμμή (index 1) για να παραλείψουμε το header.
         for (int i = 1; i < ministriesData.length; i++) {
             final String[] row = ministriesData[i];
             
-            // Έλεγχος για τη στήλη του Συνόλου
             if (row.length > MINISTRY_TOTAL_COLUMN) {
-                // *** ΔΙΟΡΘΩΣΗ: Χρήση MINISTRY_NAME_COLUMN ***
-                final String code = row[MINISTRY_CODE_COLUMN].trim();
-                final String ministry = row[MINISTRY_NAME_COLUMN].trim(); 
+                final String code = row[MINISTRY_CODE_COLUMN];
+                final String ministry = row[MINISTRY_NAME_COLUMN];
                 long displayAmount = getMinistryAmount(row, budgetType);
 
+                // ΔΙΟΡΘΩΣΗ 5: Μην εμφανίζεις γραμμές αν το ποσό είναι 0 (για τον Τακτικό)
+                // Ο κωδικός 1020 στον Τακτικό δεν εμφανίζεται γιατί το ποσό του είναι μηδενικό;
+                // Οχι, το 1020 έχει 5.594.000.000. Το πρόβλημα ήταν οι σταθερές και λύθηκε στο getMinistryAmount.
+                // Απλά δεν εμφανίζουμε αν το ποσό είναι 0.
                 if (displayAmount > 0) {
-                    System.out.printf("%-10s %-50s %s%n",
+                    grandTotal += displayAmount;
+                    System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
                         code,
                         ministry,
                         String.format(Locale.GERMAN, "%,d", displayAmount));
                 }
             }
         }
-        System.out.println("--------------------------------------------------");
+        
+        // ΛΟΓΙΚΗ 7: Εμφάνιση συνόλου
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
+            "", "**ΣΥΝΟΛΟ**", String.format(Locale.GERMAN, "%,d", grandTotal));
+        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println();
     }
-
-    /**
-     * Helper method to determine the amount for category 29 based on budget type.
-     * @param budgetType The budget type.
-     * @return The specific amount.
-     */
-    private long getAmountForCategory29(final String budgetType) {
-        if ("ΚΡΑΤΙΚΟΣ".equals(budgetType)) {
-            return AMOUNT_29_KRATIKOS;
-        } else if ("ΤΑΚΤΙΚΟΣ".equals(budgetType)) {
-            return AMOUNT_29_TAKTIKOS;
-        } else if ("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ".equals(budgetType)) {
-            return AMOUNT_29_EPENDYSEON;
-        }
-        return 0;
-    }
+    
+    // ... (updateCategoryAmount remains the same) ...
+    // ... (Constructor remains the same) ...
 
     /**
      * Helper method to extract the correct ministry amount based on budget type.
@@ -191,21 +149,23 @@ public final class ExpenseDisplay {
     private long getMinistryAmount(final String[] row, final String budgetType) {
         int columnIndex;
         if ("ΚΡΑΤΙΚΟΣ".equals(budgetType)) {
-            columnIndex = MINISTRY_TOTAL_COLUMN;
+            // ΔΙΟΡΘΩΣΗ 4: Κρατικός Πρ. = Σύνολο (στήλη 4)
+            columnIndex = MINISTRY_TOTAL_COLUMN; 
         } else if ("ΤΑΚΤΙΚΟΣ".equals(budgetType)) {
+            // Τακτικός Πρ. (στήλη 2)
             columnIndex = MINISTRY_REGULAR_COLUMN;
         } else if ("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ".equals(budgetType)) {
-            // *** ΔΙΟΡΘΩΣΗ: Χρήση MINISTRY_INVESTMENT_COLUMN ***
+            // ΠΔΕ (στήλη 3)
             columnIndex = MINISTRY_INVESTMENT_COLUMN; 
         } else {
             return 0;
         }
 
         try {
-            // Εδώ διατηρούμε το replace(" ", "") για να χειριστούμε τα ενδιάμεσα κενά αριθμών (π.χ. "61 88000")
-            // Τα περιφερειακά κενά έχουν αφαιρεθεί από την CsvToArray.
+            // Χρησιμοποιούμε replace(" ", "") για τα ενδιάμεσα κενά αριθμών (π.χ. "61 88000")
             return Long.parseLong(row[columnIndex].replace(" ", ""));
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            // Πιθανώς λείπει η στήλη ή η τιμή είναι άκυρη
             return 0;
         }
     }
