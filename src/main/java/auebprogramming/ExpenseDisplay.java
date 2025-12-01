@@ -26,7 +26,7 @@ public final class ExpenseDisplay {
     private static final int MINISTRY_TOTAL_COLUMN = 4;
     
     // ΝΕΑ ΣΤΑΘΕΡΑ: Για καλύτερη μορφοποίηση (αύξηση πλάτους)
-    private static final int DISPLAY_COLUMN_WIDTH = 60;
+    private static final int DISPLAY_COLUMN_WIDTH = 65;
     
     // ==========================================================
     // !!! ΠΕΔΙΑ ΠΟΥ ΕΛΕΙΠΑΝ ΚΑΙ ΠΡΟΚΑΛΟΥΣΑΝ ΤΑ ERRORS !!!
