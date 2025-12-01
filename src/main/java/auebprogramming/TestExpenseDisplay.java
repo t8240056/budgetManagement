@@ -14,38 +14,37 @@ public final class TestExpenseDisplay {
         final String categoriesFile = "expense_categories_2025.csv";
         final String ministriesFile = "expense_ministries_2025.csv";
 
-        // ΛΥΣΗ: Η κλήση πρέπει να έχει τα δύο ορίσματα (Strings)
         final ExpenseDisplay display = new ExpenseDisplay(categoriesFile, ministriesFile);
         
         // ----------------------------------------------------
-        // ΔΙΟΡΘΩΣΗ: Αφαιρούμε τη δοκιμή update για να δούμε τα αρχικά δεδομένα
+        // EXAMPLE UPDATE: Uncomment this block if you want to test data entry/update
         // ----------------------------------------------------
         /*
         final String categoryCodeToUpdate = "24"; 
         final long newAmount = 9876543210L; 
-        System.out.println(">>> ΔΟΚΙΜΗ: Ενημέρωση ποσού για την Κατηγορία " 
-            + categoryCodeToUpdate + " σε " + newAmount);
+        System.out.println(">>> TEST: Updating amount for Category " 
+            + categoryCodeToUpdate + " to " + newAmount);
             
         final boolean success = display.updateCategoryAmount(categoryCodeToUpdate, newAmount);
         
         if (success) {
-            System.out.println(">>> Η ενημέρωση ήταν επιτυχής.");
+            System.out.println(">>> Update successful.");
         } else {
-            System.out.println(">>> Η ενημέρωση απέτυχε.");
+            System.out.println(">>> Update failed.");
         }
         System.out.println("\n" + "-".repeat(60) + "\n");
         */
         
         // ----------------------------------------------------
-        // ΕΜΦΑΝΙΣΗ ΤΩΝ ΑΠΟΤΕΛΕΣΜΑΤΩΝ (με τις αλλαγές)
+        // DISPLAY RESULTS
         // ----------------------------------------------------
 
-        // Εμφάνιση Εξόδων ανά Δαπάνη (Κατηγορία)
+        // Display Expenses by Category
         display.displayCategories("ΚΡΑΤΙΚΟΣ");
         display.displayCategories("ΤΑΚΤΙΚΟΣ");
         display.displayCategories("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ");
 
-        // Εμφάνιση Εξόδων ανά Φορέα
+        // Display Expenses by Ministry
         display.displayMinistries("ΚΡΑΤΙΚΟΣ");
         display.displayMinistries("ΤΑΚΤΙΚΟΣ");
         display.displayMinistries("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ");
