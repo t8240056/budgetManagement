@@ -8,7 +8,5 @@ public class App {
         MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
         
-       
-        
     }
 }

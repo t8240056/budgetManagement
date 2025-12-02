@@ -1,172 +1,156 @@
 package auebprogramming;
 
+import java.util.Scanner;
+
+/**
+ * Η κλάση BudgetAnalyzer διαχειρίζεται τη φόρτωση, αναζήτηση και εμφάνιση 
+ * των δεδομένων του κρατικού προϋπολογισμού από τα CSV αρχεία.
+ * Σχεδιάστηκε ώστε να επιτρέπει την μελλοντική τροποποίηση των δεδομένων.
+ */
 public class BudgetAnalyzer {
+
+    // Πίνακας για τα δεδομένα του Άρθρου 2 (budget_ministries.csv)
+    private String[][] article2Data; 
     
-    public static class TaktikosProupologismos {
-        public String kodikosForea;
-        public String onomaForea;
-        public double synolo;
-        
-        public TaktikosProupologismos(String kodikos, String onoma, double synolo) {
-            this.kodikosForea = kodikos;
-            this.onomaForea = onoma;
-            this.synolo = synolo;
-        }
-    }
+    // Πίνακας για τα αναλυτικά δεδομένα του επιλεγμένου φορέα (π.χ. 1032.csv)
+    private String[][] detailedBudget;
     
-    public static class DimosiesEpendiseis {
-        public String kodikosForea;
-        public String onomaForea;
-        public double synolo;
-        
-        public DimosiesEpendiseis(String kodikos, String onoma, double synolo) {
-            this.kodikosForea = kodikos;
-            this.onomaForea = onoma;
-            this.synolo = synolo;
-        }
-    }
-    
-    private TaktikosProupologismos[] taktikosProupologismosTable;
-    private DimosiesEpendiseis[] dimosiesEpendiseisTable;
-    
+    // Κρατάμε τον κωδικό που ζήτησε ο χρήστης
+    private int selectedEntityCode;
+
+    /**
+     * Constructor της κλάσης. Φορτώνει αυτόματα τα συνοπτικά δεδομένα
+     * του Άρθρου 2 στη μνήμη, μέσω της CsvToArray.
+     */
     public BudgetAnalyzer() {
-        this.taktikosProupologismosTable = new TaktikosProupologismos[] {
-            new TaktikosProupologismos("1001", "PROEDRIA TIS DEMOKRATIAS", 4638000.0),
-            new TaktikosProupologismos("1003", "BOULI TON ELLINON", 169950000.0),
-            new TaktikosProupologismos("1004", "PROEDRIA TIS KYBERNISIS", 37689000.0),
-            new TaktikosProupologismos("1007", "YPOURGEIO ESOTERIKON", 3449276000.0),
-            new TaktikosProupologismos("1009", "YPOURGEIO EXOTERIKON", 390237000.0),
-            new TaktikosProupologismos("1011", "YPOURGEIO ETHNIKIS AMYNAS", 6061000000.0),
-            new TaktikosProupologismos("1015", "YPOURGEIO YGEIAS", 6608424000.0),
-            new TaktikosProupologismos("1017", "YPOURGEIO DIKAOSYNIS", 577803000.0),
-            new TaktikosProupologismos("1020", "YPOURGEIO PAIDEIAS, THRISKEVMATON KAI ATHLITISMOU", 5594000000.0),
-            new TaktikosProupologismos("1022", "YPOURGEIO POLITISMOU", 257419000.0),
-            new TaktikosProupologismos("1024", "YPOURGEIO ETHNIKIS OIKONOMIAS KAI OIKONOMIKON", 1243381464000.0),
-            new TaktikosProupologismos("1029", "YPOURGEIO AGROTIKIS ANAPTYXIS KAI TROFIMON", 222403000.0),
-            new TaktikosProupologismos("1031", "YPOURGEIO PERIVALLONTOS KAI ENERGEIAS", 319227000.0),
-            new TaktikosProupologismos("1032", "YPOURGEIO ERGASIAS KAI KOINONIKIS ASFALISIS", 18215084000.0),
-            new TaktikosProupologismos("1034", "YPOURGEIO KOINONIKIS SYNOXIS KAI OIKOGENEIAS", 3786553000.0),
-            new TaktikosProupologismos("1036", "YPOURGEIO ANAPTYXIS", 123045000.0),
-            new TaktikosProupologismos("1039", "YPOURGEIO YPODOMON KAI METAFORON", 881810000.0),
-            new TaktikosProupologismos("1041", "YPOURGEIO NAVTILIAS KAI NISIOTIKIS POLITIKIS", 336864000.0),
-            new TaktikosProupologismos("1045", "YPOURGEIO TOURISMOU", 39293000.0),
-            new TaktikosProupologismos("1053", "YPOURGEIO PSIFIAKIS DIAKYBERNISIS", 151928000.0),
-            new TaktikosProupologismos("1055", "YPOURGEIO METANASTEYSIS KAI ASYLOU", 141871000.0),
-            new TaktikosProupologismos("1057", "YPOURGEIO PROSTASIAS TOU POLITI", 2217820000.0),
-            new TaktikosProupologismos("1060", "YPOURGEIO KLIMATIKIS KRISIS KAI POLITIKIS PROSTASIAS", 760116000.0),
-            new TaktikosProupologismos("1901", "APOKENTROMENI DIOIKISI ATTIKIS", 13091000.0),
-            new TaktikosProupologismos("1902", "APOKENTROMENI DIOIKISI THESSALIAS - STEREAS ELLADAS", 10579000.0),
-            new TaktikosProupologismos("1903", "APOKENTROMENI DIOIKISI IPEIROU - DYTIKIS MAKEDONIAS", 9943000.0),
-            new TaktikosProupologismos("1904", "APOKENTROMENI DIOIKISI PELOPONNISOU - DYTIKIS ELLADAS KAI IONIOU", 14918000.0),
-            new TaktikosProupologismos("1905", "APOKENTROMENI DIOIKISI AIGAIOU", 6188000.0),
-            new TaktikosProupologismos("1906", "APOKENTROMENI DIOIKISI KRITIS", 6497000.0),
-            new TaktikosProupologismos("1907", "APOKENTROMENI DIOIKISI MAKEDONIAS - THRAKIS", 18376000.0)
-        };
+        // Καλούμε την CsvToArray για να φορτώσει το Άρθρο 2
+        this.article2Data = CsvToArray.loadCsvToArray("budget_ministries.csv");
         
-        this.dimosiesEpendiseisTable = new DimosiesEpendiseis[] {
-            new DimosiesEpendiseis("1001", "PROEDRIA TIS DEMOKRATIAS", 0.0),
-            new DimosiesEpendiseis("1003", "BOULI TON ELLINON", 2000000.0),
-            new DimosiesEpendiseis("1004", "PROEDRIA TIS KYBERNISIS", 4000000.0),
-            new DimosiesEpendiseis("1007", "YPOURGEIO ESOTERIKON", 381000000.0),
-            new DimosiesEpendiseis("1009", "YPOURGEIO EXOTERIKON", 30000000.0),
-            new DimosiesEpendiseis("1011", "YPOURGEIO ETHNIKIS AMYNAS", 69000000.0),
-            new DimosiesEpendiseis("1015", "YPOURGEIO YGEIAS", 569000000.0),
-            new DimosiesEpendiseis("1017", "YPOURGEIO DIKAOSYNIS", 73000000.0),
-            new DimosiesEpendiseis("1020", "YPOURGEIO PAIDEIAS, THRISKEVMATON KAI ATHLITISMOU", 1012000000.0),
-            new DimosiesEpendiseis("1022", "YPOURGEIO POLITISMOU", 318000000.0),
-            new DimosiesEpendiseis("1024", "YPOURGEIO ETHNIKIS OIKONOMIAS KAI OIKONOMIKON", 0.0),
-            new DimosiesEpendiseis("1029", "YPOURGEIO AGROTIKIS ANAPTYXIS KAI TROFIMON", 1059000000.0),
-            new DimosiesEpendiseis("1031", "YPOURGEIO PERIVALLONTOS KAI ENERGEIAS", 2022000000.0),
-            new DimosiesEpendiseis("1032", "YPOURGEIO ERGASIAS KAI KOINONIKIS ASFALISIS", 463000000.0),
-            new DimosiesEpendiseis("1034", "YPOURGEIO KOINONIKIS SYNOXIS KAI OIKOGENEIAS", 203000000.0),
-            new DimosiesEpendiseis("1036", "YPOURGEIO ANAPTYXIS", 695000000.0),
-            new DimosiesEpendiseis("1039", "YPOURGEIO YPODOMON KAI METAFORON", 1813000000.0),
-            new DimosiesEpendiseis("1041", "YPOURGEIO NAVTILIAS KAI NISIOTIKIS POLITIKIS", 315000000.0),
-            new DimosiesEpendiseis("1045", "YPOURGEIO TOURISMOU", 150000000.0),
-            new DimosiesEpendiseis("1053", "YPOURGEIO PSIFIAKIS DIAKYBERNISIS", 922000000.0),
-            new DimosiesEpendiseis("1055", "YPOURGEIO METANASTEYSIS KAI ASYLOU", 334000000.0),
-            new DimosiesEpendiseis("1057", "YPOURGEIO PROSTASIAS TOU POLITI", 68000000.0),
-            new DimosiesEpendiseis("1060", "YPOURGEIO KLIMATIKIS KRISIS KAI POLITIKIS PROSTASIAS", 461000000.0),
-            new DimosiesEpendiseis("1901", "APOKENTROMENI DIOIKISI ATTIKIS", 0.0),
-            new DimosiesEpendiseis("1902", "APOKENTROMENI DIOIKISI THESSALIAS - STEREAS ELLADAS", 0.0),
-            new DimosiesEpendiseis("1903", "APOKENTROMENI DIOIKISI IPEIROU - DYTIKIS MAKEDONIAS", 0.0),
-            new DimosiesEpendiseis("1904", "APOKENTROMENI DIOIKISI PELOPONNISOU - DYTIKIS ELLADAS KAI IONIOU", 0.0),
-            new DimosiesEpendiseis("1905", "APOKENTROMENI DIOIKISI AIGAIOU", 0.0),
-            new DimosiesEpendiseis("1906", "APOKENTROMENI DIOIKISI KRITIS", 0.0),
-            new DimosiesEpendiseis("1907", "APOKENTROMENI DIOIKISI MAKEDONIAS - THRAKIS", 0.0)
-        };
-    }
-    
-    public boolean displaySynola(String kodikosForea) {
-        Double taktikosSynolo = findTaktikosSynolo(kodikosForea);
-        String onomaForea = findOnomaForea(kodikosForea);
-        Double dimosiesSynolo = findDimosiesSynolo(kodikosForea);
-        
-        if (onomaForea == null) {
-            System.out.println("Error: Foreas not found: " + kodikosForea);
-            return false;
-        }
-        
-        System.out.println("\n=== BUDGET DATA ===");
-        System.out.println("FOREA: " + onomaForea);
-        System.out.println("===================");
-        
-        if (taktikosSynolo != null) {
-            System.out.println("Regular Budget: " + taktikosSynolo + " EUR");
+        if (article2Data.length < 2) {
+            System.out.println("Προειδοποίηση: Το αρχείο budget_ministries.csv δεν φορτώθηκε σωστά.");
         } else {
-            System.out.println("Regular Budget: -");
+            System.out.println("Επιτυχής φόρτωση συνοπτικών δεδομένων Άρθρου 2.");
+        }
+    }
+
+    /**
+     * Εμφανίζει τον πίνακα του Άρθρου 2 (budget_ministries.csv)
+     * με τους κωδικούς φορέων, ονομασίες και συνολικά ποσά.
+     * Εμφανίζει αυτούσιο το περιεχόμενο του φορτωμένου πίνακα.
+     */
+    public void displayArticle2() {
+        if (article2Data.length < 2) {
+            System.out.println("Δεν υπάρχουν δεδομένα για εμφάνιση.");
+            return;
         }
         
-        if (dimosiesSynolo != null && dimosiesSynolo > 0) {
-            System.out.println("Public Investments: " + dimosiesSynolo + " EUR");
+        System.out.println("\n----------------- ΑΡΘΡΟ 2: ΣΥΝΟΛΙΚΑ ΕΞΟΔΑ ΦΟΡΕΩΝ -----------------");
+        
+        // Εκτύπωση της κεφαλίδας (γραμμή 0)
+        String[] header = article2Data[0];
+        String formatString = "%-10s | %-45s | %-20s | %-20s\n";
+        System.out.printf(formatString, header[0], header[1], header[2], header[3]); 
+
+        System.out.println("---------------------------------------------------------------------------------------------------------");
+        
+        // Εκτύπωση των δεδομένων (από γραμμή 1)
+        for (int i = 1; i < article2Data.length; i++) {
+            String[] row = article2Data[i];
+            if (row.length >= 4) {
+                 // Εκτυπώνουμε τα στοιχεία των 4 πρώτων στηλών
+                 System.out.printf(formatString, row[0], row[1], row[2], row[3]);
+            }
+        }
+        System.out.println("---------------------------------------------------------------------------------------------------------");
+    }
+
+    /**
+     * Δέχεται τον κωδικό φορέα, ελέγχει την εγκυρότητά του,
+     * φορτώνει το αντίστοιχο αναλυτικό CSV και το εμφανίζει.
+     * @param code Ο τετραψήφιος κωδικός του φορέα που εισάγει ο χρήστης.
+     */
+    public void processEntityCode(int code) {
+        this.selectedEntityCode = code;
+        
+        // 1. Ελέγχουμε αν ο κωδικός είναι έγκυρος
+        if (isCodeValid(code)) {
+            
+            System.out.println("\n--- Φόρτωση αναλυτικών δεδομένων για τον κωδικό " + code + " ---");
+            
+            // 2. Η Λογική Αντιστοίχισης: Ο κωδικός γίνεται όνομα αρχείου (π.χ. 1032.csv)
+            String filename = code + ".csv"; 
+            
+            // 3. Φόρτωσε το αναλυτικό CSV
+            this.detailedBudget = CsvToArray.loadCsvToArray(filename);
+            
+            // 4. Εμφάνισε το αναλυτικό CSV
+            displayDetailedBudget();
         } else {
-            System.out.println("Public Investments: -");
+            System.out.println("Σφάλμα: Ο κωδικός φορέα " + code + " δεν βρέθηκε στο Άρθρο 2.");
         }
-        
-        if (taktikosSynolo != null && dimosiesSynolo != null && dimosiesSynolo > 0) {
-            double synolikoSynolo = taktikosSynolo + dimosiesSynolo;
-            System.out.println("TOTAL: " + synolikoSynolo + " EUR");
-        }
-        
-        System.out.println("===================");
-        return true;
     }
-    
-    public Double findTaktikosSynolo(String kodikosForea) {
-        for (TaktikosProupologismos taktikos : taktikosProupologismosTable) {
-            if (taktikos.kodikosForea.equals(kodikosForea)) {
-                return taktikos.synolo;
+
+    /**
+     * Ελέγχει αν ο δοθείς κωδικός φορέα υπάρχει στον πίνακα του Άρθρου 2.
+     * @param code Ο κωδικός φορέα προς έλεγχο.
+     * @return true αν βρεθεί ο κωδικός, false διαφορετικά.
+     */
+    private boolean isCodeValid(int code) {
+        String codeString = String.valueOf(code);
+        // Ψάχνουμε από τη γραμμή 1 (μετά την κεφαλίδα)
+        for (int i = 1; i < article2Data.length; i++) {
+            String[] row = article2Data[i];
+            // Ελέγχουμε αν ο κωδικός της γραμμής είναι ίσος με τον κωδικό
+            if (row.length > 0 && row[0].trim().equals(codeString)) {
+                return true; // Ο κωδικός βρέθηκε!
             }
         }
-        return null;
+        return false; // Ο κωδικός δεν βρέθηκε
     }
     
-    public Double findDimosiesSynolo(String kodikosForea) {
-        for (DimosiesEpendiseis dimosies : dimosiesEpendiseisTable) {
-            if (dimosies.kodikosForea.equals(kodikosForea)) {
-                return dimosies.synolo;
-            }
-        }
-        return null;
-    }
-    
-    public String findOnomaForea(String kodikosForea) {
-        for (TaktikosProupologismos taktikos : taktikosProupologismosTable) {
-            if (taktikos.kodikosForea.equals(kodikosForea)) {
-                return taktikos.onomaForea;
-            }
+    /**
+     * Εμφανίζει τον πίνακα με τον Αναλυτικό Τακτικό Προϋπολογισμό 
+     * του επιλεγμένου φορέα.
+     */
+    public void displayDetailedBudget() {
+        // Ελέγχουμε αν έχει φορτωθεί και αν έχει αρκετές γραμμές (τουλάχιστον 5)
+        if (detailedBudget.length < 5) {
+            System.out.println("Δεν βρέθηκαν αναλυτικά δεδομένα για τον φορέα " 
+                               + selectedEntityCode + ". Ελέγξτε αν το " 
+                               + selectedEntityCode + ".csv υπάρχει.");
+            return;
         }
         
-        for (DimosiesEpendiseis dimosies : dimosiesEpendiseisTable) {
-            if (dimosies.kodikosForea.equals(kodikosForea)) {
-                return dimosies.onomaForea;
+        System.out.println("\n--------------------- ΑΝΑΛΥΤΙΚΟΣ ΠΡΟΫΠΟΛΟΓΙΣΜΟΣ ---------------------");
+        // Εκτύπωση των 3 γραμμών metadata (π.χ. Όνομα Φορέα, Έτος, Κωδικός)
+        // Χρησιμοποιούμε replace για να αφαιρέσουμε τα εισαγωγικά ("")
+        System.out.println(detailedBudget[0][0].replace("\"", ""));
+        System.out.println(detailedBudget[1][0].replace("\"", ""));
+        System.out.println(detailedBudget[2][0].replace("\"", ""));
+        
+        System.out.println("--------------------------------------------------------------------------");
+        
+        // Εκτύπωση της κεφαλίδας (γραμμή 3)
+        String[] header = detailedBudget[3];
+        String formatHeader = "%-15s | %-50s | %-20s\n";
+        System.out.printf(formatHeader, 
+                          header[0].replace("\"", ""), 
+                          header[1].replace("\"", ""), 
+                          header[2].replace("\"", ""));
+
+        System.out.println("--------------------------------------------------------------------------");
+
+        // Εκτύπωση των δεδομένων (από γραμμή 4)
+        String formatData = "%-15s | %-50s | %-20s\n";
+        for (int i = 4; i < detailedBudget.length; i++) {
+            String[] row = detailedBudget[i];
+            if (row.length >= 3) {
+                 System.out.printf(formatData, 
+                                   row[0], 
+                                   row[1].replace("\"", ""), 
+                                   row[2]);
             }
         }
-        
-        return null;
-    }
-    
-    public boolean isValidKodikos(String kodikosForea) {
-        return findOnomaForea(kodikosForea) != null;
+        System.out.println("--------------------------------------------------------------------------");
     }
 }
