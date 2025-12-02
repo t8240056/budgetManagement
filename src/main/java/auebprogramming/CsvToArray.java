@@ -22,15 +22,17 @@ public final class CsvToArray {
 
     /**
      * Loads a CSV file from the classpath into a two-dimensional String array.
+     * 
      * @param filename The name of the CSV file (e.g., "data.csv").
-     * @return A String[][] array containing the CSV data, or an empty array on error.
+     * @return A String[][] array containing the CSV data, or an empty array on
+     *         error.
      */
     public static String[][] loadCsvToArray(final String filename) {
         final List<String[]> dataList = new ArrayList<>();
 
         // Use getResourceAsStream to read from the Classpath (e.g., src/main/resources)
         try (InputStream input = CsvToArray.class.getClassLoader()
-            .getResourceAsStream(filename)) {
+                .getResourceAsStream(filename)) {
             if (input == null) {
                 System.err.println("Error: File not found in classpath (" + filename + ")");
                 return new String[0][0];
@@ -38,19 +40,19 @@ public final class CsvToArray {
 
             // Use StandardCharsets.UTF_8 for correct reading of Greek characters
             final BufferedReader br = new BufferedReader(
-                new InputStreamReader(input, StandardCharsets.UTF_8));
+                    new InputStreamReader(input, StandardCharsets.UTF_8));
             String line;
 
             while ((line = br.readLine()) != null) {
                 // Splitting by comma, based on your restrictions.
                 final String[] rawParts = line.split(",");
                 final String[] trimmedParts = new String[rawParts.length];
-                
+
                 // Trimming each element from surrounding whitespace.
                 for (int i = 0; i < rawParts.length; i++) {
                     trimmedParts[i] = rawParts[i].trim();
                 }
-                
+
                 dataList.add(trimmedParts);
             }
 

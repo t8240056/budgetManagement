@@ -1,4 +1,5 @@
 package auebprogramming;
+
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -21,21 +22,16 @@ public class MenuPanel extends JPanel {
 
         final JLabel titleLabel = new JLabel(
                 "Επιλέξτε λειτουργία παρακαλώ",
-                SwingConstants.CENTER
-        );
+                SwingConstants.CENTER);
         add(titleLabel);
 
-        final JRadioButton viewBudgetButton =
-                new JRadioButton("1. Προβολή προϋπολογισμού");
+        final JRadioButton viewBudgetButton = new JRadioButton("1. Προβολή προϋπολογισμού");
 
-        final JRadioButton insertChangeButton =
-                new JRadioButton("2. Εισαγωγή αλλαγής");
+        final JRadioButton insertChangeButton = new JRadioButton("2. Εισαγωγή αλλαγής");
 
-        final JRadioButton viewChangesButton =
-                new JRadioButton("3. Εμφάνιση αλλαγών");
+        final JRadioButton viewChangesButton = new JRadioButton("3. Εμφάνιση αλλαγών");
 
-        final JRadioButton exitButton =
-                new JRadioButton("4. Έξοδος");
+        final JRadioButton exitButton = new JRadioButton("4. Έξοδος");
 
         final ButtonGroup group = new ButtonGroup();
         group.add(viewBudgetButton);

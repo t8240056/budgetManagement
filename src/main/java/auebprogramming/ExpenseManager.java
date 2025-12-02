@@ -3,28 +3,29 @@ package auebprogramming;
 import java.util.Locale;
 
 /**
- * ExpenseManager loads expense data from CSV files and provides methods 
+ * ExpenseManager loads expense data from CSV files and provides methods
  * for targeted display and data querying by code.
  */
 public final class ExpenseManager {
-    
+
     // Constants for data position in the arrays
     private static final int CATEGORY_CODE_COLUMN = 1;
     private static final int CATEGORY_DESCRIPTION_COLUMN = 2;
-    private static final int CATEGORY_STATE_BUDGET_COLUMN = 3; 
+    private static final int CATEGORY_STATE_BUDGET_COLUMN = 3;
 
     // Array for category data loaded from CSV
     private final String[][] categoriesData;
-    
+
     /**
      * Constructor. Loads data from the expense categories CSV file.
+     * 
      * @param categoriesFile The filename of the categories CSV.
      */
     public ExpenseManager(final String categoriesFile) {
         // Use CsvToArray to load data from the classpath
         this.categoriesData = CsvToArray.loadCsvToArray(categoriesFile);
     }
-    
+
     // ---------------------------
     // PUBLIC DISPLAY METHODS
     // ---------------------------
@@ -34,7 +35,7 @@ public final class ExpenseManager {
      */
     public void showCategories() {
         // Αλλαγή από "CODE\tEXPENSE NAME" σε Ελληνικά
-        System.out.println("ΚΩΔΙΚΟΣ\tΟΝΟΜΑ ΔΑΠΑΝΗΣ"); 
+        System.out.println("ΚΩΔΙΚΟΣ\tΟΝΟΜΑ ΔΑΠΑΝΗΣ");
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
             final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
@@ -44,7 +45,9 @@ public final class ExpenseManager {
     }
 
     /**
-     * Display details for one or more expense codes (State Budget, Regular, Investment).
+     * Display details for one or more expense codes (State Budget, Regular,
+     * Investment).
+     * 
      * @param codes One or more expense codes (e.g., "21", "23").
      */
     public void showExpenseDetails(final String... codes) {
@@ -54,16 +57,16 @@ public final class ExpenseManager {
             if (index != -1) {
                 // Use getAmountsForRow to safely extract the values
                 final long[] amounts = getAmountsForRow(index);
-                
+
                 final String name = categoriesData[index][CATEGORY_DESCRIPTION_COLUMN];
-                
+
                 System.out.println("\n==============================");
                 // Αλλαγή από "CODE: " σε "ΚΩΔΙΚΟΣ: "
                 System.out.println("ΚΩΔΙΚΟΣ: " + categoriesData[index][CATEGORY_CODE_COLUMN]);
                 // Αλλαγή από "NAME: " σε "ΟΝΟΜΑ: "
                 System.out.println("ΟΝΟΜΑ: " + name);
                 System.out.println("------------------------------");
-                
+
                 // Αλλαγή των labels State, Regular, Investment σε Ελληνικά
                 System.out.printf(Locale.GERMAN, "Κρατικός Προϋπολογισμός: %,d €%n", amounts[0]);
                 System.out.printf(Locale.GERMAN, "Τακτικός Προϋπολογισμός : %,d €%n", amounts[1]);
@@ -77,20 +80,19 @@ public final class ExpenseManager {
         }
     }
 
-
     /**
-     * Display all expense categories with their code, name, and State Budget amount.
+     * Display all expense categories with their code, name, and State Budget
+     * amount.
      */
     public void showExpenses() {
         long totalStateBudget = 0;
 
         // Αλλαγή από "1. EXPENSES" σε Ελληνικά
-        System.out.println("1. ΕΞΟΔΑ"); 
+        System.out.println("1. ΕΞΟΔΑ");
         System.out.println();
         // Αλλαγή από "CODE.", "DESCRIPTION", "AMOUNT (EUR)" σε Ελληνικά
         System.out.printf("%-5s %-60s %s%n", "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("----------------------------------------------------------------------------------");
-
 
         // Print each row in the requested format
         for (int i = 1; i < categoriesData.length; i++) {
@@ -104,8 +106,7 @@ public final class ExpenseManager {
             System.out.printf(Locale.GERMAN, "%-5s %-60s %,15d%n",
                     code + ".",
                     name,
-                    amount
-            );
+                    amount);
         }
 
         System.out.println("----------------------------------------------------------------------------------");
@@ -113,13 +114,15 @@ public final class ExpenseManager {
         System.out.printf(Locale.GERMAN, "Σύνολο: %,d Ευρώ%n", totalStateBudget);
         System.out.println();
     }
-    
+
     // ---------------------------
-    // PRIVATE HELPER METHODS (Δεν έχουν εμφανιζόμενο κείμενο, οπότε παραμένουν ως έχουν)
+    // PRIVATE HELPER METHODS (Δεν έχουν εμφανιζόμενο κείμενο, οπότε παραμένουν ως
+    // έχουν)
     // ---------------------------
-    
+
     /**
      * Finds the row index in the categoriesData array by expense code.
+     * 
      * @param code The expense code to search for.
      * @return The row index, or -1 if not found.
      */
@@ -132,10 +135,11 @@ public final class ExpenseManager {
         }
         return -1;
     }
-    
+
     /**
      * Extracts and calculates the three budget amounts for a given row index.
      * Handles the special case of Code 29 logic.
+     * 
      * @param rowIndex The index of the row to process.
      * @return A long array: [State Budget, Regular Budget, Investment Budget].
      */
@@ -143,16 +147,16 @@ public final class ExpenseManager {
         long stateBudget;
         long regularBudget;
         long investmentBudget;
-        
+
         final String code = categoriesData[rowIndex][CATEGORY_CODE_COLUMN];
-        
+
         // Logic for the special code 29 (Appropriations under distribution)
         if ("29".equals(code)) {
             // Use the hardcoded values (since they are not in the CSV structure)
             stateBudget = 17283053000L;
             regularBudget = 3183053000L;
             investmentBudget = 14100000000L;
-            
+
         } else {
             // Normal logic: Regular = State Budget (and Investments = 0) for most expenses.
             try {
@@ -166,7 +170,7 @@ public final class ExpenseManager {
                 investmentBudget = 0;
             }
         }
-        
-        return new long[]{stateBudget, regularBudget, investmentBudget};
+
+        return new long[] { stateBudget, regularBudget, investmentBudget };
     }
 }

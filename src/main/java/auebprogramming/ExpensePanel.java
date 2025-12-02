@@ -96,4 +96,4 @@ public class ExpensePanel extends JPanel {
     public JTable getExpenseTable() {
         return expenseTable;
     }
-} 
+}

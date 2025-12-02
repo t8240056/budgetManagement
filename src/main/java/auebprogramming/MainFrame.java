@@ -1,4 +1,5 @@
-package  auebprogramming;
+package auebprogramming;
+
 import java.awt.CardLayout;
 
 import javax.swing.JFrame;
@@ -23,7 +24,7 @@ public class MainFrame extends JFrame {
         cardPanel.add(new ExpensePanel(this), "expensePanel");
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
-         cardPanel.add(new BudgetPanel(this), "budget");
+        cardPanel.add(new BudgetPanel(this), "budget");
         // cardPanel.add(new ChangesPanel(this), "changes");
 
         add(cardPanel);
