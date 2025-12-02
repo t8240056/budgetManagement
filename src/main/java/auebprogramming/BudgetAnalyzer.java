@@ -22,12 +22,15 @@ public class BudgetAnalyzer {
      */
     public BudgetAnalyzer() {
         // Καλούμε την CsvToArray για να φορτώσει το Άρθρο 2
-        this.article2Data = CsvToArray.loadCsvToArray("budget_ministries.csv");
+        this.article2Data = CsvToArray.loadCsvToArray(
+            "budget_ministries.csv");
 
         if (article2Data.length < 2) {
-            System.out.println("Προειδοποίηση: Το αρχείο budget_ministries.csv δεν φορτώθηκε σωστά.");
+            System.out.println(
+                "Προειδοποίηση: Το αρχείο budget_ministries.csv δεν φορτώθηκε σωστά.");
         } else {
-            System.out.println("Επιτυχής φόρτωση συνοπτικών δεδομένων Άρθρου 2.");
+            System.out.println(
+                "Επιτυχής φόρτωση συνοπτικών δεδομένων Άρθρου 2.");
         }
     }
 
@@ -42,7 +45,8 @@ public class BudgetAnalyzer {
             return;
         }
 
-        System.out.println("\n----------------- ΑΡΘΡΟ 2: ΣΥΝΟΛΙΚΑ ΕΞΟΔΑ ΦΟΡΕΩΝ -----------------");
+        System.out.println(
+            "\n----------------- ΑΡΘΡΟ 2: ΣΥΝΟΛΙΚΑ ΕΞΟΔΑ ΦΟΡΕΩΝ ----------");
 
         // Εκτύπωση της κεφαλίδας (γραμμή 0)
         String[] header = article2Data[0];
@@ -50,7 +54,7 @@ public class BudgetAnalyzer {
         System.out.printf(formatString, header[0], header[1], header[2], header[3]);
 
         System.out.println(
-                "---------------------------------------------------------------------------------------------------------");
+                "---------------------------------------------------------");
 
         // Εκτύπωση των δεδομένων (από γραμμή 1)
         for (int i = 1; i < article2Data.length; i++) {
@@ -61,7 +65,7 @@ public class BudgetAnalyzer {
             }
         }
         System.out.println(
-                "---------------------------------------------------------------------------------------------------------");
+                "--------------------------------------------------");
     }
 
     /**
@@ -76,7 +80,8 @@ public class BudgetAnalyzer {
         // 1. Ελέγχουμε αν ο κωδικός είναι έγκυρος
         if (isCodeValid(code)) {
 
-            System.out.println("\n--- Φόρτωση αναλυτικών δεδομένων για τον κωδικό " + code + " ---");
+            System.out.println(
+                "\n--- Φόρτωση αναλυτικών δεδομένων για τον κωδικό " + code + " ---");
 
             // 2. Η Λογική Αντιστοίχισης: Ο κωδικός γίνεται όνομα αρχείου (π.χ. 1032.csv)
             String filename = code + ".csv";
