@@ -22,7 +22,7 @@ public final class CsvToArray {
 
     /**
      * Loads a CSV file from the classpath into a two-dimensional String array.
-     * 
+     *
      * @param filename The name of the CSV file (e.g., "data.csv").
      * @return A String[][] array containing the CSV data, or an empty array on
      *         error.

@@ -17,34 +17,34 @@ public final class ExpenseDisplay {
     /** The column index for the code in the ministries array. */
     private static final int MINISTRY_CODE_COLUMN = 0;
     /** The column index for the ministry name in the ministries array (Ministry/Agency). */
-    private static final int MINISTRY_NAME_COLUMN = 1; 
+    private static final int MINISTRY_NAME_COLUMN = 1;
     /** The column index for the regular budget in the ministries array. */
     private static final int MINISTRY_REGULAR_COLUMN = 2;
     /** The column index for the investment budget in the ministries array. */
-    private static final int MINISTRY_INVESTMENT_COLUMN = 3; 
+    private static final int MINISTRY_INVESTMENT_COLUMN = 3;
     /** The column index for the total budget (Kratikos) in the ministries array. */
     private static final int MINISTRY_TOTAL_COLUMN = 4;
-    
+
     // Constant for better formatting (increased width)
-    private static final int DISPLAY_COLUMN_WIDTH = 70; 
-    
+    private static final int DISPLAY_COLUMN_WIDTH = 70;
+
     /** The year of the budget data. */
-    private static final int BUDGET_YEAR = 2025; 
-    
+    private static final int BUDGET_YEAR = 2025;
+
     // Specific amounts for category 29
     private static final long AMOUNT_29_KRATIKOS = 17283053000L;
     private static final long AMOUNT_29_TAKTIKOS = 3183053000L;
     private static final long AMOUNT_29_EPENDYSEON = 14100000000L;
 
     /** Internal storage for expense categories data (String[][]). */
-    private final String[][] categoriesData; 
+    private final String[][] categoriesData;
     /** Internal storage for ministry expenses data (String[][]). */
-    private final String[][] ministriesData; 
-    
+    private final String[][] ministriesData;
+
     // ---------------------------
     // CONSTRUCTOR
     // ---------------------------
-    
+
     /**
      * Constructor for ExpenseDisplay. Loads data from the specified CSV files
      * using the CsvToArray utility and stores it in String arrays.
@@ -55,9 +55,9 @@ public final class ExpenseDisplay {
         this.categoriesData = CsvToArray.loadCsvToArray(categoriesFile);
         this.ministriesData = CsvToArray.loadCsvToArray(ministriesFile);
     }
-    
+
     // ---------------------------
-    // DATA MODIFICATION METHOD 
+    // DATA MODIFICATION METHOD
     // ---------------------------
 
     /**
@@ -72,7 +72,7 @@ public final class ExpenseDisplay {
             // The code is in the CATEGORY_CODE_COLUMN
             if (categoriesData[i].length > CATEGORY_CODE_COLUMN
                 && categoriesData[i][CATEGORY_CODE_COLUMN].trim().equals(code)) {
-                
+
                 // Update the amount column (CATEGORY_AMOUNT_COLUMN)
                 if (categoriesData[i].length > CATEGORY_AMOUNT_COLUMN) {
                     // Convert the long value to a String for storage
@@ -94,20 +94,20 @@ public final class ExpenseDisplay {
      */
     public void displayCategories(final String budgetType) {
         long grandTotal = 0;
-        
+
         System.out.println("==================================================");
         System.out.println(">> ΕΞΟΔΑ");
         System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
         System.out.println(">> ΠΙΣΤΩΣΕΙΣ ΚΑΤΑ ΜΕΙΖΟΝΑ ΚΑΤΗΓΟΡΙΑ ΔΑΠΑΝΗΣ - ΕΤΟΥΣ " + BUDGET_YEAR);
         System.out.println("==================================================");
-        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
+        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
             "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ ΔΑΠΑΝΗΣ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
             final String[] row = categoriesData[i];
-            
+
             if (row.length > CATEGORY_AMOUNT_COLUMN) {
                 final String code = row[CATEGORY_CODE_COLUMN];
                 final String description = row[CATEGORY_DESCRIPTION_COLUMN];
@@ -126,7 +126,7 @@ public final class ExpenseDisplay {
                         amountToDisplay = 0;
                     }
                 }
-                
+
                 // Add to the total
                 grandTotal += amountToDisplay;
 
@@ -136,12 +136,12 @@ public final class ExpenseDisplay {
                     String.format(Locale.GERMAN, "%,d", amountToDisplay));
             }
         }
-        
+
         // Display total (Left alignment)
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
-            "", 
-            "**ΣΥΝΟΛΟ**", 
+            "",
+            "**ΣΥΝΟΛΟ**",
             String.format(Locale.GERMAN, "%,d", grandTotal));
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println();
@@ -159,14 +159,14 @@ public final class ExpenseDisplay {
         System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
         System.out.println(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ - ΕΤΟΥΣ " + BUDGET_YEAR);
         System.out.println("==================================================");
-        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
+        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
             "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)");
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
 
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < ministriesData.length; i++) {
             final String[] row = ministriesData[i];
-            
+
             if (row.length > MINISTRY_TOTAL_COLUMN) {
                 final String code = row[MINISTRY_CODE_COLUMN];
                 final String ministry = row[MINISTRY_NAME_COLUMN];
@@ -181,23 +181,23 @@ public final class ExpenseDisplay {
                 }
             }
         }
-        
+
         // Display total (Left alignment)
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
-            "", 
-            "**ΣΥΝΟΛΟ**", 
+            "",
+            "**ΣΥΝΟΛΟ**",
             String.format(Locale.GERMAN, "%,d", grandTotal));
         System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
         System.out.println();
     }
-    
+
     /**
      * Helper method to determine the amount for category 29 based on budget type.
      * @param budgetType The budget type.
      * @return The specific amount.
      */
-    private long getAmountForCategory29(final String budgetType) { 
+    private long getAmountForCategory29(final String budgetType) {
         if ("ΚΡΑΤΙΚΟΣ".equals(budgetType)) {
             return AMOUNT_29_KRATIKOS;
         } else if ("ΤΑΚΤΙΚΟΣ".equals(budgetType)) {
@@ -217,11 +217,11 @@ public final class ExpenseDisplay {
     private long getMinistryAmount(final String[] row, final String budgetType) {
         int columnIndex;
         if ("ΚΡΑΤΙΚΟΣ".equals(budgetType)) {
-            columnIndex = MINISTRY_TOTAL_COLUMN; 
+            columnIndex = MINISTRY_TOTAL_COLUMN;
         } else if ("ΤΑΚΤΙΚΟΣ".equals(budgetType)) {
             columnIndex = MINISTRY_REGULAR_COLUMN;
         } else if ("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ".equals(budgetType)) {
-            columnIndex = MINISTRY_INVESTMENT_COLUMN; 
+            columnIndex = MINISTRY_INVESTMENT_COLUMN;
         } else {
             return 0;
         }
