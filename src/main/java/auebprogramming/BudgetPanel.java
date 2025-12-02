@@ -58,7 +58,7 @@ public class BudgetPanel extends JPanel {
                 if (revenueButton.isSelected()) {
                     frame.switchTo("budgetRevenue");
                 } else if (expenseButton.isSelected()) {
-                    frame.switchTo("budgetExpense");
+                    frame.switchTo("expensePanel");
                 }
             }
         });
