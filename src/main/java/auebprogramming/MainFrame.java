@@ -20,6 +20,7 @@ public class MainFrame extends JFrame {
 
         // Προσθήκη panels
         cardPanel.add(new MenuPanel(this), "menu");
+        cardPanel.add(new ExpensePanel(this), "expensePanel");
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
          cardPanel.add(new BudgetPanel(this), "budget");
