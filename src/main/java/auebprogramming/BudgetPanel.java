@@ -1,4 +1,5 @@
 package auebprogramming;
+
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -10,7 +11,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-public class BudgetPanel extends JPanel {
+public final class BudgetPanel extends JPanel {
 
     private final MainFrame frame;
     private final JRadioButton revenueButton;
@@ -24,7 +25,7 @@ public class BudgetPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
 
         // Τίτλος + RadioButtons:NORTH
-         final JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        final JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
         final JLabel titleLabel = new JLabel("Επιλέξτε τύπο δεδομένων:", JLabel.CENTER);
         topPanel.add(titleLabel);
 
@@ -49,7 +50,7 @@ public class BudgetPanel extends JPanel {
         // Κουμπί Επιστροφής στο Menu
         backButton = new JButton("Επιστροφή στο Menu");
         bottomPanel.add(backButton);
-        add(bottomPanel,BorderLayout.SOUTH);
+        add(bottomPanel, BorderLayout.SOUTH);
 
         // Listener για το κουμπί επιβεβαίωσης
         confirmButton.addActionListener(new ActionListener() {
@@ -63,13 +64,12 @@ public class BudgetPanel extends JPanel {
             }
         });
         // Listener για το κουμπί επιστροφής
-        backButton.addActionListener(new ActionListener(){
+        backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 frame.switchTo("menu");
             }
         });
-
 
     }
 }

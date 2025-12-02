@@ -46,9 +46,9 @@ public class ExpensePanel extends JPanel {
         // 2) Center Panel (Table)
         // ============================
         // Temporary dummy data – replace this when your colleague gives real data
-        final String[] columns = {"Κωδικός", "Περιγραφή", "Ποσό"};
+        final String[] columns = { "Κωδικός", "Περιγραφή", "Ποσό" };
         final Object[][] data = {
-            {"-", "Δεν υπάρχουν δεδομένα ακόμα", "-"}
+                { "-", "Δεν υπάρχουν δεδομένα ακόμα", "-" }
         };
 
         expenseTable = new JTable(data, columns);
@@ -66,10 +66,10 @@ public class ExpensePanel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                frame.switchTo("budget");   // πίσω στο BudgetPanel
+                frame.switchTo("budget"); // πίσω στο BudgetPanel
             }
         });
-         confirmButton.addActionListener(new ActionListener() {
+        confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
 
@@ -80,24 +80,20 @@ public class ExpensePanel extends JPanel {
                 } else {
                     // GUI-friendly μήνυμα
                     JOptionPane.showMessageDialog(
-                        ExpensePanel.this,
-                        "Παρακαλώ επιλέξτε τύπο προβολής.",
-                        "Σφάλμα",
-                        JOptionPane.WARNING_MESSAGE
-                    );
+                            ExpensePanel.this,
+                            "Παρακαλώ επιλέξτε τύπο προβολής.",
+                            "Σφάλμα",
+                            JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
 
-       
         bottomPanel.add(confirmButton);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    
-
     public JTable getExpenseTable() {
         return expenseTable;
     }
-}
+} 
