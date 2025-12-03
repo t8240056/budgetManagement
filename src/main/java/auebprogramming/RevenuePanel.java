@@ -4,10 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -43,8 +43,8 @@ public class RevenuePanel extends JPanel {
      *
      * @param mainFrame the application's main frame used for switching panels
      */
-    public RevenuePanel(final MainFrame mainFrame) {
-        this.frame = mainFrame;
+    public RevenuePanel(final MainFrame frame) {
+        this.frame = frame;
         setLayout(new BorderLayout());
         initializeTable();
         initializeCenter();
@@ -56,20 +56,25 @@ public class RevenuePanel extends JPanel {
      * Table content will be filled later by collaborators.
      */
     private void initializeTable() {
+        JPanel topPanel = new JPanel(new BorderLayout());
         String[][] emptyData = { {"-", "-"} };
         String[] columnNames = { "Κωδικός", "Ποσό" };
 
         revenueTable = new JTable(emptyData, columnNames);
         JScrollPane scrollPane = new JScrollPane(revenueTable);
-        add(scrollPane, BorderLayout.NORTH);
+        scrollPane.setPreferredSize(new Dimension(400,500)); // πλάτος x ύψος
+        topPanel.add(scrollPane, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
     }
 
     /**
      * Initializes the center area containing code entry controls.
      */
     private void initializeCenter() {
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel centerPanel = new JPanel(new GridLayout(
+            2, 1, 5, 5));
+        centerPanel.setBorder(BorderFactory.createEmptyBorder(
+            10, 10, 10, 10));
 
         openCodeInputButton = new JButton("Εισαγωγή Κωδικού");
         codeField = new JTextField();
@@ -111,21 +116,10 @@ public class RevenuePanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                    // αργότερα θα γίνει switchTo("revenueDetails")
-                    JOptionPane.showMessageDialog(
-                        RevenuePanel.this,
-                        "Κωδικός: " + codeField.getText().trim(),
-                        "Επιβεβαίωση",
-                        JOptionPane.INFORMATION_MESSAGE
-                    );
-                } else {
-                    JOptionPane.showMessageDialog(
-                        RevenuePanel.this,
-                        "Παρακαλώ εισαγάγετε έναν κωδικό.",
-                        "Σφάλμα",
-                        JOptionPane.WARNING_MESSAGE
-                    );
-                }
+                     frame.switchTo("revenueDetails");
+                            } else {
+                                AppException.showError("Πληκτρολογήστε κωδικό ή πατήστε το κουμί επιστροφής");
+                                }
             }
         });
 
