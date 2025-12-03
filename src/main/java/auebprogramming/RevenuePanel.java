@@ -37,7 +37,7 @@ public class RevenuePanel extends JPanel {
     private JButton backButton;
 
     /** Reference to main frame for panel switching. */
-    private MainFrame frame;
+    private final MainFrame frame;
 
     /**
      * Constructs the RevenuePanel.
@@ -117,7 +117,7 @@ public class RevenuePanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                     frame.switchTo("revenueDetails");
+                     frame.switchTo("revenue2panel");
                             } else {
                                 AppException.showError("Πληκτρολογήστε κωδικό ή πατήστε το κουμί επιστροφής");
                                 }
