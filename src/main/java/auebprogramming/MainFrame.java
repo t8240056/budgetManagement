@@ -7,10 +7,10 @@ import javax.swing.JPanel;
 
 public class MainFrame extends JFrame {
 
-    private CardLayout cardLayout;
-    private JPanel cardPanel;
-    private RevenuePanel revenuePanel;
-    private Revenue2Panel revenue2Panel;
+    private final  CardLayout cardLayout;
+    private final JPanel cardPanel;
+    private final RevenuePanel revenuePanel;
+    private final Revenue2Panel revenue2Panel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -28,6 +28,7 @@ public class MainFrame extends JFrame {
         cardPanel.add(revenuePanel, "revenuePanel");
         String revcode2 = revenuePanel.getCode2();
         revenue2Panel= new Revenue2Panel(this, revcode2);
+        cardPanel.add(revenue2Panel, "revenue2panel");
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
