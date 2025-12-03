@@ -122,7 +122,7 @@ public class Revenue2Panel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 if (codeField.isVisible() &&
                 !codeField.getText().trim().isEmpty()) {
-                    frame.switchTo("revenue3details");
+                    frame.switchTo("revenue3panel");
                 } else {
                     AppException.showError(
                         "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
@@ -141,7 +141,7 @@ public class Revenue2Panel extends JPanel {
      *
      * @return the entered code
      */
-    public String getCode() {
+    public String getCode3() {
         return codeField.getText().trim();
     }
 }
