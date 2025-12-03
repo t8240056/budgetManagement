@@ -36,10 +36,10 @@ public class Revenue2Panel extends JPanel {
     private JButton backButton;
 
     /** Reference to main frame for panel switching. */
-    private MainFrame frame;
+    private final MainFrame frame;
 
     /** The two-digit code selected from the previous panel. */
-    private String parentCode;
+    private final String parentCode;
 
     /**
      * Constructs the Revenue2Panel.
@@ -61,15 +61,15 @@ public class Revenue2Panel extends JPanel {
      * Table content will be filled later by collaborators.
      */
     private void initializeTable() {
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         String[][] emptyData = { {"-", "-"} };
         String[] columnNames = { "Κωδικός", "Ποσό" };
 
         revenueTable = new JTable(emptyData, columnNames);
         JScrollPane scrollPane = new JScrollPane(revenueTable);
         scrollPane.setPreferredSize(new Dimension(400, 500));
-        topPanel.add(scrollPane);
-        add(topPanel, BorderLayout.NORTH);
+        centerPanel.add(scrollPane);
+        add(centerPanel, BorderLayout.CENTER);
     }
 
     /**
@@ -77,8 +77,8 @@ public class Revenue2Panel extends JPanel {
      * Includes button for enabling input and hidden text field.
      */
     private void initializeCenter() {
-        JPanel centerPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         openCodeInputButton = new JButton("Εισάγετε 3ψήφιο κωδικό προς ανάλυση");
         codeField = new JTextField();
@@ -88,15 +88,15 @@ public class Revenue2Panel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 codeField.setVisible(true);
-                centerPanel.revalidate();
-                centerPanel.repaint();
+                topPanel.revalidate();
+                topPanel.repaint();
             }
         });
 
-        centerPanel.add(openCodeInputButton);
-        centerPanel.add(codeField);
+        topPanel.add(openCodeInputButton);
+        topPanel.add(codeField);
 
-        add(centerPanel, BorderLayout.CENTER);
+        add(topPanel, BorderLayout.NORTH);
     }
 
     /**
@@ -112,7 +112,7 @@ public class Revenue2Panel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                frame.switchTo("revenue");
+                frame.switchTo("revenuePanel");
             }
         });
 
