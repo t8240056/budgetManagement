@@ -85,24 +85,27 @@ public final class ExpenseDisplay {
     }
 
     // ---------------------------
-    // DISPLAY METHODS
+    // GUI REPORT METHODS (Replacing System.out)
     // ---------------------------
 
     /**
-     * Prints the expense categories list in the required format.
+     * Generates the expense categories report in the required format as a single String.
      * @param budgetType The type of budget (e.g., ΚΡΑΤΙΚΟΣ).
+     * @return The formatted report content as a String.
      */
-    public void displayCategories(final String budgetType) {
+    public String getCategoriesReport(final String budgetType) { 
+        final StringBuilder sb = new StringBuilder(); 
         long grandTotal = 0;
         
-        System.out.println("==================================================");
-        System.out.println(">> ΕΞΟΔΑ");
-        System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
-        System.out.println(">> ΠΙΣΤΩΣΕΙΣ ΚΑΤΑ ΜΕΙΖΟΝΑ ΚΑΤΗΓΟΡΙΑ ΔΑΠΑΝΗΣ - ΕΤΟΥΣ " + BUDGET_YEAR);
-        System.out.println("==================================================");
-        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
-            "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ ΔΑΠΑΝΗΣ", "ΠΟΣΟ (ΕΥΡΩ)");
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        // Append Header
+        sb.append("==================================================").append(System.lineSeparator());
+        sb.append(">> ΕΞΟΔΑ").append(System.lineSeparator());
+        sb.append(">> ").append(budgetType).append(" ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ").append(System.lineSeparator());
+        sb.append(">> ΠΙΣΤΩΣΕΙΣ ΚΑΤΑ ΜΕΙΖΟΝΑ ΚΑΤΗΓΟΡΙΑ ΔΑΠΑΝΗΣ - ΕΤΟΥΣ ").append(BUDGET_YEAR).append(System.lineSeparator());
+        sb.append("==================================================").append(System.lineSeparator());
+        sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
+            "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ ΔΑΠΑΝΗΣ", "ΠΟΣΟ (ΕΥΡΩ)"));
+        sb.append("-------------------------------------------------------------------------------------------------------------------------------------").append(System.lineSeparator());
 
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
@@ -130,38 +133,42 @@ public final class ExpenseDisplay {
                 // Add to the total
                 grandTotal += amountToDisplay;
 
-                System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
+                sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
                     code,
                     description,
-                    String.format(Locale.GERMAN, "%,d", amountToDisplay));
+                    String.format(Locale.GERMAN, "%,d", amountToDisplay)));
             }
         }
         
-        // Display total (Left alignment)
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
+        // Append total (Left alignment)
+        sb.append("-------------------------------------------------------------------------------------------------------------------------------------").append(System.lineSeparator());
+        sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
             "", 
             "**ΣΥΝΟΛΟ**", 
-            String.format(Locale.GERMAN, "%,d", grandTotal));
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println();
+            String.format(Locale.GERMAN, "%,d", grandTotal)));
+        sb.append("-------------------------------------------------------------------------------------------------------------------------------------").append(System.lineSeparator());
+        
+        return sb.toString();
     }
 
     /**
-     * Prints the ministry expenses list in the required format.
+     * Generates the ministry expenses report in the required format as a single String.
      * @param budgetType The type of budget (e.g., ΚΡΑΤΙΚΟΣ).
+     * @return The formatted report content as a String.
      */
-    public void displayMinistries(final String budgetType) {
+    public String getMinistriesReport(final String budgetType) {
+        final StringBuilder sb = new StringBuilder();
         long grandTotal = 0;
 
-        System.out.println("==================================================");
-        System.out.println(">> ΕΞΟΔΑ");
-        System.out.println(">> " + budgetType + " ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ");
-        System.out.println(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ - ΕΤΟΥΣ " + BUDGET_YEAR);
-        System.out.println("==================================================");
-        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
-            "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)");
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
+        // Append Header
+        sb.append("==================================================").append(System.lineSeparator());
+        sb.append(">> ΕΞΟΔΑ").append(System.lineSeparator());
+        sb.append(">> ").append(budgetType).append(" ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ").append(System.lineSeparator());
+        sb.append(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ - ΕΤΟΥΣ ").append(BUDGET_YEAR).append(System.lineSeparator());
+        sb.append("==================================================").append(System.lineSeparator());
+        sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n", 
+            "ΚΩΔ.", "ΦΟΡΕΑΣ", "ΠΟΣΟ (ΕΥΡΩ)"));
+        sb.append("-------------------------------------------------------------------------------------------------------------------------------------").append(System.lineSeparator());
 
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < ministriesData.length; i++) {
@@ -174,22 +181,25 @@ public final class ExpenseDisplay {
 
                 if (displayAmount > 0) {
                     grandTotal += displayAmount;
-                    System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
+                    
+                    // Append row output to StringBuilder
+                    sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
                         code,
                         ministry,
-                        String.format(Locale.GERMAN, "%,d", displayAmount));
+                        String.format(Locale.GERMAN, "%,d", displayAmount)));
                 }
             }
         }
         
-        // Display total (Left alignment)
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.printf("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
+        // Append total (Left alignment)
+        sb.append("-------------------------------------------------------------------------------------------------------------------------------------").append(System.lineSeparator());
+        sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
             "", 
             "**ΣΥΝΟΛΟ**", 
-            String.format(Locale.GERMAN, "%,d", grandTotal));
-        System.out.println("-------------------------------------------------------------------------------------------------------------------------------------");
-        System.out.println();
+            String.format(Locale.GERMAN, "%,d", grandTotal)));
+        sb.append("-------------------------------------------------------------------------------------------------------------------------------------").append(System.lineSeparator());
+        
+        return sb.toString();
     }
     
     /**
