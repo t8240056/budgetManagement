@@ -1,10 +1,11 @@
 package auebprogramming;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.Dimension;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -56,15 +57,15 @@ public class RevenuePanel extends JPanel {
      * Table content will be filled later by collaborators.
      */
     private void initializeTable() {
-        JPanel topPanel = new JPanel(new BorderLayout());
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         String[][] emptyData = { {"-", "-"} };
         String[] columnNames = { "Κωδικός", "Ποσό" };
 
         revenueTable = new JTable(emptyData, columnNames);
         JScrollPane scrollPane = new JScrollPane(revenueTable);
         scrollPane.setPreferredSize(new Dimension(400,500)); // πλάτος x ύψος
-        topPanel.add(scrollPane, BorderLayout.CENTER);
-        add(topPanel, BorderLayout.NORTH);
+        topPanel.add(scrollPane);
+        add(topPanel, BorderLayout.CENTER);
     }
 
     /**
@@ -76,7 +77,7 @@ public class RevenuePanel extends JPanel {
         centerPanel.setBorder(BorderFactory.createEmptyBorder(
             10, 10, 10, 10));
 
-        openCodeInputButton = new JButton("Εισαγωγή Κωδικού");
+        openCodeInputButton = new JButton("Εισάγετε Κωδικό προς περαιτέρω ανάλυση");
         codeField = new JTextField();
         codeField.setVisible(false);
 
@@ -92,7 +93,7 @@ public class RevenuePanel extends JPanel {
         centerPanel.add(openCodeInputButton);
         centerPanel.add(codeField);
 
-        add(centerPanel, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.NORTH);
     }
 
     /**
@@ -123,8 +124,11 @@ public class RevenuePanel extends JPanel {
             }
         });
 
-        bottomPanel.add(backButton);
         bottomPanel.add(confirmButton);
+        bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
+    }
+    public  String getCode2() {
+        return codeField.getText().trim();
     }
 }
