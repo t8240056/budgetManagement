@@ -76,7 +76,8 @@ public class Revenue3Panel extends JPanel {
         JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-        openCodeInputButton = new JButton("Εισάγετε 5ψήφιο κωδικό προς ανάλυση");
+        openCodeInputButton = new JButton(
+            "Εισάγετε 5ψήφιο κωδικό προς ανάλυση");
         codeField = new JTextField();
         codeField.setVisible(false);
 
@@ -115,10 +116,12 @@ public class Revenue3Panel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
+                if
+                (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
                     frame.switchTo("revenue4details");
                 } else {
-                    AppException.showError("Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
+                    AppException.showError(
+                        "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
                 }
             }
         });
