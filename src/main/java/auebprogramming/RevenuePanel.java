@@ -77,7 +77,7 @@ public class RevenuePanel extends JPanel {
         centerPanel.setBorder(BorderFactory.createEmptyBorder(
             10, 10, 10, 10));
 
-        openCodeInputButton = new JButton("Εισάγετε Κωδικό προς περαιτέρω ανάλυση");
+        openCodeInputButton = new JButton("Εισάγετε 2ψηφίο κωδικό προς περαιτέρω ανάλυση");
         codeField = new JTextField();
         codeField.setVisible(false);
 
