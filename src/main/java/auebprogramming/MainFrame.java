@@ -11,6 +11,7 @@ public class MainFrame extends JFrame {
     private final JPanel cardPanel;
     private final RevenuePanel revenuePanel;
     private final Revenue2Panel revenue2Panel;
+    private final Revenue3Panel revenue3Panel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -29,6 +30,9 @@ public class MainFrame extends JFrame {
         String revcode2 = revenuePanel.getCode2();
         revenue2Panel= new Revenue2Panel(this, revcode2);
         cardPanel.add(revenue2Panel, "revenue2panel");
+        String revcode3 = revenue2Panel.getCode3();
+        revenue3Panel = new Revenue3Panel(this, revcode3);
+        cardPanel.add(revenue3Panel, "revenue3panel");
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
