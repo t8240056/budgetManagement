@@ -5,13 +5,14 @@ import java.awt.CardLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-public class MainFrame extends JFrame {
+public final class MainFrame extends JFrame {
 
     private final  CardLayout cardLayout;
     private final JPanel cardPanel;
     private final RevenuePanel revenuePanel;
     private final Revenue2Panel revenue2Panel;
     private final Revenue3Panel revenue3Panel;
+    private final Revenue4Panel revenue4Panel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -33,6 +34,9 @@ public class MainFrame extends JFrame {
         String revcode3 = revenue2Panel.getCode3();
         revenue3Panel = new Revenue3Panel(this, revcode3);
         cardPanel.add(revenue3Panel, "revenue3panel");
+        String revcode4 = revenue3Panel.getCode();
+        revenue4Panel = new Revenue4Panel(this, revcode4);
+        cardPanel.add(revenue4Panel,"revenue4panel");
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
@@ -47,12 +51,4 @@ public class MainFrame extends JFrame {
     public void switchTo(String panelName) {
         cardLayout.show(cardPanel, panelName);
     }
-    public String getrevcode2() {
-        return revenuePanel.getCode2();
-    }
-    public String getrevcode3() {
-        return revenue2Panel.getCode3();
-    }
-
-
 }
