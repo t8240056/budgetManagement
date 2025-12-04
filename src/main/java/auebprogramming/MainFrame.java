@@ -47,6 +47,12 @@ public class MainFrame extends JFrame {
     public void switchTo(String panelName) {
         cardLayout.show(cardPanel, panelName);
     }
+    public String getcode() {
+        return revenuePanel.getCode2();
+    }
+    public String getcode2() {
+        return revenue2Panel.getCode3();
+    }
 
 
 }
