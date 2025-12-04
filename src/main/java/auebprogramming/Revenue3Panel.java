@@ -16,7 +16,7 @@ import javax.swing.JTextField;
  * Panel responsible for displaying third-level revenue analysis
  * based on a previously selected three-digit revenue code.
  */
-public class Revenue3Panel extends JPanel {
+public final  class Revenue3Panel extends JPanel {
 
     /** Table displaying detailed revenue data (currently placeholder). */
     private JTable revenueTable;
@@ -60,7 +60,7 @@ public class Revenue3Panel extends JPanel {
     private void initializeTablePanel() {
         JPanel topPanel = new JPanel(new BorderLayout());
         RevenueDataManager revdata = new RevenueDataManager();
-        String[][] emptyData = revdata.get5DigitCodes(frame.getrevcode3());
+        String[][] emptyData = revdata.get5DigitCodes(parentCode);
         String[] columnNames = { "Κωδικός", "Κατηγορία", "Ποσό" };
 
         revenueTable = new JTable(emptyData, columnNames);
@@ -119,7 +119,7 @@ public class Revenue3Panel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 if
                 (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                    frame.switchTo("revenue4details");
+                    frame.switchTo("revenue4panel");
                 } else {
                     AppException.showError(
                         "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");

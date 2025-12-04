@@ -18,7 +18,7 @@ import javax.swing.JTextField;
  * Panel responsible for displaying second-level revenue analysis based
  * on a previously selected two-digit revenue code.
  */
-public class Revenue2Panel extends JPanel {
+public final class Revenue2Panel extends JPanel {
 
     /** Table displaying detailed revenue data (currently placeholder). */
     private JTable revenueTable;
@@ -63,7 +63,7 @@ public class Revenue2Panel extends JPanel {
     private void initializeTable() {
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         RevenueDataManager revdata = new RevenueDataManager();
-        String[][] emptyData = revdata.get3DigitCodes(frame.getrevcode2());
+        String[][] emptyData = revdata.get3DigitCodes(parentCode);
         String[] columnNames = { "Κωδικός", "Κατηγορία","Ποσό" };
 
         revenueTable = new JTable(emptyData, columnNames);

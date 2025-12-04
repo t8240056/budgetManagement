@@ -16,7 +16,7 @@ import javax.swing.JTable;
  * based on a previously selected five-digit revenue code.
  * There is no further analysis beyond this level.
  */
-public class Revenue4Panel extends JPanel {
+public final class Revenue4Panel extends JPanel {
 
     /** Table displaying final-level revenue data. */
     private JTable revenueTable;
@@ -54,7 +54,7 @@ public class Revenue4Panel extends JPanel {
         RevenueDataManager revdata = new RevenueDataManager();
 
         // Fetch final-level data (method name can be adjusted to your implementation)
-        String[][] tableData = revdata.get7DigitCodes();
+        String[][] tableData = revdata.get7DigitCodes(parentCode);
         String[] columnNames = { "Κωδικός", "Κατηγορία", "Ποσό" };
 
         revenueTable = new JTable(tableData, columnNames);
