@@ -11,7 +11,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
-public class MenuPanel extends JPanel {
+public final class MenuPanel extends JPanel {
 
     private final MainFrame frame;
 
