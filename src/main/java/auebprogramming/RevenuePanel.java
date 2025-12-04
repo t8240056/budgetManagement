@@ -42,7 +42,7 @@ public class RevenuePanel extends JPanel {
     /**
      * Constructs the RevenuePanel.
      *
-     * @param mainFrame the application's main frame used for switching panels
+     * @param frame the application's main frame used for switching panels
      */
     public RevenuePanel(final MainFrame frame) {
         this.frame = frame;
@@ -64,7 +64,7 @@ public class RevenuePanel extends JPanel {
 
         revenueTable = new JTable(Data, columnNames);
         JScrollPane scrollPane = new JScrollPane(revenueTable);
-        scrollPane.setPreferredSize(new Dimension(400,500)); // πλάτος x ύψος
+        scrollPane.setPreferredSize(new Dimension(550,230)); // πλάτος x ύψος
         topPanel.add(scrollPane);
         add(topPanel, BorderLayout.CENTER);
     }
