@@ -42,4 +42,22 @@ public final class RevenueDataManager {
     public String[][] get7DigitCodes(final String prefix) {
         return filterByPrefix(codes7, prefix);
     }
+
+    /**
+     * Filters a 2D array by the prefix of the first column.
+     * 
+     * @param data   The 2D array
+     * @param prefix The prefix to filter by
+     * @return Array containing only rows that start with the prefix
+     */
+    private String[][] filterByPrefix(final String[][] data, final String prefix) {
+        final List<String[]> filtered = new ArrayList<>();
+        for (final String[] row : data) {
+            if (row.length > 0 && row[0].startsWith(prefix)) {
+                filtered.add(row);
+            }
+        }
+        return filtered.toArray(new String[0][]);
+    }
 }
+
