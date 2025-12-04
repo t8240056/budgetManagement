@@ -202,6 +202,41 @@ public final class ExpenseDisplay {
         return sb.toString();
     }
     
+     /**
+     * Generates all six possible expense reports (Categories and Ministries for 
+     * State, Regular, and Investment Budgets) and returns them in a String array.
+     * * The return array is ordered as follows:
+     * [0] Categories Report (KRATIKOS)
+     * [1] Categories Report (TAKTIKOS)
+     * [2] Categories Report (EPENDYSEON)
+     * [3] Ministries Report (KRATIKOS)
+     * [4] Ministries Report (TAKTIKOS)
+     * [5] Ministries Report (EPENDYSEON)
+     * * @return A String array containing the six formatted reports.
+     */
+    public String[] getAllExpenseReports() {
+        
+        // 1. Ορισμός των 3 τύπων Προϋπολογισμού
+        final String kratikos = "ΚΡΑΤΙΚΟΣ";
+        final String taktikos = "ΤΑΚΤΙΚΟΣ";
+        final String ependyseon = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
+
+        // 2. Δημιουργία πίνακα για τα 6 αποτελέσματα
+        final String[] reports = new String[6];
+
+        // 3. ΛΗΨΗ 3 ΑΝΑΦΟΡΩΝ ΑΝΑ ΔΑΠΑΝΗ (Categories)
+        reports[0] = this.getCategoriesReport(kratikos);
+        reports[1] = this.getCategoriesReport(taktikos);
+        reports[2] = this.getCategoriesReport(ependyseon);
+
+        // 4. ΛΗΨΗ 3 ΑΝΑΦΟΡΩΝ ΑΝΑ ΦΟΡΕΑ (Ministries)
+        reports[3] = this.getMinistriesReport(kratikos);
+        reports[4] = this.getMinistriesReport(taktikos);
+        reports[5] = this.getMinistriesReport(ependyseon);
+
+        return reports;
+    }
+
     /**
      * Helper method to determine the amount for category 29 based on budget type.
      * @param budgetType The budget type.
