@@ -64,7 +64,7 @@ public final class RevenuePanel extends JPanel {
 
         revenueTable = new JTable(Data, columnNames);
         JScrollPane scrollPane = new JScrollPane(revenueTable);
-        scrollPane.setPreferredSize(new Dimension(550,230)); // πλάτος x ύψος
+        scrollPane.setPreferredSize(new Dimension(550,230));
         topPanel.add(scrollPane);
         add(topPanel, BorderLayout.CENTER);
     }
@@ -78,7 +78,8 @@ public final class RevenuePanel extends JPanel {
         centerPanel.setBorder(BorderFactory.createEmptyBorder(
             10, 10, 10, 10));
 
-        openCodeInputButton = new JButton("Εισάγετε 2ψηφίο κωδικό προς περαιτέρω ανάλυση");
+        openCodeInputButton = new JButton(
+            "Εισάγετε 2ψηφίο κωδικό προς περαιτέρω ανάλυση");
         codeField = new JTextField();
         codeField.setVisible(false);
 
@@ -101,8 +102,11 @@ public final class RevenuePanel extends JPanel {
      * Initializes the bottom navigation buttons.
      */
     private void initializeBottomButtons() {
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel bottomPanel =
+        new JPanel(new GridLayout(1, 2, 10, 10));
+        bottomPanel.setBorder(
+            BorderFactory.createEmptyBorder(10, 10,
+                 10, 10));
 
         backButton = new JButton("Επιστροφή");
         confirmButton = new JButton("Επιβεβαίωση");
@@ -117,7 +121,8 @@ public final class RevenuePanel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
+                if(codeField.isVisible()
+                     && !codeField.getText().trim().isEmpty()) {
                      frame.switchTo("revenue2panel");
                 } else {
                          AppException.showError(
