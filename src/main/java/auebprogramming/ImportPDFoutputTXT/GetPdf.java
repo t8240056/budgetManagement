@@ -1,4 +1,4 @@
-package auebprogramming;
+package auebprogramming.ImportPDFoutputTXT;
 
 import java.io.IOException;
 import java.io.InputStream;

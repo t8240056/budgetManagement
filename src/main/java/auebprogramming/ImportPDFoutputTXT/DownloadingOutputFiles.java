@@ -1,4 +1,4 @@
-package auebprogramming;
+package auebprogramming.ImportPDFoutputTXT;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

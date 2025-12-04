@@ -1,4 +1,4 @@
-package auebprogramming;
+package auebprogramming.ImportPDFoutputTXT;
 
 // This class is used for getting the links for the year that the user chooses.
 public final class Links {

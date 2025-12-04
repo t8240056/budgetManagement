@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+
+import auebprogramming.ImportPDFoutputTXT.ReadPDF;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
