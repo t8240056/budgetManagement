@@ -10,7 +10,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-
+/**Class for the second appeared panel */
 public final class BudgetPanel extends JPanel {
 
     private final MainFrame frame;
@@ -18,7 +18,7 @@ public final class BudgetPanel extends JPanel {
     private final JRadioButton expenseButton;
     private final JButton confirmButton;
     private final JButton backButton;
-
+//*Constructor for the second appeared class */
     public BudgetPanel(final MainFrame frame) {
         this.frame = frame;
 
@@ -52,7 +52,7 @@ public final class BudgetPanel extends JPanel {
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        // Listener για το κουμπί επιβεβαίωσης
+        //*  Listener για το κουμπί επιβεβαίωσης*/
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -63,7 +63,7 @@ public final class BudgetPanel extends JPanel {
                 }
             }
         });
-        // Listener για το κουμπί επιστροφής
+        //* Listener για το κουμπί επιστροφής*/
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
