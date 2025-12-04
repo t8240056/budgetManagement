@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+//*Class for demonstrating expenses */
 
 public class ExpensePanel extends JPanel {
 
@@ -20,7 +21,7 @@ public class ExpensePanel extends JPanel {
     private final JButton backButton;
     private final JButton confirmButton;
     private final JTable expenseTable;
-
+//*Constructor with a MainFrame parameter */
     public ExpensePanel(MainFrame frame) {
 
         setLayout(new BorderLayout());
@@ -42,11 +43,6 @@ public class ExpensePanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // ============================
-        // 2) Center Panel (Table)
-        // ============================
-        // Temporary dummy data – replace this when your colleague gives real data
-        //ExpenseDisplay expenseDisplay = new ExpenseDisplay(TOOL_TIP_TEXT_KEY, TOOL_TIP_TEXT_KEY)
         final String[] columns = { "Κωδικός", "Περιγραφή", "Ποσό" };
         final Object[][] data = {
                 { "-", "Δεν υπάρχουν δεδομένα ακόμα", "-" }
@@ -60,16 +56,19 @@ public class ExpensePanel extends JPanel {
         // ============================
         // 3) Bottom Panel (Buttons)
         // ============================
-        final JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JPanel bottomPanel =
+        new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         backButton = new JButton("Επιστροφή");
         confirmButton = new JButton("Επιβεβαίωση");
+        //*BackButton's method */
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 frame.switchTo("budget"); // πίσω στο BudgetPanel
             }
         });
+        //*ConfirmButton's method */
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -93,7 +92,7 @@ public class ExpensePanel extends JPanel {
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-
+//*method for getting the JTable */
     public JTable getExpenseTable() {
         return expenseTable;
     }

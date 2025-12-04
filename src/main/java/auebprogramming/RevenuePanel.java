@@ -19,7 +19,7 @@ import javax.swing.JTextField;
  * This panel contains a table, a field for entering a revenue code,
  * and buttons for navigation and confirmation.
  */
-public class RevenuePanel extends JPanel {
+public final class RevenuePanel extends JPanel {
 
     /** Table displaying revenue data (currently placeholder). */
     private JTable revenueTable;
@@ -119,9 +119,10 @@ public class RevenuePanel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
                      frame.switchTo("revenue2panel");
-                            } else {
-                                AppException.showError("Πληκτρολογήστε κωδικό ή πατήστε το κουμί επιστροφής");
-                                }
+                } else {
+                         AppException.showError(
+                "Πληκτρολογήστε κωδικό ή πατήστε το κουμί επιστροφής");
+                        }
             }
         });
 
@@ -129,6 +130,7 @@ public class RevenuePanel extends JPanel {
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
+    //*Method for getting the inputed code */
     public  String getCode2() {
         return codeField.getText().trim();
     }
