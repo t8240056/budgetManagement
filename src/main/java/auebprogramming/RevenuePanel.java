@@ -58,10 +58,11 @@ public class RevenuePanel extends JPanel {
      */
     private void initializeTable() {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        String[][] emptyData = { {"-", "-"} };
-        String[] columnNames = { "Κωδικός", "Ποσό" };
+        RevenueDataManager revdata = new RevenueDataManager();
+        String[][] Data = revdata.get2DigitCodes();
+        String[] columnNames = { "Κωδικός", "Κατηγορία" ,"Ποσό"};
 
-        revenueTable = new JTable(emptyData, columnNames);
+        revenueTable = new JTable(Data, columnNames);
         JScrollPane scrollPane = new JScrollPane(revenueTable);
         scrollPane.setPreferredSize(new Dimension(400,500)); // πλάτος x ύψος
         topPanel.add(scrollPane);
