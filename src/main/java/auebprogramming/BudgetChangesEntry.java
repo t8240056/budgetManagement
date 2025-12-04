@@ -4,9 +4,7 @@ import java.math.BigDecimal;
 import java.util.Objects;
 
 public class BudgetChangesEntry {
-    
-
-    private final String code;          
+        private final String code;          
     private final String description;   
     private BigDecimal amount; 
 
@@ -30,3 +28,38 @@ public class BudgetChangesEntry {
     //Updates the amount of this entry
     public void setAmount(BigDecimal newAmount) {
         this.amount = Objects.requireNonNull(newAmount, "New amount cannot be null");
+   /**
+     * Compares this entry with another object for equality
+     * Two entries are considered equal if they have the same code
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BudgetChangesEntry)) return false;
+        BudgetChangesEntry that = (BudgetChangesEntry) o;
+        return code.equals(that.code);
+    }
+ }
+
+    
+    /**
+     * Returns the hash code of this entry based on its code
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(code);
+    }
+    
+    /**
+     * Returns a string representation of this entry
+     * Format: "CODE: DESCRIPTION - AMOUNT €"
+     */
+    @Override
+    public String toString() {
+        return String.format("%s: %s - %,.2f €", code, description, amount);
+    }
+}
+ 
+
+
+   
