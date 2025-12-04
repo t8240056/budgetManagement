@@ -205,7 +205,7 @@ public final class ExpenseDisplay {
      /**
      * Generates all six possible expense reports (Categories and Ministries for 
      * State, Regular, and Investment Budgets) and returns them in a String array.
-     * * The return array is ordered as follows:
+     * The return array is ordered as follows:
      * [0] Categories Report (KRATIKOS)
      * [1] Categories Report (TAKTIKOS)
      * [2] Categories Report (EPENDYSEON)
@@ -216,20 +216,20 @@ public final class ExpenseDisplay {
      */
     public String[] getAllExpenseReports() {
         
-        // 1. Ορισμός των 3 τύπων Προϋπολογισμού
+        // 1. Define the 3 Budget Types (Used as method arguments)
         final String kratikos = "ΚΡΑΤΙΚΟΣ";
         final String taktikos = "ΤΑΚΤΙΚΟΣ";
         final String ependyseon = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
 
-        // 2. Δημιουργία πίνακα για τα 6 αποτελέσματα
+        // 2. Create the array for the 6 results
         final String[] reports = new String[6];
 
-        // 3. ΛΗΨΗ 3 ΑΝΑΦΟΡΩΝ ΑΝΑ ΔΑΠΑΝΗ (Categories)
+        // 3. Retrieve 3 Expense Category Reports
         reports[0] = this.getCategoriesReport(kratikos);
         reports[1] = this.getCategoriesReport(taktikos);
         reports[2] = this.getCategoriesReport(ependyseon);
 
-        // 4. ΛΗΨΗ 3 ΑΝΑΦΟΡΩΝ ΑΝΑ ΦΟΡΕΑ (Ministries)
+        // 4. Retrieve 3 Ministry Expense Reports
         reports[3] = this.getMinistriesReport(kratikos);
         reports[4] = this.getMinistriesReport(taktikos);
         reports[5] = this.getMinistriesReport(ependyseon);
