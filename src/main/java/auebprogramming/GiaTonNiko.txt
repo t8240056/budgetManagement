@@ -1,24 +1,87 @@
-// Ορισμός αρχείων (όπως κάναμε πάντα)
+Λοιπον μπέμπη Νίκο άκου
+
+---ExpenseDisplay---
+
+* ExpenseDisplay(String, String) -> Constructor -> Φορτώνει τα δεδομένα από τα δύο
+    CSV (categoriesFile, ministriesFile) κατά τη δημιουργία του αντικειμένου, δηλαδή 
+    εδώ σαν ορίσματα θα βάλεις τα 2 csv. Αν έχουμε και τα csv άλλων ετών θα
+    μπορείς να τα βάζεις και αυτά σαν ορίσματα για να εμφανίζει και από άλλες χρονιές.
+
+* getCategoriesReport(String) -> Δημιουργεί Αναφορά ανά Δαπάνη -> Επιστρέφει το πλήρες,
+    μορφοποιημένο String του πίνακα "Πιστώσεις κατά Μείζονα Κατηγορία Δαπάνης" για τον
+    συγκεκριμένο τύπο προϋπολογισμού (π.χ., "ΚΡΑΤΙΚΟΣ")
+
+* getMinistriesReport(String) -> Δημιουργεί Αναφορά ανά Φορέα -> Επιστρέφει το πλήρες,
+    μορφοποιημένο String του πίνακα "Πιστώσεις Συνολικά κατά Φορέα" για τον συγκεκριμένο
+    τύπο προϋπολογισμού
+
+* getAllExpenseReports() -> ΝΕΑ ΜΕΘΟΔΟΣ: Ολα Μαζί -> Εκτελεί τις 6 κλήσεις 
+    (getCategoriesReport και getMinistriesReport για τους 3 τύπους Πρ., είναι αυτό που
+    σου είπα που είναι περίπλοκο και τώρα αντί να καλείς 6 μεθόδους, θα καλείς αυτή)
+    και επιστρέφει έναν πίνακα String[] με τις 6 αναφορές. ΕΣΥ ΑΥΤΟ ΘΑ ΚΑΛΕΙΣ!
+
+* updateCategoryAmount(...) -> Εισαγωγή Αλλαγών ->Ενημερώνει το ποσό ενός συγκεκριμένου
+    κωδικού δαπάνης στον εσωτερικό πίνακα categoriesData. ΔΕΝ ΣΕ ΝΟΙΑΖΕΙ ΑΚΟΜΑ
+
+
+---ExpenseManager---
+
+* ExpenseManager(String) -> Constructor ->	Φορτώνει τα δεδομένα των Κατηγοριών Δαπανών 
+    από το CSV κατά τη δημιουργία του αντικειμένου. Πάλι και εδώ αν του βάλεις csv από
+    άλλες χρονιές (πάντα με την ίδια μορφοποίηση) θα κάνει την ίδια δουλειά και για 
+    αυτά τα έτη.
+
+* getCategoryListReport() -> Λίστα Επιλογών -> Επιστρέφει ένα συνοπτικό String 
+    (Κωδικός / Όνομα) όλων των δαπανών. Ιδανικό για να γεμίσει λίστες επιλογής (ComboBoxes)
+
+* getFullExpensesReport() -> Πλήρης Λίστα Δαπανών -> Επιστρέφει ένα μορφοποιημένο String 
+    με τον Κωδικό, την Περιγραφή και το ποσό του Κρατικού Προϋπολογισμού (μία από τις 6 
+    αναφορές), μαζί με το σύνολο
+
+* getExpenseDetailsReport(String...) -> Λεπτομέρειες Κωδικών -> Επιστρέφει ένα 
+    μορφοποιημένο String με τις πλήρεις λεπτομέρειες (Κρατικός, Τακτικός, Επενδύσεων) για 
+    τους κωδικούς που ζήτησε ο χρήστης
+
+
+ΤΙ ΚΑΝΕΙΣ ΕΣΥ?
+Δημιουργείς τα αρχικά αντικείμενα (μία φορά):
+
 final String categoriesFile = "expense_categories_2025.csv";
 final String ministriesFile = "expense_ministries_2025.csv";
+//Ξαναλέω εδώ βάζεις από όποια χρονιά θες
 
-// 1. Δημιουργία αντικειμένου ExpenseDisplay
+// Δημιουργία αντικειμένων
 final ExpenseDisplay display = new ExpenseDisplay(categoriesFile, ministriesFile);
+final ExpenseManager manager = new ExpenseManager(categoriesFile);
 
-// 2. ΟΡΙΣΜΟΣ ΤΩΝ 3 ΤΥΠΩΝ ΠΡΟΥΠΟΛΟΓΙΣΜΟΥ
-final String KRATIKOS = "ΚΡΑΤΙΚΟΣ";
-final String TAKTIKOS = "ΤΑΚΤΙΚΟΣ";
-final String EPENDYSEON = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
 
-// 3. ΛΗΨΗ 3 ΑΝΑΦΟΡΩΝ ΑΝΑ ΔΑΠΑΝΗ (Categories)
-String reportCategoriesKratikos = display.getCategoriesReport(KRATIKOS);
-String reportCategoriesTaktikos = display.getCategoriesReport(TAKTIKOS);
-String reportCategoriesEpendyseon = display.getCategoriesReport(EPENDYSEON);
 
-// 4. ΛΗΨΗ 3 ΑΝΑΦΟΡΩΝ ΑΝΑ ΦΟΡΕΑ (Ministries)
-String reportMinistriesKratikos = display.getMinistriesReport(KRATIKOS);
-String reportMinistriesTaktikos = display.getMinistriesReport(TAKTIKOS);
-String reportMinistriesEpendyseon = display.getMinistriesReport(EPENDYSEON);
+Για να εμφανίσεις τα έξοδα όλα μαζί καλείς τη μέθοδο getAllExpenseReports():
 
-// Τώρα έχεις 6 Strings. Το Front-End μπορεί να τις φορτώσει κατόπιν επιλογής
-// του χρήστη (π.χ. σε Tabbed Pane ή με radio buttons).
+// 1. Καλούμε τη μέθοδο
+String[] allReports = display.getAllExpenseReports();
+
+// 2. Χρησιμοποιούμε τα Strings (για JTextArea, κτλ.)
+// Αναφορές Δαπάνης
+String report_Cat_Kratikos = allReports[0]; 
+String report_Cat_Taktikos = allReports[1];
+String report_Cat_Ependyseon = allReports[2];
+
+// Αναφορές Φορέων
+String report_Min_Kratikos = allReports[3];
+String report_Min_Taktikos = allReports[4];
+String report_Min_Ependyseon = allReports[5];
+
+// guiComponent1.setText(report_Cat_Kratikos);
+// guiComponent4.setText(report_Min_Kratikos);
+
+
+Αν θες να γεμίσεις μια λίστα επιλογών ή να τραβήξεις λεπτομέρειες:
+
+// Λήψη λίστας κωδικών για drop-down
+String codeList = manager.getCategoryListReport(); 
+// guiSelectionComponent.setText(codeList);
+
+// Λήψη λεπτομερειών για κωδικούς που έδωσε ο χρήστης (π.χ., 44 και 54)
+String details = manager.getExpenseDetailsReport("44", "54");
+// guiDetailsArea.setText(details);
