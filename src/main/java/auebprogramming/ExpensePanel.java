@@ -46,6 +46,7 @@ public class ExpensePanel extends JPanel {
         // 2) Center Panel (Table)
         // ============================
         // Temporary dummy data – replace this when your colleague gives real data
+        //ExpenseDisplay expenseDisplay = new ExpenseDisplay(TOOL_TIP_TEXT_KEY, TOOL_TIP_TEXT_KEY)
         final String[] columns = { "Κωδικός", "Περιγραφή", "Ποσό" };
         final Object[][] data = {
                 { "-", "Δεν υπάρχουν δεδομένα ακόμα", "-" }
