@@ -14,7 +14,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 //*Class for demonstrating expenses */
 
-public class ExpensePanel extends JPanel {
+public final class ExpensePanel extends JPanel {
 
     private final JRadioButton byAgencyButton;
     private final JRadioButton byCategoryButton;
