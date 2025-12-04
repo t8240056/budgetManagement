@@ -22,4 +22,24 @@ public final class RevenueDataManager {
         this.codes5 = CsvToArray.loadCsvToArray("revenue_categories5_2025.csv");
         this.codes7 = CsvToArray.loadCsvToArray("revenue_categories7_2025.csv");
     }
+
+    /** Returns 2-digit codes starting with the given prefix. */
+    public String[][] get2DigitCodes(final String prefix) {
+        return filterByPrefix(codes2, prefix);
+    }
+
+    /** Returns 3-digit codes starting with the given prefix. */
+    public String[][] get3DigitCodes(final String prefix) {
+        return filterByPrefix(codes3, prefix);
+    }
+
+    /** Returns 5-digit codes starting with the given prefix. */
+    public String[][] get5DigitCodes(final String prefix) {
+        return filterByPrefix(codes5, prefix);
+    }
+
+    /** Returns 7-digit codes starting with the given prefix. */
+    public String[][] get7DigitCodes(final String prefix) {
+        return filterByPrefix(codes7, prefix);
+    }
 }
