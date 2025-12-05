@@ -36,29 +36,45 @@ public class BudgetMainTest {
 
     public static void main(String[] args) {
         
-        BudgetAnalyzer analyzer = new BudgetAnalyzer();
+        BudgetAnalyzer analyzer = new BudgetAnalyzer(); 
         Scanner scanner = new Scanner(System.in);
         
-        System.out.println("Εφαρμογή Κρατικού Προϋπολογισμού - ΔΟΚΙΜΗ GUI LOGIC");
+        System.out.println("Εφαρμογή Κρατικού Προϋπολογισμού - ΔΟΚΙΜΗ EXCEPTIONS");
         
         // 1. Δοκιμή: getArticle2Data() - Εμφάνιση του Άρθρου 2
         String[][] article2Data = analyzer.getArticle2Data();
-        // Το Άρθρο 2 έχει την κεφαλίδα στην index 0
         printTable(article2Data, "ΑΠΟΤΕΛΕΣΜΑ: ΣΥΝΟΠΤΙΚΑ (Άρθρο 2)", 0);
         
         // 2. Είσοδος Κωδικού Φορέα
-        System.out.print("\n>>> Εισάγετε κωδικό για αναλυτική προβολή (π.χ. 1032, 4101): ");
+        System.out.print("\n>>> Εισάγετε κωδικό για ανάλυση (π.χ. 1032, 9999, abc): ");
         
-        if (scanner.hasNextInt()) {
-            int code = scanner.nextInt();
+        String input = scanner.nextLine(); // Παίρνουμε όλη τη γραμμή ως String
+        
+        try {
+            // 3. Έλεγχος & Εκτέλεση
+            int code;
             
-            // 3. Δοκιμή: getDetailedBudget(code) - Φόρτωση Ανάλυσης
+            // Έλεγχος για άδεια εισαγωγή
+            if (input == null || input.trim().isEmpty()) {
+                throw new IllegalArgumentException("Παρακαλώ εισάγετε έναν κωδικό φορέα.");
+            }
+            
+            // Μετατροπή σε int (εδώ πιάνεται το NumberFormatException)
+            code = Integer.parseInt(input.trim()); 
+            
+            // Η κλήση της δικής σου μεθόδου. Εδώ μπορεί να πεταχτεί η IllegalArgumentException 
+            // αν ο κωδικός (π.χ. 5000) δεν βρεθεί στο Άρθρο 2.
             String[][] detailedData = analyzer.getDetailedBudget(code);
 
-            // Το Αναλυτικό CSV έχει την κεφαλίδα στην index 3
+            // 4. Εμφάνιση αποτελέσματος (αν η κλήση πετύχει)
             printTable(detailedData, "ΑΠΟΤΕΛΕΣΜΑ: ΑΝΑΛΥΣΗ ΦΟΡΕΑ " + code, 3);
-        } else {
-            System.out.println("Άκυρη είσοδος.");
+            
+        } catch (NumberFormatException e) {
+            // Πιάνουμε το λάθος αν ο χρήστης έβαλε "abc"
+            System.out.println("\n[ΣΦΑΛΜΑ ΕΙΣΟΔΟΥ] Μη έγκυρη εισαγωγή: Παρακαλώ εισάγετε μόνο αριθμούς.");
+        } catch (IllegalArgumentException e) {
+            // Πιάνουμε το λάθος που πέταξε η BudgetAnalyzer (π.χ. 5000)
+            System.out.println("\n[ΣΦΑΛΜΑ ΛΟΓΙΚΗΣ] " + e.getMessage());
         }
         
         scanner.close();
