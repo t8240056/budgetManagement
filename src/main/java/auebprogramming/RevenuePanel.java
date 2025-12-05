@@ -3,6 +3,7 @@ package auebprogramming;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-
 /**
  * Panel responsible for displaying revenue information.
  * This panel contains a table, a field for entering a revenue code,
@@ -63,8 +63,13 @@ public final class RevenuePanel extends JPanel {
         String[] columnNames = { "Κωδικός", "Κατηγορία" ,"Ποσό"};
 
         revenueTable = new JTable(Data, columnNames);
+        revenueTable.setFont(new Font("Arial", Font.PLAIN, 16));
+        revenueTable.setRowHeight(22);  // επιλογή: μεγαλύτερο ύψος γραμμών ώστε να "χωράει" η γραμματοσειρά
+
+    // 🔹 Μεγαλύτερη γραμματοσειρά στην επικεφαλίδα
+        revenueTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
         JScrollPane scrollPane = new JScrollPane(revenueTable);
-        scrollPane.setPreferredSize(new Dimension(550,230));
+        scrollPane.setPreferredSize(new Dimension(550,335));
         topPanel.add(scrollPane);
         add(topPanel, BorderLayout.CENTER);
     }
