@@ -2,6 +2,7 @@ package auebprogramming;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -11,16 +12,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
-//*Class for demonstrating expenses */
+import javax.swing.JTextArea;
 
 public final class ExpensePanel extends JPanel {
 
+    private final JTextArea displayArea;
     private final JRadioButton byAgencyButton;
     private final JRadioButton byCategoryButton;
     private final JButton backButton;
     private final JButton confirmButton;
-    private final JTable expenseTable;
+
 //*Constructor with a MainFrame parameter */
     public ExpensePanel(MainFrame frame) {
 
@@ -43,16 +44,14 @@ public final class ExpensePanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        final String[] columns = { "Κωδικός", "Περιγραφή", "Ποσό" };
-        final Object[][] data = {
-                { "-", "Δεν υπάρχουν δεδομένα ακόμα", "-" }
-        };
-
-        expenseTable = new JTable(data, columns);
-        final JScrollPane scrollPane = new JScrollPane(expenseTable);
-
-        add(scrollPane, BorderLayout.CENTER);
-
+        final JPanel centerPanel = new JPanel(new BorderLayout());
+        displayArea = new JTextArea();
+        displayArea.setEditable(false);
+        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 14)); // για τέλειο alignment
+        JScrollPane scrollPane = new JScrollPane(displayArea);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
+        loadReports();
         // ============================
         // 3) Bottom Panel (Buttons)
         // ============================
@@ -92,8 +91,51 @@ public final class ExpensePanel extends JPanel {
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-//*method for getting the JTable */
-    public JTable getExpenseTable() {
-        return expenseTable;
+    //*This method loads all reports. */
+    private void loadReports() {
+    try {
+        final String categoriesFile = "expense_categories_2025.csv";
+        final String ministriesFile = "expense_ministries_2025.csv";
+
+        ExpenseDisplay display = new ExpenseDisplay(categoriesFile, ministriesFile);
+
+        final String KRATIKOS = "ΚΡΑΤΙΚΟΣ";
+        final String TAKTIKOS = "ΤΑΚΤΙΚΟΣ";
+        final String EPENDYSEON = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
+
+        // 1. Αναφορές ανά δαπάνη
+        String reportCategoriesKratikos = display.getCategoriesReport(KRATIKOS);
+        String reportCategoriesTaktikos = display.getCategoriesReport(TAKTIKOS);
+        String reportCategoriesEpendyseon = display.getCategoriesReport(EPENDYSEON);
+
+        // 2. Αναφορές ανά φορέα
+        String reportMinistriesKratikos = display.getMinistriesReport(KRATIKOS);
+        String reportMinistriesTaktikos = display.getMinistriesReport(TAKTIKOS);
+        String reportMinistriesEpendyseon = display.getMinistriesReport(EPENDYSEON);
+
+        // 3. Εμφάνιση στο JTextArea
+        displayArea.setText("");
+
+        displayArea.append("=== Κατηγορίες - Κρατικός ===\n");
+        displayArea.append(reportCategoriesKratikos + "\n\n");
+
+        displayArea.append("=== Κατηγορίες - Τακτικός ===\n");
+        displayArea.append(reportCategoriesTaktikos + "\n\n");
+
+        displayArea.append("=== Κατηγορίες - ΠΔΕ ===\n");
+        displayArea.append(reportCategoriesEpendyseon + "\n\n");
+
+        displayArea.append("=== Φορείς - Κρατικός ===\n");
+        displayArea.append(reportMinistriesKratikos + "\n\n");
+
+        displayArea.append("=== Φορείς - Τακτικός ===\n");
+        displayArea.append(reportMinistriesTaktikos + "\n\n");
+
+        displayArea.append("=== Φορείς - ΠΔΕ ===\n");
+        displayArea.append(reportMinistriesEpendyseon + "\n\n");
+
+    } catch (Exception e) {
+        displayArea.setText("Σφάλμα κατά την φόρτωση δεδομένων:\n" + e.getMessage());
     }
+}
 }
