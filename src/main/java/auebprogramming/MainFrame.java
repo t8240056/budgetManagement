@@ -13,6 +13,9 @@ public final class MainFrame extends JFrame {
     private final Revenue2Panel revenue2Panel;
     private final Revenue3Panel revenue3Panel;
     private final Revenue4Panel revenue4Panel;
+    private final BudgetAnalyzer budgetAnalyzer;
+    private final ExpenseByAgencySummaryPanel agencySummaryPanel;
+    private final AgencyDetailsPanel agencyDetailsPanel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -23,9 +26,15 @@ public final class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
+        this.budgetAnalyzer = new BudgetAnalyzer();
+        agencySummaryPanel = new ExpenseByAgencySummaryPanel(this, budgetAnalyzer);
+        agencyDetailsPanel = new AgencyDetailsPanel(this, budgetAnalyzer);
+
         // Προσθήκη panels
         cardPanel.add(new MenuPanel(this), "menu");
         cardPanel.add(new ExpensePanel(this), "expensePanel");
+        cardPanel.add(agencySummaryPanel, "expenseByAgency");
+        cardPanel.add(agencyDetailsPanel, "agencyDetails");
         revenuePanel = new RevenuePanel(this);
         cardPanel.add(revenuePanel, "revenuePanel");
         String revcode2 = revenuePanel.getCode2();
@@ -36,7 +45,7 @@ public final class MainFrame extends JFrame {
         cardPanel.add(revenue3Panel, "revenue3panel");
         String revcode4 = revenue3Panel.getCode();
         revenue4Panel = new Revenue4Panel(this, revcode4);
-        cardPanel.add(revenue4Panel,"revenue4panel");
+        cardPanel.add(revenue4Panel,"revenue4panel");       
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
@@ -50,5 +59,13 @@ public final class MainFrame extends JFrame {
     // Μέθοδος για εναλλαγή panels
     public void switchTo(String panelName) {
         cardLayout.show(cardPanel, panelName);
+    }
+    /**
+     * Μεταβαίνει στο Panel ανάλυσης και φορτώνει τα στοιχεία του φορέα.
+     * @param code ο κωδικός του φορέα.
+     */
+    public void showAgencyDetails(final int code) {
+        agencyDetailsPanel.loadDetails(code); 
+        switchTo("agencyDetails");
     }
 }
