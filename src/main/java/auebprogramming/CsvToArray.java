@@ -50,7 +50,7 @@ public final class CsvToArray {
 
                 // Trimming each element from surrounding whitespace.
                 for (int i = 0; i < rawParts.length; i++) {
-                    trimmedParts[i] = rawParts[i].trim();
+                    trimmedParts[i] = rawParts[i].trim().replaceAll("^\"|\"$", "");
                 }
 
                 dataList.add(trimmedParts);
