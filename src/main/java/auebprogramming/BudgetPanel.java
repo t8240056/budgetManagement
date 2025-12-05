@@ -43,6 +43,8 @@ public final class BudgetPanel extends JPanel {
         add(topPanel, BorderLayout.NORTH);
 
         final JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new GridLayout(
+            1, 2, 10, 0));
 
         // Κουμπί Επιβεβαίωσης
         confirmButton = new JButton("Επιβεβαίωση");
