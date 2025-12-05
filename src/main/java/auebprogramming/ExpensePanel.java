@@ -3,6 +3,7 @@ package auebprogramming;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -55,8 +56,9 @@ public final class ExpensePanel extends JPanel {
         // ============================
         // 3) Bottom Panel (Buttons)
         // ============================
-        final JPanel bottomPanel =
-        new JPanel(new FlowLayout(FlowLayout.CENTER));
+        final JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new GridLayout(
+            1, 2, 10, 0));
 
         backButton = new JButton("Επιστροφή");
         confirmButton = new JButton("Επιβεβαίωση");
