@@ -12,7 +12,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * Panel υπεύθυνο για την εμφάνιση του αναλυτικού προϋπολογισμού
- * ενός συγκεκριμένου φορέα. (Placeholder - θα υλοποιηθεί αργότερα)
+ * ενός συγκεκριμένου φορέα.
  */
 public final class AgencyDetailsPanel extends JPanel {
     
@@ -88,10 +88,37 @@ public final class AgencyDetailsPanel extends JPanel {
     
     /**
      * Μέθοδος που καλείται από τη MainFrame για φόρτωση των αναλυτικών δεδομένων.
-     * Προς το παρόν, απλά καθαρίζει τον πίνακα.
      * @param agencyCode ο κωδικός του φορέα.
      */
     public void loadDetails(final int agencyCode) {
-        // Αυτή η μέθοδος είναι άδεια, αλλά είναι απαραίτητη για να μη βγάλει σφάλμα η MainFrame
+        try {
+            // 1. Καλεί τη λογική σου για να πάρει τον πίνακα από το ΧΧΧΧ.csv
+            final String[][] detailedData = analyzer.getDetailedBudget(agencyCode);
+            
+            // 2. Η πρώτη γραμμή είναι η κεφαλίδα
+            final String[] columnNames = detailedData[0]; 
+            
+            // 3. Δημιουργούμε έναν πίνακα μόνο με τις γραμμές δεδομένων (από τη 2η γραμμή και κάτω)
+            final int numRows = detailedData.length - 1;
+            final String[][] dataRows = new String[numRows][];
+            
+            for (int i = 0; i < numRows; i++) {
+                dataRows[i] = detailedData[i + 1]; // Παίρνουμε τη γραμμή i+1 (μετά την κεφαλίδα)
+            }
+            
+            // 4. Ενημερώνουμε το μοντέλο του πίνακα με τα νέα δεδομένα (όλες τις στήλες)
+            tableModel.setDataVector(dataRows, columnNames);
+            
+            // 5. Ενημερώνουμε την οθόνη
+            this.revalidate();
+            this.repaint();
+            
+        } catch (IllegalArgumentException e) {
+            // 6. Χειρισμός του λάθους
+            AppException.showError("Σφάλμα: " + e.getMessage());
+            
+            // Επιστρέφουμε στο πρώτο Panel σε περίπτωση λάθους
+            frame.switchTo("expenseByAgency"); 
+        }
     }
 }
