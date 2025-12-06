@@ -23,9 +23,9 @@ public final class RevenueDataManager {
         this.codes7 = CsvToArray.loadCsvToArray("revenue_categories7_2025.csv");
     }
 
-    /** Returns 2-digit codes starting with the given prefix. */
-    public String[][] get2DigitCodes(final String prefix) {
-        return filterByPrefix(codes2, prefix);
+    /** Returns 2-digit codes. */
+    public String[][] get2DigitCodes() {
+        return codes2;
     }
 
     /** Returns 3-digit codes starting with the given prefix. */
