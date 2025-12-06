@@ -52,12 +52,15 @@ public final class RevenueDataManager {
      */
     private String[][] filterByPrefix(final String[][] data, final String prefix) {
         final List<String[]> filtered = new ArrayList<>();
-        for (final String[] row : data) {
-            if (row.length > 0 && row[0].startsWith(prefix)) {
+
+        for (String[] row : data) {
+            if (row.length > 0 && row[0] != null && row[0].startsWith(prefix)) {
                 filtered.add(row);
             }
         }
+
         return filtered.toArray(new String[0][]);
     }
 }
+
 
