@@ -109,6 +109,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
         displayArea.setFont(
             new Font("Monospaced", Font.PLAIN, FONT_SIZE));
 
+        setDisplayText();
         final JScrollPane scrollPane = new JScrollPane(displayArea);
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -166,6 +167,10 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * @param text the text to display
      */
     public void setDisplayText() {
-        displayArea.setText("");// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
+        ExpenseManager expenseManager = new ExpenseManager("expense_categories_2025.csv");
+
+        displayArea.setText(expenseManager.getCategoryListReport());// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
+        //getCategoryListReports() εδώ
+        //getExpenseDetailsReport(final String... codes) μέθοδος που εμφανίζει στοιχεία επιλεγμένων, άρα στο επόμενο panel,όρισμα πίνακα
     }
 }
