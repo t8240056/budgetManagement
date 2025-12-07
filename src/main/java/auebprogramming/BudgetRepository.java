@@ -26,4 +26,11 @@ public class BudgetRepository {
     public Optional<BudgetChangesEntry> findByCode(String code) {
         return Optional.ofNullable(entries.get(code));
     }
+
+    /**
+     * Returns all budget entries in the repository
+     */
+    public List<BudgetChangesEntry> findAll() {
+        return new ArrayList<>(entries.values());
+    }
 }
