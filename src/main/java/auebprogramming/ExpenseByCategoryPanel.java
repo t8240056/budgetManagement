@@ -64,7 +64,8 @@ public final class ExpenseByCategoryPanel extends JPanel {
 
         displayArea = new JTextArea();
         codeField = new JTextField();
-        openInputButton = new JButton("Εισάγετε έναν η περισσότερους κωδικούς δαπανών για περαιτέρω ανάλυση");
+        openInputButton = new JButton(
+        "Εισάγετε έναν η περισσότερους κωδικούς δαπανών για περαιτέρω ανάλυση");
         confirmButton = new JButton("Επιβεβαίωση");
         backButton = new JButton("Επιστροφή");
 
@@ -139,14 +140,14 @@ public final class ExpenseByCategoryPanel extends JPanel {
                     frame.switchTo("displayCategory");
                 }
                 else {
-                    AppException.showError("Πατήστε το κουμπί επιστροφής ή πληκτρολογήστε κωδικό");
+                    AppException.showError(
+                    "Πατήστε το κουμπί επιστροφής ή πληκτρολογήστε κωδικό");
                 }
             }
         });
 
-        bottomPanel.add(backButton);
         bottomPanel.add(confirmButton);
-
+        bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
 
