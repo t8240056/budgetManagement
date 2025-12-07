@@ -1,52 +1,82 @@
 package auebprogramming;
 
-public class BudgetStructureManager {
+/**
+ * Utility class for managing the structure of the budget data arrays.
+ * Handles adding and removing rows (categories) dynamically.
+ * Note: These operations return a new array instance.
+ */
+public final class BudgetStructureManager {
 
     /**
-     * Προσθέτει μια νέα γραμμή στον πίνακα δεδομένων.
-     * Επιστρέφει τον ΝΕΟ πίνακα (μεγαλύτερο κατά 1).
+     * Private constructor to prevent instantiation of this utility class.
      */
-    public static String[][] addRow(String[][] originalData, String[] newRowData) {
-        // Δημιουργία μεγαλύτερου πίνακα
-        String[][] newData = new String[originalData.length + 1][originalData[0].length];
-        
-        // Αντιγραφή παλιών δεδομένων
-        for (int i = 0; i < originalData.length; i++) {
+    private BudgetStructureManager() {
+        // Utility class
+    }
+
+    /**
+     * Adds a new row (category) to the data array.
+     * Creates a new array with an increased size and copies existing data.
+     *
+     * @param originalData The original 2D String array.
+     * @param newRowData   The array representing the new row to add.
+     * @return             A new 2D array containing the added row.
+     */
+    public static String[][] addRow(final String[][] originalData, final String[] newRowData) {
+        final int rows = originalData.length;
+        final int cols = originalData[0].length;
+        final String[][] newData = new String[rows + 1][cols];
+
+        // Copy old data
+        for (int i = 0; i < rows; i++) {
             newData[i] = originalData[i];
         }
-        
-        // Προσθήκη νέας γραμμής στο τέλος
-        newData[newData.length - 1] = newRowData;
-        
+
+        // Add new row at the end
+        newData[rows] = newRowData;
+
         return newData;
     }
 
     /**
-     * Διαγράφει μια γραμμή βάσει κωδικού.
-     * Επιστρέφει τον ΝΕΟ πίνακα (μικρότερο κατά 1).
+     * Deletes a row identified by a specific code.
+     * Creates a new array with a decreased size.
+     *
+     * @param originalData The original 2D String array.
+     * @param code         The code of the row to delete.
+     * @param codeCol      The column index where the codes are located.
+     * @return             A new 2D array with the row removed, or the original
+     * array if the code was not found.
      */
-    public static String[][] deleteRow(String[][] originalData, String code, int codeCol) {
+    public static String[][] deleteRow(final String[][] originalData,
+                                       final String code, final int codeCol) {
         int indexToDelete = -1;
-        
-        // Βρίσκουμε ποια γραμμή να σβήσουμε
+
+        // Find the row index
         for (int i = 1; i < originalData.length; i++) {
             if (originalData[i][codeCol].equals(code)) {
                 indexToDelete = i;
                 break;
             }
         }
-        
-        if (indexToDelete == -1) return originalData; // Δεν βρέθηκε, επιστρέφουμε τον ίδιο
 
-        // Δημιουργία μικρότερου πίνακα
-        String[][] newData = new String[originalData.length - 1][originalData[0].length];
-        
-        int k = 0;
-        for (int i = 0; i < originalData.length; i++) {
-            if (i == indexToDelete) continue; // Skip τη γραμμή που σβήνουμε
-            newData[k++] = originalData[i];
+        // If not found, return original data
+        if (indexToDelete == -1) {
+            return originalData;
         }
-        
+
+        final int rows = originalData.length;
+        final int cols = originalData[0].length;
+        final String[][] newData = new String[rows - 1][cols];
+
+        int newRowIndex = 0;
+        for (int i = 0; i < rows; i++) {
+            if (i == indexToDelete) {
+                continue; // Skip the deleted row
+            }
+            newData[newRowIndex++] = originalData[i];
+        }
+
         return newData;
     }
 }
