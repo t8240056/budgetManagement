@@ -16,6 +16,7 @@ public final class MainFrame extends JFrame {
     private final BudgetAnalyzer budgetAnalyzer;
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
+    private final ExpenseByCategoryPanel expenseByCategoryPanel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -46,8 +47,10 @@ public final class MainFrame extends JFrame {
         String revcode4 = revenue3Panel.getCode();
         revenue4Panel = new Revenue4Panel(this, revcode4);
         cardPanel.add(revenue4Panel,"revenue4panel");
-        cardPanel.add(new ExpenseByCategoryPanel(this),
+        expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
+        cardPanel.add(expenseByCategoryPanel,
          "expenseByCategory");
+        String expcodes = expenseByCategoryPanel.getCodes();
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
