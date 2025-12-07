@@ -2,6 +2,8 @@ package auebprogramming;
 import java.math.BigDecimal;
 import java.util.*;
 
+import main.java.auebprogramming.BudgetChangesEntry;
+
    
 /**
  * Repository for managing BudgetChangesEntry objects using in-memory storage
@@ -16,5 +18,12 @@ public class BudgetRepository {
      */
     public void save(BudgetChangesEntry entry) {
         entries.put(entry.getCode(), entry);
+    }
+
+     /**
+     * Finds a budget entry by its unique code
+     */
+    public Optional<BudgetChangesEntry> findByCode(String code) {
+        return Optional.ofNullable(entries.get(code));
     }
 }
