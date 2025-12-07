@@ -45,7 +45,9 @@ public final class MainFrame extends JFrame {
         cardPanel.add(revenue3Panel, "revenue3panel");
         String revcode4 = revenue3Panel.getCode();
         revenue4Panel = new Revenue4Panel(this, revcode4);
-        cardPanel.add(revenue4Panel,"revenue4panel");       
+        cardPanel.add(revenue4Panel,"revenue4panel");
+        cardPanel.add(new ExpenseByCategoryPanel(this),
+         "expenseByCategory");
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
@@ -65,7 +67,7 @@ public final class MainFrame extends JFrame {
      * @param code ο κωδικός του φορέα.
      */
     public void showAgencyDetails(final int code) {
-        agencyDetailsPanel.loadDetails(code); 
+        agencyDetailsPanel.loadDetails(code);
         switchTo("agencyDetails");
     }
 }
