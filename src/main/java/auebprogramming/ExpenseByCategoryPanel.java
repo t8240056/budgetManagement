@@ -165,7 +165,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
      *
      * @param text the text to display
      */
-    public void setDisplayText(final String text) {
-        displayArea.setText(text);
+    public void setDisplayText() {
+        displayArea.setText("");// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
     }
 }
