@@ -48,7 +48,7 @@ public final class ExpensePanel extends JPanel {
         final JPanel centerPanel = new JPanel(new BorderLayout());
         displayArea = new JTextArea();
         displayArea.setEditable(false);
-        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 14)); // για τέλειο alignment
+        displayArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
         JScrollPane scrollPane = new JScrollPane(displayArea);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
@@ -99,7 +99,8 @@ public final class ExpensePanel extends JPanel {
         final String categoriesFile = "expense_categories_2025.csv";
         final String ministriesFile = "expense_ministries_2025.csv";
 
-        ExpenseDisplay display = new ExpenseDisplay(categoriesFile, ministriesFile);
+        ExpenseDisplay display = new ExpenseDisplay(
+            categoriesFile, ministriesFile);
 
         final String KRATIKOS = "ΚΡΑΤΙΚΟΣ";
         final String TAKTIKOS = "ΤΑΚΤΙΚΟΣ";
@@ -108,12 +109,14 @@ public final class ExpensePanel extends JPanel {
         // 1. Αναφορές ανά δαπάνη
         String reportCategoriesKratikos = display.getCategoriesReport(KRATIKOS);
         String reportCategoriesTaktikos = display.getCategoriesReport(TAKTIKOS);
-        String reportCategoriesEpendyseon = display.getCategoriesReport(EPENDYSEON);
+        String reportCategoriesEpendyseon =
+        display.getCategoriesReport(EPENDYSEON);
 
         // 2. Αναφορές ανά φορέα
         String reportMinistriesKratikos = display.getMinistriesReport(KRATIKOS);
         String reportMinistriesTaktikos = display.getMinistriesReport(TAKTIKOS);
-        String reportMinistriesEpendyseon = display.getMinistriesReport(EPENDYSEON);
+        String reportMinistriesEpendyseon =
+        display.getMinistriesReport(EPENDYSEON);
 
         // 3. Εμφάνιση στο JTextArea
         displayArea.setText("");
@@ -137,7 +140,8 @@ public final class ExpensePanel extends JPanel {
         displayArea.append(reportMinistriesEpendyseon + "\n\n");
 
     } catch (Exception e) {
-        displayArea.setText("Σφάλμα κατά την φόρτωση δεδομένων:\n" + e.getMessage());
+        displayArea.setText(
+            "Σφάλμα κατά την φόρτωση δεδομένων:\n" + e.getMessage());
     }
 }
 }
