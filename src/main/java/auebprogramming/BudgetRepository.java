@@ -33,4 +33,20 @@ public class BudgetRepository {
     public List<BudgetChangesEntry> findAll() {
         return new ArrayList<>(entries.values());
     }
+
+       /**
+     * Finds entries whose description contains the given keyword (case-insensitive)
+     * returns list of matching entries
+     */
+    public List<BudgetChangesEntry> findByDescriptionContaining(String keyword) {
+        List<BudgetChangesEntry> results = new ArrayList<>();
+        String lowerKeyword = keyword.toLowerCase();
+        
+        for (BudgetChangesEntry entry : entries.values()) {
+            if (entry.getDescription().toLowerCase().contains(lowerKeyword)) {
+                results.add(entry);
+            }
+        }
+        return results;
+    }
 }
