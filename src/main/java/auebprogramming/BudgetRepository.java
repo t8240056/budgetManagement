@@ -49,4 +49,30 @@ public class BudgetRepository {
         }
         return results;
     }
-}
+
+    /**
+     * Checks if an entry with the given code exists in the repository
+     * returns true if an entry with this code exists, false otherwise
+     */
+    public boolean exists(String code) {
+        return entries.containsKey(code);
+    }
+
+     /**
+         * Removes an entry from the repository by its code
+         * @param code the code of the entry to remove
+         */
+        public void delete(String code) {
+            entries.remove(code);
+        }
+        
+        /**
+         * Saves multiple budget entries to the repository
+         * @param entries collection of entries to save
+         */
+        public void saveAll(Collection<BudgetEntry> entries) {
+            for (BudgetEntry entry : entries) {
+                save(entry);
+            }
+        }
+
