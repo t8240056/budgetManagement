@@ -60,7 +60,6 @@ public class BudgetRepository {
 
      /**
          * Removes an entry from the repository by its code
-         * @param code the code of the entry to remove
          */
         public void delete(String code) {
             entries.remove(code);
@@ -68,11 +67,29 @@ public class BudgetRepository {
         
         /**
          * Saves multiple budget entries to the repository
-         * @param entries collection of entries to save
          */
-        public void saveAll(Collection<BudgetEntry> entries) {
-            for (BudgetEntry entry : entries) {
+        public void saveAll(Collection<BudgetChangesEntry> entries) {
+            for (BudgetChangesEntry entry : entries) {
                 save(entry);
             }
         }
+         /**
+     * Returns the total number of entries in the repository
+     * returns count of entries
+     */
+    public int count() {
+        return entries.size();
+    }
+    
+    /**
+     * Calculates the sum of all amounts in the repository
+     * returns total sum of all entry amounts
+     */
+    public BigDecimal calculateTotal() {
+        return entries.values().stream()
+            .map(BudgetChangesEntry::getAmount)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    }
 
