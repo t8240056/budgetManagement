@@ -1,20 +1,18 @@
 @startuml
 
-' ΑΥΤΗ Η ΕΝΤΟΛΗ ΕΙΝΑΙ ΤΟ ΚΛΕΙΔΙ: Επιτρέπει ανάμιξη αρχείων και κλάσεων
+' Επιτρέπουμε την ανάμιξη αρχείων και κλάσεων
 allow_mixing
 
-left to right direction
 skinparam packageStyle rectangle
 
 package "Data Set" {
     folder "resources" {
-        ' Τώρα τα ορίζουμε σωστά ως file (αρχεία)
         file "Ministry_X.csv" as minX
         file "Expenses_Categories.csv" as expCat
         file "Expenses_Ministries.csv" as expMin
         file "Revenue_categories.csv" as revCat
         
-        ' Στοίχιση
+        ' Στοίχιση αρχείων
         minX -[hidden]-> expCat
         expCat -[hidden]-> expMin
         expMin -[hidden]-> revCat
@@ -29,22 +27,35 @@ package "Data Processing" {
 }
 
 package "UI" {
-    ' Πρόσθεσα μια γενική κλάση μέχρι να μου πεις τις δικές σου
-    class MainFrame
+    ' Τα 4 Panels που ζήτησες
+    class MenuPanel
+    class BudgetPanel
+    class RevenuePanel
+    class ExpensePanel
+    
+    ' Το MenuPanel συνδέεται με τα υπόλοιπα (Πλοήγηση)
+    MenuPanel -[hidden]-> BudgetPanel
+    MenuPanel --> BudgetPanel : opens
+    MenuPanel --> RevenuePanel : opens
+    MenuPanel --> ExpensePanel : opens
 }
 
-' --- ΣΥΝΔΕΣΕΙΣ ---
-' Τώρα συνδέουμε Αρχεία (Artifacts) με Κλάσεις (Classes)
-minX ..> CsvToArray : read
+' --- ΣΥΝΔΕΣΕΙΣ ΡΟΗΣ ΔΕΔΟΜΕΝΩΝ ---
+
+' 1. Ανάγνωση Αρχείων
+minX ..> CsvToArray
 expCat ..> CsvToArray
 expMin ..> CsvToArray
 revCat ..> CsvToArray
 
+' 2. Επεξεργασία (Ο Parser μοιράζει τα δεδομένα)
 CsvToArray --> BudgetAnalyzer
 CsvToArray --> RevenueDataManager
 CsvToArray --> ExpenseDisplay
 
-BudgetAnalyzer --> MainFrame
-ExpenseDisplay --> MainFrame
+' 3. Εμφάνιση (Η λογική πάει στο σωστό Panel)
+BudgetAnalyzer --> BudgetPanel : shows data
+RevenueDataManager --> RevenuePanel : shows data
+ExpenseDisplay --> ExpensePanel : shows data
 
 @enduml
