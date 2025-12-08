@@ -26,7 +26,23 @@ public final class ExpenseManager {
     }
     
     // ---------------------------
-    // GUI REPORT METHODS (Replacing System.out)
+    // PUBLIC VALIDATION METHOD (THROWS EXCEPTION)
+    // ---------------------------
+
+    /**
+     * Validates if the given expense code exists.
+     * Throws an AppException if the code is not found.
+     * @param code The expense code to validate.
+     * @throws AppException If the code is not found in the expenses list.
+     */
+    public void validateExpenseCode(final String code) throws AppException {
+        if (findRowIndexByCode(code) == -1) {
+            throw new AppException("Σφάλμα: ο κωδικός " + code + " δεν ανήκει στις δαπανες εξοδων");
+        }
+    }
+
+    // ---------------------------
+    // GUI REPORT METHODS
     // ---------------------------
 
     /**
@@ -81,7 +97,7 @@ public final class ExpenseManager {
                 sb.append("==============================").append(System.lineSeparator());
 
             } else {
-                // Append error message
+                // Append error message to the report string
                 sb.append(System.lineSeparator()).append(code).append(" : Μη έγκυρος κωδικός").append(System.lineSeparator());
             }
         }
