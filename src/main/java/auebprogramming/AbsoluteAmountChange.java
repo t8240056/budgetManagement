@@ -41,4 +41,12 @@ public class AbsoluteAmountChange extends BudgetChange {
         entry.setAmount(newAmount);
         return newAmount;
     }
+
+      @Override
+    public BigDecimal undo(BudgetChangesEntry entry) {
+        BigDecimal currentAmount = entry.getAmount();
+        BigDecimal oldAmount = currentAmount.subtract(changeAmount);
+        entry.setAmount(oldAmount);
+        return oldAmount;
+    }
     
