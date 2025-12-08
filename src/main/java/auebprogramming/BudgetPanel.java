@@ -82,6 +82,9 @@ public final class BudgetPanel extends JPanel {
                     frame.switchTo("revenuePanel");
                 } else if (expenseButton.isSelected()) {
                     frame.switchTo("expensePanel");
+                } else {
+                    AppException.showError(
+                        "Επιλέξτε τύπο δεδομένων ή πατήστε Επιστροφή");
                 }
             }
         });
