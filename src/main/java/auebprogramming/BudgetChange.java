@@ -76,4 +76,13 @@ public abstract class BudgetChange {
      */
     public String getUserId() { return userId; }
 
+        /**
+     * Returns a string representation of this change
+     * @return formatted string showing type, code and justification
+     */
+    @Override
+    public String toString() {
+        return String.format("%s [%s]: %s", 
+            getType(), entryCode, justification);
+    }
 }
