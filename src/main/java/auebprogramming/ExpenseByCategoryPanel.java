@@ -138,7 +138,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 final String text = codeField.getText().trim();
                 if (!text.isEmpty()) {
-                    frame.switchTo("displayCategory");
+                    frame.showExpenseCategory2(text);
                 }
                 else {
                     AppException.showError(
