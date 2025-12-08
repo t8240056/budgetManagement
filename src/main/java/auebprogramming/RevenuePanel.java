@@ -64,10 +64,11 @@ public final class RevenuePanel extends JPanel {
 
         revenueTable = new JTable(Data, columnNames);
         revenueTable.setFont(new Font("Arial", Font.PLAIN, 16));
-        revenueTable.setRowHeight(22);  // επιλογή: μεγαλύτερο ύψος γραμμών ώστε να "χωράει" η γραμματοσειρά
+        revenueTable.setRowHeight(22);
 
     // 🔹 Μεγαλύτερη γραμματοσειρά στην επικεφαλίδα
-        revenueTable.getTableHeader().setFont(new Font("Arial", Font.BOLD, 16));
+        revenueTable.getTableHeader().setFont(
+        new Font("Arial", Font.BOLD, 16));
         JScrollPane scrollPane = new JScrollPane(revenueTable);
         scrollPane.setPreferredSize(new Dimension(550,335));
         topPanel.add(scrollPane);
@@ -126,14 +127,23 @@ public final class RevenuePanel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                String code = getCode2();
-                frame.showRevenue2(code);
-            } else {
-                AppException.showError(
-                    "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
+                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()){
+                //try {
+                    // Εδώ θα μπε η μέθοδος του Θανάση if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
+                    String code = getCode2();
+                    frame.showRevenue2(code);
+                    //}
+                //} catch (AppException ex) {
+                    //AppException.showError(ex.getMessage());
+                //}
+                } else {
+                    AppException.showError(
+                    "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή");
+                }
+
+
             }
-        }});
+        });
 
 
         bottomPanel.add(confirmButton);
