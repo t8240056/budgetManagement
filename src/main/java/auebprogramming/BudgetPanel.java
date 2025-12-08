@@ -1,7 +1,9 @@
 package auebprogramming;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,11 +33,16 @@ public final class BudgetPanel extends JPanel {
         new GridLayout(3, 1, 5, 5));
         final JLabel titleLabel = new JLabel(
         "Επιλέξτε τύπο δεδομένων:", JLabel.CENTER);
+        titleLabel.setFont(
+            new Font("SansSerif", Font.BOLD | Font.ITALIC, 20));
         topPanel.add(titleLabel);
 
         // RadioButtons για Έσοδα / Έξοδα
         revenueButton = new JRadioButton("Έσοδα");
         expenseButton = new JRadioButton("Έξοδα");
+        revenueButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        expenseButton.setFont(new Font("Arial", Font.PLAIN, 20));
+
 
         final ButtonGroup group = new ButtonGroup();
         group.add(revenueButton);
@@ -55,9 +62,15 @@ public final class BudgetPanel extends JPanel {
 
         // Κουμπί Επιβεβαίωσης
         confirmButton = new JButton("Επιβεβαίωση");
+        confirmButton.setBackground(Color.GREEN);
+        confirmButton.setForeground(Color.BLACK);
+        confirmButton.setOpaque(true);
         bottomPanel.add(confirmButton);
         // Κουμπί Επιστροφής στο Menu
         backButton = new JButton("Επιστροφή στο Menu");
+        backButton.setBackground(Color.YELLOW);
+        backButton.setForeground(Color.BLACK);
+        backButton.setOpaque(true);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
