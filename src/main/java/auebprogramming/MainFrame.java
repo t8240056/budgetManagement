@@ -10,10 +10,10 @@ public final class MainFrame extends JFrame {
     private final  CardLayout cardLayout;
     private final JPanel cardPanel;
     private final RevenuePanel revenuePanel;
-    private final Revenue2Panel revenue2Panel;
-    private final Revenue3Panel revenue3Panel;
-    private final Revenue4Panel revenue4Panel;
-    private final BudgetAnalyzer budgetAnalyzer;
+    private Revenue2Panel revenue2Panel;
+    private Revenue3Panel revenue3Panel;
+    private Revenue4Panel revenue4Panel;
+    private BudgetAnalyzer budgetAnalyzer;
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
@@ -38,15 +38,6 @@ public final class MainFrame extends JFrame {
         cardPanel.add(agencyDetailsPanel, "agencyDetails");
         revenuePanel = new RevenuePanel(this);
         cardPanel.add(revenuePanel, "revenuePanel");
-        String revcode2 = revenuePanel.getCode2();
-        revenue2Panel= new Revenue2Panel(this, revcode2);
-        cardPanel.add(revenue2Panel, "revenue2panel");
-        String revcode3 = revenue2Panel.getCode3();
-        revenue3Panel = new Revenue3Panel(this, revcode3);
-        cardPanel.add(revenue3Panel, "revenue3panel");
-        String revcode4 = revenue3Panel.getCode();
-        revenue4Panel = new Revenue4Panel(this, revcode4);
-        cardPanel.add(revenue4Panel,"revenue4panel");
         expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
         cardPanel.add(expenseByCategoryPanel,
          "expenseByCategory");
@@ -73,4 +64,21 @@ public final class MainFrame extends JFrame {
         agencyDetailsPanel.loadDetails(code);
         switchTo("agencyDetails");
     }
+    public void showRevenue2(String code) {
+
+    // Αν υπάρχει παλιό panel, το αφαιρούμε
+    if (revenue2Panel != null) {
+        cardPanel.remove(revenue2Panel);
+    }
+
+    // Δημιουργούμε νέο panel με τον πραγματικό κωδικό
+    revenue2Panel = new Revenue2Panel(this, code);
+
+    cardPanel.add(revenue2Panel, "revenue2panel");
+    cardPanel.revalidate();
+    cardPanel.repaint();
+
+    switchTo("revenue2panel");
+}
+
 }

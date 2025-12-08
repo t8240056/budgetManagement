@@ -126,15 +126,15 @@ public final class RevenuePanel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if(codeField.isVisible()
-                     && !codeField.getText().trim().isEmpty()) {
-                     frame.switchTo("revenue2panel");
-                } else {
-                         AppException.showError(
-                "Πληκτρολογήστε κωδικό ή πατήστε το κουμί επιστροφής");
-                        }
+                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
+                String code = getCode2();
+                frame.showRevenue2(code);
+            } else {
+                AppException.showError(
+                    "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
             }
-        });
+        }});
+
 
         bottomPanel.add(confirmButton);
         bottomPanel.add(backButton);

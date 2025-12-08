@@ -121,13 +121,13 @@ public final class Revenue2Panel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (codeField.isVisible() &&
-                !codeField.getText().trim().isEmpty()) {
-                    frame.switchTo("revenue3panel");
-                } else {
-                    AppException.showError(
-                        "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
-                }
+                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
+                String code = getCode3();
+                //frame.showRevenue3(code);
+            } else {
+                AppException.showError(
+                    "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
+            }
             }
         });
 
