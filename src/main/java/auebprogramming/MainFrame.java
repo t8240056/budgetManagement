@@ -80,5 +80,26 @@ public final class MainFrame extends JFrame {
 
     switchTo("revenue2panel");
 }
+public void showRevenue3(String code) {
+
+    // Αν υπάρχει παλιό panel, το αφαιρούμε
+    if (revenue3Panel != null) {
+        cardPanel.remove(revenue3Panel);
+    }
+
+    // Δημιουργούμε νέο panel με τον πραγματικό κωδικό
+    revenue3Panel = new Revenue3Panel(this, code);
+
+    // Προσθήκη στο CardLayout με το σωστό όνομα
+    cardPanel.add(revenue3Panel, "revenue3panel");
+
+    // Ανανεώσεις
+    cardPanel.revalidate();
+    cardPanel.repaint();
+
+    // Εμφάνιση panel
+    switchTo("revenue3panel");
+}
+
 
 }
