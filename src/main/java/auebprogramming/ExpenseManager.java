@@ -1,114 +1,189 @@
 package auebprogramming;
 
+import java.util.Locale;
+
+/**
+ * ExpenseManager loads expense data from CSV files and provides methods
+ * for targeted display and data querying by code.
+ */
 public final class ExpenseManager {
 
-    // Array with expense codes and names (fixed)
-    private static final String[][] CATEGORIES = {
-        {"21", "Παροχές σε εργαζομένους"},
-        {"22", "Κοινωνικές παροχές"},
-        {"23", "Μεταβιβάσεις"},
-        {"24", "Αγορές αγαθών και υπηρεσιών"},
-        {"25", "Επιδοτήσεις"},
-        {"26", "Τόκοι"},
-        {"27", "Λοιπές δαπάνες"},
-        {"29", "Πιστώσεις υπό κατανομή"},
-        {"31", "Πάγια περιουσιακά στοιχεία"},
-        {"33", "Τιμαλφή"},
-        {"44", "Δάνεια"},
-        {"45", "Συμμετοχικοί τίτλοι και μερίδια"},
-        {"53", "Χρεωστικοί τίτιλοι (υποχρεώσεις)"},
-        {"54", "Δάνεια"}
-    };
+    // Constants for data position in the arrays
+    private static final int CATEGORY_CODE_COLUMN = 1;
+    private static final int CATEGORY_DESCRIPTION_COLUMN = 2;
+    private static final int CATEGORY_STATE_BUDGET_COLUMN = 3;
 
-    // Amounts array [StateBudget, RegularBudget, Investments]
-    private static final long[][] AMOUNTS = {
-        {14889199000L, 14889199000L, 0},
-        {425136000L, 425136000L, 0},
-        {34741365000L, 34741365000L, 0},
-        {2039542000L, 2039542000L, 0},
-        {80630000L, 80630000L, 0},
-        {7701101000L, 7701101000L, 0},
-        {101553000L, 101553000L, 0},
-        {17283053000L, 3183053000L, 14100000000L},
-        {2609600000L, 2609600000L, 0},
-        {85000L, 85000L, 0},
-        {3741000000L, 3741000000L, 0},
-        {1755112000L, 1755112000L, 0},
-        {19375000000L, 19375000000L, 0},
-        {1203165130000L, 1203165130000L, 0}
-    };
+    // Array for category data loaded from CSV
+    private final String[][] categoriesData;
 
-    /*//
-     * Display all available expense categories with their codes
-    //*/
-    public static void showCategories() {
-        System.out.println("CODE\tEXPENSE NAME");
-        for (String[] category : CATEGORIES) {
-            System.out.printf("%s\t%s%n", category[0], category[1]);
-        }
+    /**
+     * Constructor. Loads data from the expense categories CSV file.
+     *
+     * @param categoriesFile The filename of the categories CSV.
+     */
+    public ExpenseManager(final String categoriesFile) {
+        // Use CsvToArray to load data from the classpath
+        this.categoriesData = CsvToArray.loadCsvToArray(categoriesFile);
     }
 
-    /*//
-     * Display details for one or more expense codes
-     * User can input multiple codes, e.g., "21", "23"
-    //*/
-    public void showExpenseDetails(String... codes) {
-        System.out.println("CODE\tNAME\tSTATE\tREGULAR\tINVESTMENTS");
-        for (String code : codes) {
-            int index = findIndexByCode(code);
-            if (index != -1) {
-                System.out.printf("%s\t%s\t%,d\t%,d\t%,d%n",
-                        CATEGORIES[index][0],
-                        CATEGORIES[index][1],
-                        AMOUNTS[index][0],
-                        AMOUNTS[index][1],
-                        AMOUNTS[index][2]);
-            } else {
-                System.out.println(code + " : Invalid code");
-            }
+    // ---------------------------
+    // GUI REPORT METHODS (Replacing System.out)
+    // ---------------------------
+
+    /**
+     * Generates a list of all available expense categories with their codes as a formatted String.
+     * @return The formatted list as a String.
+     */
+    public String getCategoryListReport() {
+        final StringBuilder sb = new StringBuilder();
+
+        // Append Header
+        sb.append("ΚΩΔΙΚΟΣ\tΟΝΟΜΑ ΔΑΠΑΝΗΣ").append(System.lineSeparator());
+
+        // Start from the 2nd row (index 1) to skip the header.
+        for (int i = 1; i < categoriesData.length; i++) {
+            final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
+            final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
+
+            // Append row output to StringBuilder
+            sb.append(String.format("%s\t%s%n", code, name));
         }
+
+        return sb.toString();
     }
 
     /**
-     * Display all expense categories with their code, name, and State Budget amount,
-     * using the exact formatting style of the showRevenues method (code. Name Amount).
+     * Generates details for one or more expense codes as a single formatted String.
+     * @param codes One or more expense codes (e.g., "21", "23").
+     * @return The formatted details report as a String.
      */
-    public static void showExpenses() {
+    public String getExpenseDetailsReport(final String... codes) {
+        final StringBuilder sb = new StringBuilder();
+
+        for (final String code : codes) {
+            final int index = findRowIndexByCode(code);
+
+            if (index != -1) {
+                // Use getAmountsForRow to safely extract the values
+                final long[] amounts = getAmountsForRow(index);
+
+                final String name = categoriesData[index][CATEGORY_DESCRIPTION_COLUMN];
+
+                // Append formatted details to StringBuilder
+                sb.append(System.lineSeparator()).append("==============================").append(System.lineSeparator());
+                sb.append("ΚΩΔΙΚΟΣ: ").append(categoriesData[index][CATEGORY_CODE_COLUMN]).append(System.lineSeparator());
+                sb.append("ΟΝΟΜΑ: ").append(name).append(System.lineSeparator());
+                sb.append("------------------------------").append(System.lineSeparator());
+
+                // Use Locale.GERMAN for correct thousand separators
+                sb.append(String.format(Locale.GERMAN, "Κρατικός Προϋπολογισμός: %,d €%n", amounts[0]));
+                sb.append(String.format(Locale.GERMAN, "Τακτικός Προϋπολογισμός : %,d €%n", amounts[1]));
+                sb.append(String.format(Locale.GERMAN, "Πρ. Δημοσίων Επενδύσεων: %,d €%n", amounts[2]));
+                sb.append("==============================").append(System.lineSeparator());
+
+            } else {
+                // Append error message
+                sb.append(System.lineSeparator()).append(code).append(" : Μη έγκυρος κωδικός").append(System.lineSeparator());
+            }
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * Generates the report of all expense categories with their code, name, and State Budget amount as a formatted String.
+     * @return The formatted expense report as a String.
+     */
+    public String getFullExpensesReport() {
+        final StringBuilder sb = new StringBuilder();
         long totalStateBudget = 0;
 
-        System.out.println("1. ΕΞΟΔΑ"); // Αλλάζουμε την κεφαλίδα σε ΕΞΟΔΑ
-        System.out.println();
+        // Append Header
+        sb.append("1. ΕΞΟΔΑ").append(System.lineSeparator());
+        sb.append(System.lineSeparator());
+        sb.append(String.format("%-5s %-60s %s%n", "ΚΩΔ.", "ΠΕΡΙΓΡΑΦΗ", "ΠΟΣΟ (ΕΥΡΩ)"));
+        sb.append("----------------------------------------------------------------------------------").append(System.lineSeparator());
 
         // Print each row in the requested format
-        for (int i = 0; i < CATEGORIES.length; i++) {
-            String code = CATEGORIES[i][0];
-            String name = CATEGORIES[i][1];
-            long amount = AMOUNTS[i][0]; // State Budget amount
+        for (int i = 1; i < categoriesData.length; i++) {
+            final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
+            final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
+            final long[] amounts = getAmountsForRow(i);
+            final long amount = amounts[0]; // State Budget amount
 
             totalStateBudget += amount;
 
-            // Χρησιμοποιούμε ακριβώς την ίδια μορφοποίηση (printf arguments) με τη showRevenues:
-            // %-5s: Κωδικός με τελεία (π.χ. "21."), αριστερή στοίχιση
-            // %-60s: Όνομα, αριστερή στοίχιση
-            // %,15d: Ποσό, δεξιά στοίχιση, με κόμμα για διαχωριστικό χιλιάδων
-            System.out.printf("%-5s %-60s %,15d%n",
+            // Append formatted row to StringBuilder
+            sb.append(String.format(Locale.GERMAN, "%-5s %-60s %,15d%n",
                     code + ".",
                     name,
                     amount
-            );
+            ));
         }
 
-        System.out.println();
-        // Εμφάνιση του συνολικού ποσού των εξόδων (State Budget)
-        System.out.printf("Σύνολο: %,d Ευρώ%n", totalStateBudget);
+        // Append Total
+        sb.append("----------------------------------------------------------------------------------").append(System.lineSeparator());
+        sb.append(String.format(Locale.GERMAN, "Σύνολο: %,d Ευρώ%n", totalStateBudget));
+        sb.append(System.lineSeparator());
+
+        return sb.toString();
     }
-    
-    // Helper method to find the index in CATEGORIES by code
-    private int findIndexByCode(String code) {
-        for (int i = 0; i < CATEGORIES.length; i++) {
-            if (CATEGORIES[i][0].equals(code)) return i;
+
+    // ---------------------------
+    // PRIVATE HELPER METHODS
+    // ---------------------------
+
+    /**
+     * Finds the row index in the categoriesData array by expense code.
+     *
+     * @param code The expense code to search for.
+     * @return The row index, or -1 if not found.
+     */
+    private int findRowIndexByCode(final String code) {
+        // Start from 1 to skip the header
+        for (int i = 1; i < categoriesData.length; i++) {
+            if (categoriesData[i][CATEGORY_CODE_COLUMN].equals(code)) {
+                return i;
+            }
         }
         return -1;
     }
 
+    /**
+     * Extracts and calculates the three budget amounts for a given row index.
+     * Handles the special case of Code 29 logic.
+     *
+     * @param rowIndex The index of the row to process.
+     * @return A long array: [State Budget, Regular Budget, Investment Budget].
+     */
+    private long[] getAmountsForRow(final int rowIndex) {
+        long stateBudget;
+        long regularBudget;
+        long investmentBudget;
+
+        final String code = categoriesData[rowIndex][CATEGORY_CODE_COLUMN];
+
+        // Logic for the special code 29 (Appropriations under distribution)
+        if ("29".equals(code)) {
+            // Use the hardcoded values (since they are not in the CSV structure)
+            stateBudget = 17283053000L;
+            regularBudget = 3183053000L;
+            investmentBudget = 14100000000L;
+
+        } else {
+            // Normal logic: Regular = State Budget (and Investments = 0) for most expenses.
+            try {
+                // Read the total from CSV (column 3, as in your original CSV)
+                stateBudget = Long.parseLong(categoriesData[rowIndex][CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
+                regularBudget = stateBudget;
+                investmentBudget = 0;
+            } catch (final NumberFormatException e) {
+                stateBudget = 0;
+                regularBudget = 0;
+                investmentBudget = 0;
+            }
+        }
+
+        return new long[] { stateBudget, regularBudget, investmentBudget };
+    }
 }

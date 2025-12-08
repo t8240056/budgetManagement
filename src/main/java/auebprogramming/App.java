@@ -1,28 +1,18 @@
 package auebprogramming;
 
-import java.util.Scanner;
+/** entry point of the application. */
+public final class App {
+/** private constructor.
+ */
+private App() {
 
-/**entry point of the application */
-public class App {
-
+}
+/** entry point of the application.
+ * @param args
+ */
     public static void main(final String[] args) {
-        // DownloadingOutputFiles.run();  run only once 
-        
-        Scanner scanner = new Scanner(System.in);
-       
-        
-        System.out.println(" Which year do you want to see ?");
-        int year = scanner.nextInt();
-      
+        MainFrame mainFrame = new MainFrame();
+        mainFrame.setVisible(true);
 
-        PrintExpensesArticle2.printbudget();
-
-        scanner.close();
-
-        //RevenueExtractor re = new RevenueExtractor();
-        //re.printRevenues();
-        //RevenueManager.showRevenues();
-        Article_1new.printArticle1New(year);
-        
     }
 }
