@@ -20,3 +20,31 @@ public class PercentageChange extends BudgetChange {
         super(entryCode, justification, userId);
         this.percentage = percentage;
     }
+
+        /**
+     * Applies this percentage change to the given entry
+     * Calculates the actual amount based on percentage and adds it to current amount
+     * @param entry the entry to modify
+     * @return the new amount after the change
+     * @throws IllegalArgumentException if the new amount would be negative
+     */
+    @Override
+    public BigDecimal apply(BudgetChangesEntry entry) {
+        BigDecimal oldAmount = entry.getAmount();
+        BigDecimal percentageDecimal = BigDecimal.valueOf(percentage / 100.0);
+        
+        // Calculate the actual change amount
+        actualChange = oldAmount.multiply(percentageDecimal)
+                              .setScale(2, RoundingMode.HALF_UP);
+        
+        BigDecimal newAmount = oldAmount.add(actualChange);
+        
+        // Validate that the new amount is not negative
+        if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "Το Καινούριο ποσό δεν μπορεί να είναι αρνητικό: " + newAmount);
+        }
+        
+        entry.setAmount(newAmount);
+        return newAmount;
+    }
