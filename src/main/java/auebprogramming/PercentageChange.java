@@ -48,3 +48,15 @@ public class PercentageChange extends BudgetChange {
         entry.setAmount(newAmount);
         return newAmount;
     }
+
+     @Override
+    public BigDecimal undo(BudgetChangesEntry entry) {
+        if (actualChange == null) {
+            throw new IllegalStateException("Η αλλαγή δεν έχει εκχωρηθεί ακόμα");
+        }
+        
+        BigDecimal currentAmount = entry.getAmount();
+        BigDecimal oldAmount = currentAmount.subtract(actualChange);
+        entry.setAmount(oldAmount);
+        return oldAmount;
+    }
