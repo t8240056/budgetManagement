@@ -49,4 +49,33 @@ public class AbsoluteAmountChange extends BudgetChange {
         entry.setAmount(oldAmount);
         return oldAmount;
     }
+
+        /**
+     * Returns the amount difference caused by this change
+     * @return the changeAmount (positive for increase, negative for decrease)
+     */
+    @Override
+    public BigDecimal getDifference() {
+        return changeAmount;
+    }
+    
+    /**
+     * Determines the type based on whether changeAmount is positive or negative
+     * @return ABSOLUTE_INCREASE if changeAmount > 0, ABSOLUTE_DECREASE otherwise
+     */
+    @Override
+    public ChangeType getType() {
+        return changeAmount.compareTo(BigDecimal.ZERO) > 0 
+            ? ChangeType.ABSOLUTE_INCREASE 
+            : ChangeType.ABSOLUTE_DECREASE;
+    }
+    
+    /**
+     * Returns the absolute amount of this change
+     * @return the change amount
+     */
+    public BigDecimal getChangeAmount() {
+        return changeAmount;
+    }
+}
     
