@@ -1,0 +1,37 @@
+@startuml
+
+
+' Ορισμός των στυλ για να φαίνονται όμορφα τα κουτιά (προαιρετικό αλλά βοηθάει στην παρουσίαση)
+skinparam packageStyle rectangle
+
+' 1. Το πακέτο των Δεδομένων (Αριστερά)
+package "Data Set" {
+    ' Εδώ θα μπουν αργότερα οι κλάσεις της βάσης ή των αρχείων
+    folder "recources"{
+        file "Ministry_X.csv" as minX
+        file "Expenses_Categories.csv" as expCat
+        file "Expenses_Ministries.csv" as expMin
+        file "Revenue_categories.csv" as revCat
+
+        minX -[hidden]-> expCat
+        expCat -[hidden]-> expMin
+        expMin -[hidden]-> revCat
+    }
+}
+
+' 2. Το πακέτο της Επεξεργασίας (Μέση)
+package "Data Processing" {
+    ' Εδώ θα μπουν αργότερα οι controllers και η λογική
+}
+
+' 3. Το πακέτο του Περιβάλλοντος Χρήστη (Δεξιά)
+package "UI" {
+    ' Εδώ θα μπουν οι οθόνες/φόρμες
+}
+
+' Ορίζουμε τη σχέση για να κλειδώσουμε τη σειρά εμφάνισης
+' Το Data Set τροφοδοτεί το Processing, το οποίο τροφοδοτεί το UI
+"Data Set" --> "Data Processing"
+"Data Processing" --> "UI"
+
+@enduml
