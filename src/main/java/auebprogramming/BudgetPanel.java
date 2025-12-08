@@ -1,6 +1,7 @@
 package auebprogramming;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,6 +11,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+
 /**Class for the second appeared panel */
 public final class BudgetPanel extends JPanel {
 
@@ -25,8 +27,10 @@ public final class BudgetPanel extends JPanel {
         setLayout(new BorderLayout(10, 10));
 
         // Τίτλος + RadioButtons:NORTH
-        final JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
-        final JLabel titleLabel = new JLabel("Επιλέξτε τύπο δεδομένων:", JLabel.CENTER);
+        final JPanel topPanel = new JPanel(
+        new GridLayout(3, 1, 5, 5));
+        final JLabel titleLabel = new JLabel(
+        "Επιλέξτε τύπο δεδομένων:", JLabel.CENTER);
         topPanel.add(titleLabel);
 
         // RadioButtons για Έσοδα / Έξοδα
@@ -39,12 +43,15 @@ public final class BudgetPanel extends JPanel {
 
         topPanel.add(revenueButton);
         topPanel.add(expenseButton);
-        topPanel.setPreferredSize(new java.awt.Dimension(300, 200));
+        topPanel.setPreferredSize(new java.awt.Dimension(
+        300, 400));
         add(topPanel, BorderLayout.NORTH);
 
         final JPanel bottomPanel = new JPanel();
         bottomPanel.setLayout(new GridLayout(
-            1, 2, 10, 0));
+        1, 2, 10, 0));
+        bottomPanel.setPreferredSize(new Dimension(0, 80));
+
 
         // Κουμπί Επιβεβαίωσης
         confirmButton = new JButton("Επιβεβαίωση");
