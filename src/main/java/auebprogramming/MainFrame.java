@@ -64,6 +64,10 @@ public final class MainFrame extends JFrame {
         agencyDetailsPanel.loadDetails(code);
         switchTo("agencyDetails");
     }
+    /**
+     * Μεταβαίνει στο Panel revenue2 και φορτώνει τα στοιχεία του φορέα.
+     * @param code ο κωδικός του φορέα
+     */
     public void showRevenue2(String code) {
 
     // Αν υπάρχει παλιό panel, το αφαιρούμε
@@ -80,6 +84,10 @@ public final class MainFrame extends JFrame {
 
     switchTo("revenue2panel");
 }
+/**
+     * Μεταβαίνει στο Panel revenue3 και φορτώνει τα στοιχεία του φορέα.
+     * @param code ο κωδικός του φορέα
+     */
 public void showRevenue3(String code) {
 
     // Αν υπάρχει παλιό panel, το αφαιρούμε
