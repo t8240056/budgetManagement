@@ -34,7 +34,7 @@ public final  class Revenue3Panel extends JPanel {
     private JButton backButton;
 
     /** Reference to main frame for panel switching. */
-    private MainFrame frame;
+    private final MainFrame frame;
 
     /** The three-digit code selected from the previous panel. */
     private String parentCode;
@@ -119,7 +119,7 @@ public final  class Revenue3Panel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 if
                 (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                    frame.switchTo("revenue4panel");
+                    frame.showRevenue4(getCode());
                 } else {
                     AppException.showError(
                         "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
