@@ -17,6 +17,7 @@ public final class MainFrame extends JFrame {
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
+    private  ExpenseByCategory2Panel expenseByCategory2Panel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -132,6 +133,31 @@ public void showRevenue4(final String code) {
 
     // Switch to the revenue4panel screen
     switchTo("revenue4panel");
+}
+/**
+ * Shows the panel with detailed expense reports for the selected categories.
+ *
+ * @param codesString the codes entered by the user, separated by commas or spaces
+ */
+public void showExpenseCategory2(final String codesString) {
+
+    // Remove previous instance if it exists
+    if (expenseByCategory2Panel != null) {
+        cardPanel.remove(expenseByCategory2Panel);
+    }
+
+    // Create a new panel using the provided codes
+    expenseByCategory2Panel = new ExpenseByCategory2Panel(this, codesString);
+
+    // Add the panel to the CardLayout with a consistent name
+    cardPanel.add(expenseByCategory2Panel, "expenseCategory2");
+
+    // Refresh the layout
+    cardPanel.revalidate();
+    cardPanel.repaint();
+
+    // Switch to the expenseCategory2 panel
+    switchTo("expenseCategory2");
 }
 
 
