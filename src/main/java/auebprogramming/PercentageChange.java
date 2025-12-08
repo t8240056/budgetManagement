@@ -60,3 +60,32 @@ public class PercentageChange extends BudgetChange {
         entry.setAmount(oldAmount);
         return oldAmount;
     }
+
+        /**
+     * Returns the actual amount difference caused by this change
+     * @return the calculated change amount, or zero if not applied yet
+     */
+    @Override
+    public BigDecimal getDifference() {
+        return actualChange != null ? actualChange : BigDecimal.ZERO;
+    }
+    
+    /**
+     * Determines the type based on whether percentage is positive or negative
+     * @return PERCENTAGE_INCREASE if percentage > 0, PERCENTAGE_DECREASE otherwise
+     */
+    @Override
+    public ChangeType getType() {
+        return percentage > 0 
+            ? ChangeType.PERCENTAGE_INCREASE 
+            : ChangeType.PERCENTAGE_DECREASE;
+    }
+    
+    /**
+     * Returns the percentage value of this change
+     * @return the percentage (positive for increase, negative for decrease)
+     */
+    public double getPercentage() {
+        return percentage;
+    }
+}
