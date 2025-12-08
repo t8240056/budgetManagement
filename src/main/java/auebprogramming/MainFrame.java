@@ -1,7 +1,9 @@
 package auebprogramming;
 
 import java.awt.CardLayout;
+import java.awt.Color;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -85,11 +87,11 @@ public final class MainFrame extends JFrame {
 
     switchTo("revenue2panel");
 }
-/**
+    /**
      * Μεταβαίνει στο Panel revenue3 και φορτώνει τα στοιχεία του φορέα.
      * @param code ο κωδικός του φορέα
      */
-public void showRevenue3(String code) {
+    public void showRevenue3(String code) {
 
     // Αν υπάρχει παλιό panel, το αφαιρούμε
     if (revenue3Panel != null) {
@@ -109,12 +111,12 @@ public void showRevenue3(String code) {
     // Εμφάνιση panel
     switchTo("revenue3panel");
 }
-/**
+ /**
  * Displays the fourth-level revenue analysis panel.
  *
  * @param code the four-digit revenue code to analyze
  */
-public void showRevenue4(final String code) {
+    public void showRevenue4(final String code) {
 
     // Remove previous instance if it exists
     if (revenue4Panel != null) {
@@ -134,12 +136,12 @@ public void showRevenue4(final String code) {
     // Switch to the revenue4panel screen
     switchTo("revenue4panel");
 }
-/**
+ /**
  * Shows the panel with detailed expense reports for the selected categories.
  *
  * @param codesString the codes entered by the user, separated by commas or spaces
  */
-public void showExpenseCategory2(final String codesString) {
+    public void showExpenseCategory2(final String codesString) {
 
     // Remove previous instance if it exists
     if (expenseByCategory2Panel != null) {
@@ -159,6 +161,26 @@ public void showExpenseCategory2(final String codesString) {
     // Switch to the expenseCategory2 panel
     switchTo("expenseCategory2");
 }
+/**
+ * Applies custom styling to a JButton.
+ *
+ * @param button the button to style
+ */
+    public void confButtonColors(JButton confirmButton) {
+        confirmButton.setBackground(Color.GREEN);
+        confirmButton.setForeground(Color.BLACK);
+        confirmButton.setOpaque(true);
+    }
+/**
+ * Applies custom styling to a JButton.
+ *
+ * @param button the button to style
+ */
+    public void backButtonColors(JButton backButton) {
+        backButton.setBackground(Color.YELLOW);
+        backButton.setForeground(Color.BLACK);
+        backButton.setOpaque(true);
+    }
 
 
 }
