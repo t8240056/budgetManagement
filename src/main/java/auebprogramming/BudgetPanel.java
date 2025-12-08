@@ -62,15 +62,11 @@ public final class BudgetPanel extends JPanel {
 
         // Κουμπί Επιβεβαίωσης
         confirmButton = new JButton("Επιβεβαίωση");
-        confirmButton.setBackground(Color.GREEN);
-        confirmButton.setForeground(Color.BLACK);
-        confirmButton.setOpaque(true);
+        frame.confButtonColors(confirmButton);
         bottomPanel.add(confirmButton);
         // Κουμπί Επιστροφής στο Menu
         backButton = new JButton("Επιστροφή στο Menu");
-        backButton.setBackground(Color.YELLOW);
-        backButton.setForeground(Color.BLACK);
-        backButton.setOpaque(true);
+        frame.backButtonColors(backButton);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
