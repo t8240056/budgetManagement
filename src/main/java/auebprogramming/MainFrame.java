@@ -108,6 +108,31 @@ public void showRevenue3(String code) {
     // Εμφάνιση panel
     switchTo("revenue3panel");
 }
+/**
+ * Displays the fourth-level revenue analysis panel.
+ *
+ * @param code the four-digit revenue code to analyze
+ */
+public void showRevenue4(final String code) {
+
+    // Remove previous instance if it exists
+    if (revenue4Panel != null) {
+        cardPanel.remove(revenue4Panel);
+    }
+
+    // Create a new panel using the provided code
+    revenue4Panel = new Revenue4Panel(this, code);
+
+    // Add the panel to the card layout with a consistent name
+    cardPanel.add(revenue4Panel, "revenue4panel");
+
+    // Refresh layout
+    cardPanel.revalidate();
+    cardPanel.repaint();
+
+    // Switch to the revenue4panel screen
+    switchTo("revenue4panel");
+}
 
 
 }
