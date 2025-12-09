@@ -61,7 +61,9 @@ public final class ExpensePanel extends JPanel {
             1, 2, 10, 0));
 
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         //*BackButton's method */
         backButton.addActionListener(new ActionListener() {
             @Override

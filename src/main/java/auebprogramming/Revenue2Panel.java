@@ -120,7 +120,9 @@ public final class Revenue2Panel extends JPanel {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         backButton.addActionListener(new ActionListener() {
             @Override

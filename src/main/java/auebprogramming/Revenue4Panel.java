@@ -72,6 +72,7 @@ public final class Revenue4Panel extends JPanel {
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         backButton.addActionListener(new ActionListener() {
             @Override

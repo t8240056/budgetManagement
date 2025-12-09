@@ -116,6 +116,9 @@ public final class RevenuePanel extends JPanel {
 
         backButton = new JButton("Επιστροφή");
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
+        frame.backButtonColors(backButton);
+
 
         backButton.addActionListener(new ActionListener() {
             @Override
