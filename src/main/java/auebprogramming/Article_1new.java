@@ -1,8 +1,9 @@
 package auebprogramming;
 public class Article_1new {
     public static void printArticle1New(int year){
+        ExpenseManager exp_mgr = new ExpenseManager("expense_categories_" + year + ".csv");
         RevenueManager.showRevenues();
-        ExpenseManager.showExpenses();
+        exp_mgr.showExpenses();
     }
 
 }
