@@ -112,3 +112,48 @@ public class ChangeManager {
         System.out.println("✅ Transfer " + amount + " from " + sourceCode + 
                           " to " + targetCode);
     }
+
+     /**
+     * Internal helper method to apply a change to an entry
+     * @param change the change to apply
+     * @throws IllegalArgumentException if entry doesn't exist
+     */
+    private void applyChange(BudgetChange change) {
+        BudgetEntry entry = repository.findByCode(change.getEntryCode())
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Entry not found: " + change.getEntryCode()));
+        
+        BigDecimal newAmount = change.apply(entry);
+        
+        changeHistory.push(change);
+        redoStack.clear();
+        
+        System.out.println("✅ Applied: " + change);
+        System.out.println("   New amount: " + newAmount);
+    }
+
+        /**
+     * Undoes the most recent change
+     * Restores the entry to its state before the change
+     */
+    public void undo() {
+        if (changeHistory.isEmpty()) {
+            System.out.println("⚠️ No changes to undo");
+            return;
+        }
+        
+        BudgetChange change = changeHistory.pop();
+        
+        if (change instanceof TransferChange) {
+            undoTransfer((TransferChange) change);
+        } else {
+            BudgetEntry entry = repository.findByCode(change.getEntryCode())
+                .orElseThrow(() -> new IllegalStateException(
+                    "Entry no longer exists: " + change.getEntryCode()));
+            
+            change.undo(entry);
+        }
+        
+        redoStack.push(change);
+        System.out.println("↩️ Undone: " + change);
+    }
