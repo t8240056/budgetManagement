@@ -33,4 +33,19 @@ public class ChangeManager {
             code, amount, justification, userId);
         applyChange(change);
     }
+
+        /**
+     * Decreases an entry's amount by an absolute value
+     * @param code entry code to decrease
+     * @param amount amount to subtract (must be positive)
+     * @param justification reason for the decrease
+     * @param userId who is making the change
+     */
+    public void decreaseAmount(String code, BigDecimal amount,
+                              String justification, String userId) {
+        BudgetChange change = new AbsoluteAmountChange(
+            code, amount.negate(), justification, userId);
+        applyChange(change);
+    }
+
 }
