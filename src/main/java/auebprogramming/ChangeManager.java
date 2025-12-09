@@ -48,4 +48,17 @@ public class ChangeManager {
         applyChange(change);
     }
 
+     /**
+     * Increases an entry's amount by a percentage
+     * @param code entry code to increase
+     * @param percentage percentage to increase by (e.g., 10.0 for 10%)
+     * @param justification reason for the increase
+     * @param userId who is making the change
+     */
+    public void increaseByPercentage(String code, double percentage,
+                                    String justification, String userId) {
+        BudgetChange change = new PercentageChange(
+            code, percentage, justification, userId);
+        applyChange(change);
+    }
 }
