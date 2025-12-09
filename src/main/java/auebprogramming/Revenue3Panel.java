@@ -1,6 +1,7 @@
 package auebprogramming;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,7 +35,7 @@ public final  class Revenue3Panel extends JPanel {
     private JButton backButton;
 
     /** Reference to main frame for panel switching. */
-    private MainFrame frame;
+    private final MainFrame frame;
 
     /** The three-digit code selected from the previous panel. */
     private String parentCode;
@@ -101,11 +102,16 @@ public final  class Revenue3Panel extends JPanel {
      * Initializes the bottom panel with navigation and confirmation buttons.
      */
     private void initializeBottomPanel() {
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel bottomPanel = new JPanel(new GridLayout(
+            1, 2, 10, 10));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(
+            10, 10, 10, 10));
+        bottomPanel.setPreferredSize(new Dimension(200, 70));
 
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -119,7 +125,7 @@ public final  class Revenue3Panel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 if
                 (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                    frame.switchTo("revenue4panel");
+                    frame.showRevenue4(getCode());
                 } else {
                     AppException.showError(
                         "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");

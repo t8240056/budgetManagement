@@ -1,5 +1,6 @@
 package auebprogramming;
 
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,15 +24,23 @@ public final class MenuPanel extends JPanel {
         final JLabel titleLabel = new JLabel(
                 "Επιλέξτε λειτουργία παρακαλώ",
                 SwingConstants.CENTER);
+        titleLabel.setFont(
+            new Font("SansSerif", Font.BOLD, 20));
         add(titleLabel);
 
-        final JRadioButton viewBudgetButton = new JRadioButton("1. Προβολή προϋπολογισμού");
+        final JRadioButton viewBudgetButton = new JRadioButton(
+            "1. Προβολή προϋπολογισμού");
+        viewBudgetButton.setFont(new Font("Arial", Font.PLAIN, 20));
 
-        final JRadioButton insertChangeButton = new JRadioButton("2. Εισαγωγή αλλαγής");
-
-        final JRadioButton viewChangesButton = new JRadioButton("3. Εμφάνιση αλλαγών");
-
-        final JRadioButton exitButton = new JRadioButton("4. Έξοδος");
+        final JRadioButton insertChangeButton = new JRadioButton(
+            "2. Εισαγωγή αλλαγής");
+        insertChangeButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        final JRadioButton viewChangesButton = new JRadioButton(
+            "3. Εμφάνιση αλλαγών");
+        viewChangesButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        final JRadioButton exitButton = new JRadioButton(
+            "4. Έξοδος");
+        exitButton.setFont(new Font("Arial", Font.PLAIN, 20));
 
         final ButtonGroup group = new ButtonGroup();
         group.add(viewBudgetButton);
@@ -45,6 +54,7 @@ public final class MenuPanel extends JPanel {
         add(exitButton);
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         add(confirmButton);
 
         confirmButton.addActionListener(new ActionListener() {

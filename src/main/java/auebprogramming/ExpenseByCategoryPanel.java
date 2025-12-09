@@ -65,9 +65,11 @@ public final class ExpenseByCategoryPanel extends JPanel {
         displayArea = new JTextArea();
         codeField = new JTextField();
         openInputButton = new JButton(
-        "Εισάγετε έναν η περισσότερους κωδικούς δαπανών για περαιτέρω ανάλυση");
+        "Εισάγετε έναν η περισσότερους κωδικούς δαπανών για ανάλυση");
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         initializeTopPanel();
         initializeCenterPanel();
@@ -138,7 +140,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
             public void actionPerformed(final ActionEvent event) {
                 final String text = codeField.getText().trim();
                 if (!text.isEmpty()) {
-                    frame.switchTo("displayCategory");
+                    frame.showExpenseCategory2(text);
                 }
                 else {
                     AppException.showError(
@@ -167,9 +169,10 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * @param text the text to display
      */
     public void setDisplayText() {
-        ExpenseManager expenseManager = new ExpenseManager("expense_categories_2025.csv");
+        ExpenseManager expenseManager = new ExpenseManager(
+            "expense_categories_2025.csv");
 
-        displayArea.setText(expenseManager.getCategoryListReport());// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
+        displayArea.setText(expenseManager.getFullExpensesReport());// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
         //getCategoryListReports() εδώ
         //getExpenseDetailsReport(final String... codes) μέθοδος που εμφανίζει στοιχεία επιλεγμένων, άρα στο επόμενο panel,όρισμα πίνακα
     }
