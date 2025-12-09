@@ -76,4 +76,37 @@ public class ChangeValidator {
         
         return new ValidationResult(errors);
     }
+
+        /**
+     * Validates a transfer between entries
+     * @param sourceCode entry code giving amount
+     * @param targetCode entry code receiving amount
+     * @param amount amount to transfer
+     * @return ValidationResult containing any errors found
+     */
+    public ValidationResult validateTransfer(String sourceCode, String targetCode, 
+                                           BigDecimal amount) {
+        List<String> errors = new ArrayList<>();
+        
+        // Check if both entries exist
+        if (!repository.exists(sourceCode)) {
+            errors.add("Source does not exist: " + sourceCode);
+        }
+        
+        if (!repository.exists(targetCode)) {
+            errors.add("Target does not exist: " + targetCode);
+        }
+        
+        // If both exist, check if source has enough amount
+        if (errors.isEmpty()) {
+            BudgetEntry source = repository.findByCode(sourceCode).get();
+            
+            if (source.getAmount().compareTo(amount) < 0) {
+                errors.add("Insufficient amount: " + source.getAmount() + 
+                          " < " + amount);
+            }
+        }
+        
+        return new ValidationResult(errors);
+    }
 }
