@@ -12,4 +12,11 @@ public class ChangeManager {
     private final Stack<BudgetChange> changeHistory = new Stack<>(); // History stack for undo
     private final Stack<BudgetChange> redoStack = new Stack<>();     // Redo stack
   
+     /**
+     * Constructs a ChangeManager with the given repository
+     * @param repository the repository containing budget entries
+     */
+    public ChangeManager(BudgetRepository repository) {
+        this.repository = repository;
+    }
 }
