@@ -19,4 +19,18 @@ public class ChangeManager {
     public ChangeManager(BudgetRepository repository) {
         this.repository = repository;
     }
+
+     /**
+     * Increases an entry's amount by an absolute value
+     * @param code entry code to increase
+     * @param amount amount to add (must be positive)
+     * @param justification reason for the increase
+     * @param userId who is making the change
+     */
+    public void increaseAmount(String code, BigDecimal amount, 
+                              String justification, String userId) {
+        BudgetChange change = new AbsoluteAmountChange(
+            code, amount, justification, userId);
+        applyChange(change);
+    }
 }
