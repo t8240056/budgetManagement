@@ -174,3 +174,46 @@ public class ChangeManager {
         change.undo(source);
         change.undoFromTarget(target);
     }
+
+        /**
+     * Redoes the most recently undone change
+     * Reapplies the change that was last undone
+     */
+    public void redo() {
+        if (redoStack.isEmpty()) {
+            System.out.println("⚠️ No changes to redo");
+            return;
+        }
+        
+        BudgetChange change = redoStack.pop();
+        
+        if (change instanceof TransferChange) {
+            redoTransfer((TransferChange) change);
+        } else {
+            BudgetChangesEntry entry = repository.findByCode(change.getEntryCode())
+                .orElseThrow(() -> new IllegalStateException(
+                    "Entry no longer exists: " + change.getEntryCode()));
+            
+            change.apply(entry);
+        }
+        
+        changeHistory.push(change);
+        System.out.println("↪️ Redone: " + change);
+    }
+    
+    /**
+     * Helper method to redo a transfer change (both source and target)
+     * @param change the transfer change to redo
+     */
+    private void redoTransfer(TransferChange change) {
+        BudgetChangesEntry source = repository.findByCode(change.getEntryCode())
+            .orElseThrow(() -> new IllegalStateException(
+                "Source no longer exists: " + change.getEntryCode()));
+        
+        BudgetChangesEntry target = repository.findByCode(change.getTargetEntryCode())
+            .orElseThrow(() -> new IllegalStateException(
+                "Target no longer exists: " + change.getTargetEntryCode()));
+        
+        change.apply(source);
+        change.applyToTarget(target);
+    }
