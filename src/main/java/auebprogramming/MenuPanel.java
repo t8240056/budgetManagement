@@ -45,6 +45,7 @@ public final class MenuPanel extends JPanel {
         add(exitButton);
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         add(confirmButton);
 
         confirmButton.addActionListener(new ActionListener() {
