@@ -50,4 +50,30 @@ public class ChangeValidator {
         return new ValidationResult(errors);
     }
     
+        /**
+     * Validates a percentage change
+     * @param code entry code to validate
+     * @param percentage percentage to change by
+     * @return ValidationResult containing any errors found
+     */
+    public ValidationResult validatePercentageChange(String code, double percentage) {
+        List<String> errors = new ArrayList<>();
+        
+        // Check if entry exists
+        if (!repository.exists(code)) {
+            errors.add("Code does not exist: " + code);
+            return new ValidationResult(errors);
+        }
+        
+        // Validate percentage range
+        if (Math.abs(percentage) > 100) {
+            errors.add("Percentage cannot exceed 100%: " + percentage + "%");
+        }
+        
+        if (percentage < -100) {
+            errors.add("Percentage cannot be below -100%: " + percentage + "%");
+        }
+        
+        return new ValidationResult(errors);
+    }
 }
