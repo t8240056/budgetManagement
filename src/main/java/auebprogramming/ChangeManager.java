@@ -89,11 +89,11 @@ public class ChangeManager {
                               BigDecimal amount, String justification,
                               String userId) {
         // Find source and target entries
-        BudgetChangeEntry source = repository.findByCode(sourceCode)
+        BudgetChangesEntry source = repository.findByCode(sourceCode)
             .orElseThrow(() -> new IllegalArgumentException(
                 "Source not found: " + sourceCode));
         
-        BudgetChangeEntry target = repository.findByCode(targetCode)
+        BudgetChangesEntry target = repository.findByCode(targetCode)
             .orElseThrow(() -> new IllegalArgumentException(
                 "Target not found: " + targetCode));
         
@@ -119,7 +119,7 @@ public class ChangeManager {
      * @throws IllegalArgumentException if entry doesn't exist
      */
     private void applyChange(BudgetChange change) {
-        BudgetEntry entry = repository.findByCode(change.getEntryCode())
+        BudgetChangesEntry entry = repository.findByCode(change.getEntryCode())
             .orElseThrow(() -> new IllegalArgumentException(
                 "Entry not found: " + change.getEntryCode()));
         
@@ -147,7 +147,7 @@ public class ChangeManager {
         if (change instanceof TransferChange) {
             undoTransfer((TransferChange) change);
         } else {
-            BudgetEntry entry = repository.findByCode(change.getEntryCode())
+            BudgetChangesEntry entry = repository.findByCode(change.getEntryCode())
                 .orElseThrow(() -> new IllegalStateException(
                     "Entry no longer exists: " + change.getEntryCode()));
             
@@ -156,4 +156,21 @@ public class ChangeManager {
         
         redoStack.push(change);
         System.out.println("↩️ Undone: " + change);
+    }
+
+        /**
+     * Helper method to undo a transfer change (both source and target)
+     * @param change the transfer change to undo
+     */
+    private void undoTransfer(TransferChange change) {
+        BudgetChangesEntry source = repository.findByCode(change.getEntryCode())
+            .orElseThrow(() -> new IllegalStateException(
+                "Source no longer exists: " + change.getEntryCode()));
+        
+        BudgetChangesEntry target = repository.findByCode(change.getTargetEntryCode())
+            .orElseThrow(() -> new IllegalStateException(
+                "Target no longer exists: " + change.getTargetEntryCode()));
+        
+        change.undo(source);
+        change.undoFromTarget(target);
     }
