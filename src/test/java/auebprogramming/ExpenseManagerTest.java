@@ -3,19 +3,37 @@ package auebprogramming;
 /**
  * Test class for ExpenseManager.
  * Simulates GUI calls to verify report generation and validation logic.
+ * <p>
+ * This class demonstrates how the front-end should interact with the
+ * ExpenseManager to retrieve formatted strings and handle exceptions.
+ * </p>
+ *
+ * @version 1.0
  */
-public class ExpenseManagerTest {
+public final class ExpenseManagerTest {
+
+    /** The filename for the expense categories CSV. */
+    private static final String CATEGORIES_FILE = "expense_categories_2025.csv";
+
+    /**
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private ExpenseManagerTest() {
+        // Empty constructor
+    }
 
     /**
      * Main method to execute tests.
-     * @param args Command line arguments.
+     *
+     * @param args Command line arguments (not used).
      */
     public static void main(final String[] args) {
         
-        // 1. Setup
         System.out.println(">>> INITIALIZING ExpenseManager...");
-        final String categoriesFile = "expense_categories_2025.csv";
-        final ExpenseManager manager = new ExpenseManager(categoriesFile);
+        
+        // Ensure the file exists in src/main/resources
+        final ExpenseManager manager = new ExpenseManager(CATEGORIES_FILE);
+        
         System.out.println(">>> Initialization Complete.\n");
 
         // ---------------------------------------------------------
@@ -28,8 +46,8 @@ public class ExpenseManagerTest {
             System.out.print("Checking valid code '21'... ");
             manager.validateExpenseCode("21");
             System.out.println("OK (Valid).");
-        } catch (AppException e) {
-            System.err.println("FAILED: Should not have thrown exception for 21.");
+        } catch (final AppException e) {
+            System.err.println("FAILED: Should not have thrown exception for code 21.");
         }
 
         // Case B: Invalid Code
@@ -37,7 +55,7 @@ public class ExpenseManagerTest {
             System.out.print("Checking invalid code '999'... ");
             manager.validateExpenseCode("999");
             System.out.println("FAILED: Should have thrown exception.");
-        } catch (AppException e) {
+        } catch (final AppException e) {
             System.out.println("OK (Caught expected exception): " + e.getMessage());
         }
         System.out.println();
@@ -57,14 +75,14 @@ public class ExpenseManagerTest {
         System.out.println(fullReport);
 
         // ---------------------------------------------------------
-        // TEST 4: Expense Details (Specific Queries)
+        // TEST 4: Expense Details Report (Specific Queries)
         // ---------------------------------------------------------
         System.out.println("========== TEST 4: EXPENSE DETAILS REPORT ==========");
         
         // Testing a mix of:
         // - "21" (Regular expense)
         // - "29" (Special expense with hardcoded logic)
-        // - "XYZ" (Invalid code)
+        // - "XYZ" (Invalid code to verify error handling in report)
         final String[] queries = {"21", "29", "XYZ"};
         System.out.println("Querying codes: 21, 29, XYZ");
         
