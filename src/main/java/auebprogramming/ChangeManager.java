@@ -217,3 +217,29 @@ public class ChangeManager {
         change.apply(source);
         change.applyToTarget(target);
     }
+
+        /**
+     * Returns a list of all changes made so far (in application order)
+     * @return list of budget changes
+     */
+    public List<BudgetChange> getChangeHistory() {
+        return new ArrayList<>(changeHistory);
+    }
+    
+    /**
+     * Clears all change history (both undo and redo stacks)
+     * Useful for starting a new session
+     */
+    public void clearHistory() {
+        changeHistory.clear();
+        redoStack.clear();
+    }
+    
+    /**
+     * Returns the total number of changes made
+     * @return count of changes in history
+     */
+    public int getTotalChanges() {
+        return changeHistory.size();
+    }
+}
