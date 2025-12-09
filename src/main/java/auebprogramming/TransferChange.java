@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 package auebprogramming;
 
 import java.math.BigDecimal;
@@ -24,4 +24,26 @@ public class TransferChange extends BudgetChange {
         super(sourceEntryCode, justification, userId);
         this.targetEntryCode = targetEntryCode;
         this.transferAmount = transferAmount;
+    }
+
+        /**
+     * Applies the transfer to the source entry (subtracts amount)
+     * This is called by ChangeManager for the source entry
+     * @param sourceEntry the entry giving the amount
+     * @return the new amount of the source entry after transfer
+     * @throws IllegalArgumentException if source has insufficient amount
+     */
+    @Override
+    public BigDecimal apply(BudgetChangeEntry sourceEntry) {
+        BigDecimal oldAmount = sourceEntry.getAmount();
+        BigDecimal newAmount = oldAmount.subtract(transferAmount);
+        
+        // Check if source has enough amount to transfer
+        if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "Insufficient amount for transfer: " + oldAmount);
+        }
+        
+        sourceEntry.setAmount(newAmount);
+        return newAmount;
     }
