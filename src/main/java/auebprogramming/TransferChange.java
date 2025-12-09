@@ -47,3 +47,37 @@ public class TransferChange extends BudgetChange {
         sourceEntry.setAmount(newAmount);
         return newAmount;
     }
+
+        /**
+     * Applies the transfer to the target entry (adds amount)
+     * This is called separately by ChangeManager for the target entry
+     * @param targetEntry the entry receiving the amount
+     */
+    public void applyToTarget(BudgetChangeEntry targetEntry) {
+        BigDecimal oldAmount = targetEntry.getAmount();
+        BigDecimal newAmount = oldAmount.add(transferAmount);
+        targetEntry.setAmount(newAmount);
+    }
+    
+    /**
+     * Reverses the transfer on the source entry (adds back the amount)
+     * @param sourceEntry the source entry to restore
+     * @return the original amount of the source entry
+     */
+    @Override
+    public BigDecimal undo(BudgetChangeEntry sourceEntry) {
+        BigDecimal currentAmount = sourceEntry.getAmount();
+        BigDecimal oldAmount = currentAmount.add(transferAmount);
+        sourceEntry.setAmount(oldAmount);
+        return oldAmount;
+    }
+    
+    /**
+     * Reverses the transfer on the target entry (subtracts the amount)
+     * @param targetEntry the target entry to restore
+     */
+    public void undoFromTarget(BudgetEntry targetEntry) {
+        BigDecimal currentAmount = targetEntry.getAmount();
+        BigDecimal oldAmount = currentAmount.subtract(transferAmount);
+        targetEntry.setAmount(oldAmount);
+    }
