@@ -34,7 +34,7 @@ public class TransferChange extends BudgetChange {
      * @throws IllegalArgumentException if source has insufficient amount
      */
     @Override
-    public BigDecimal apply(BudgetChangeEntry sourceEntry) {
+    public BigDecimal apply(BudgetChangesEntry sourceEntry) {
         BigDecimal oldAmount = sourceEntry.getAmount();
         BigDecimal newAmount = oldAmount.subtract(transferAmount);
         
@@ -53,7 +53,7 @@ public class TransferChange extends BudgetChange {
      * This is called separately by ChangeManager for the target entry
      * @param targetEntry the entry receiving the amount
      */
-    public void applyToTarget(BudgetChangeEntry targetEntry) {
+    public void applyToTarget(BudgetChangesEntry targetEntry) {
         BigDecimal oldAmount = targetEntry.getAmount();
         BigDecimal newAmount = oldAmount.add(transferAmount);
         targetEntry.setAmount(newAmount);
@@ -65,7 +65,7 @@ public class TransferChange extends BudgetChange {
      * @return the original amount of the source entry
      */
     @Override
-    public BigDecimal undo(BudgetChangeEntry sourceEntry) {
+    public BigDecimal undo(BudgetChangesEntry sourceEntry) {
         BigDecimal currentAmount = sourceEntry.getAmount();
         BigDecimal oldAmount = currentAmount.add(transferAmount);
         sourceEntry.setAmount(oldAmount);
@@ -76,7 +76,7 @@ public class TransferChange extends BudgetChange {
      * Reverses the transfer on the target entry (subtracts the amount)
      * @param targetEntry the target entry to restore
      */
-    public void undoFromTarget(BudgetEntry targetEntry) {
+    public void undoFromTarget(BudgetChangesEntry targetEntry) {
         BigDecimal currentAmount = targetEntry.getAmount();
         BigDecimal oldAmount = currentAmount.subtract(transferAmount);
         targetEntry.setAmount(oldAmount);
