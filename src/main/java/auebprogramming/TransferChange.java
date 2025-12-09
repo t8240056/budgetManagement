@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package auebprogramming;
 
 import java.math.BigDecimal;
