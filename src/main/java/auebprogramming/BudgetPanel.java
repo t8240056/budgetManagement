@@ -1,7 +1,6 @@
 package auebprogramming;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
@@ -34,7 +33,7 @@ public final class BudgetPanel extends JPanel {
         final JLabel titleLabel = new JLabel(
         "Επιλέξτε τύπο δεδομένων:", JLabel.CENTER);
         titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD | Font.ITALIC, 20));
+            new Font("SansSerif", Font.BOLD, 20));
         topPanel.add(titleLabel);
 
         // RadioButtons για Έσοδα / Έξοδα

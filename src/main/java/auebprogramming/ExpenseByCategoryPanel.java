@@ -67,7 +67,9 @@ public final class ExpenseByCategoryPanel extends JPanel {
         openInputButton = new JButton(
         "Εισάγετε έναν η περισσότερους κωδικούς δαπανών για ανάλυση");
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         initializeTopPanel();
         initializeCenterPanel();

@@ -126,6 +126,8 @@ public final class ExpenseByAgencySummaryPanel extends JPanel {
 
         backButton = new JButton("Επιστροφή");
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
+        frame.backButtonColors(backButton);
 
         // Ενέργεια Επιστροφής (Πίσω στο ExpensePanel)
         backButton.addActionListener(e -> {

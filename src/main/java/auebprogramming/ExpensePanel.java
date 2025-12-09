@@ -32,9 +32,10 @@ public final class ExpensePanel extends JPanel {
         // 1) Top Panel (Radio Buttons)
         // ============================
         final JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-
         byAgencyButton = new JRadioButton("Έξοδα ανά φορέα");
+        byAgencyButton.setFont(new Font("Arial", Font.BOLD, 15));
         byCategoryButton = new JRadioButton("Έξοδα ανά δαπάνη");
+        byCategoryButton.setFont(new Font("Arial", Font.BOLD, 15));
 
         final ButtonGroup group = new ButtonGroup();
         group.add(byAgencyButton);
@@ -61,7 +62,9 @@ public final class ExpensePanel extends JPanel {
             1, 2, 10, 0));
 
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         //*BackButton's method */
         backButton.addActionListener(new ActionListener() {
             @Override

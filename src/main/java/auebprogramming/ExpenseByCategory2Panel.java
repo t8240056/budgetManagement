@@ -61,6 +61,7 @@ public final class ExpenseByCategory2Panel extends JPanel {
 
         displayArea = new JTextArea();
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         initializeCenterPanel(codesString);
         initializeBottomPanel();

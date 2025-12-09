@@ -116,11 +116,16 @@ public final class Revenue2Panel extends JPanel {
      * Initializes the bottom navigation and confirmation buttons.
      */
     private void initializeBottomButtons() {
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel bottomPanel = new JPanel(new GridLayout(
+            1, 2, 10, 10));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(
+            10, 10, 10, 10));
+        bottomPanel.setPreferredSize(new Dimension(200, 70));
 
         confirmButton = new JButton("Επιβεβαίωση");
+        frame.confButtonColors(confirmButton);
         backButton = new JButton("Επιστροφή");
+        frame.backButtonColors(backButton);
 
         backButton.addActionListener(new ActionListener() {
             @Override
