@@ -1,0 +1,15 @@
+package auebprogramming;
+import java.math.BigDecimal;
+import java.util.*;
+
+/**
+ * Main facade class for managing all budget changes
+ * Provides a unified interface for applying, undoing, and redoing changes
+ * Implements the Facade pattern
+ */
+public class ChangeManager {
+    private final BudgetRepository repository;      // Data repository
+    private final Stack<BudgetChange> changeHistory = new Stack<>(); // History stack for undo
+    private final Stack<BudgetChange> redoStack = new Stack<>();     // Redo stack
+  
+}
