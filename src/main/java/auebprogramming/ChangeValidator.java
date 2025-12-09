@@ -109,4 +109,45 @@ public class ChangeValidator {
         
         return new ValidationResult(errors);
     }
+
+         /**
+     * Represents the result of a validation check
+     * Contains any errors found during validation
+     */
+    public static class ValidationResult {
+        private final List<String> errors;
+        private final boolean isValid;    
+        /**
+         * Constructs a ValidationResult with the given errors
+         * @param errors list of error messages (empty list means valid)
+         */
+        public ValidationResult(List<String> errors) {
+            this.errors = errors;
+            this.isValid = errors.isEmpty();
+        }
+        
+        /**
+         * Checks if the validation passed (no errors)
+         * @return true if valid, false otherwise
+         */
+        public boolean isValid() { return isValid; }
+        
+        /**
+         * Returns the list of error messages
+         * @return list of errors (empty if valid)
+         */
+        public List<String> getErrors() { return errors; }
+        
+        /**
+         * Throws an IllegalArgumentException if validation failed
+         * @throws IllegalArgumentException with error messages if not valid
+         */
+        public void throwIfInvalid() {
+            if (!isValid) {
+                throw new IllegalArgumentException(
+                    "Invalid change: " + String.join(", ", errors));
+            }
+        }
+    }
+
 }
