@@ -61,4 +61,18 @@ public class ChangeManager {
             code, percentage, justification, userId);
         applyChange(change);
     }
+
+    /**
+     * Decreases an entry's amount by a percentage
+     * @param code entry code to decrease
+     * @param percentage percentage to decrease by (e.g., 5.0 for 5%)
+     * @param justification reason for the decrease
+     * @param userId who is making the change
+     */
+    public void decreaseByPercentage(String code, double percentage,
+                                    String justification, String userId) {
+        BudgetChange change = new PercentageChange(
+            code, -percentage, justification, userId);
+        applyChange(change);
+    }
 }
