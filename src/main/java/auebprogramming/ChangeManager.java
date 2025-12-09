@@ -75,4 +75,40 @@ public class ChangeManager {
             code, -percentage, justification, userId);
         applyChange(change);
     }
-}
+
+     /**
+     * Transfers amount from one entry to another
+     * @param sourceCode entry code giving the amount
+     * @param targetCode entry code receiving the amount
+     * @param amount amount to transfer (must be positive)
+     * @param justification reason for the transfer
+     * @param userId who is making the transfer
+     * @throws IllegalArgumentException if source or target doesn't exist
+     */
+    public void transferAmount(String sourceCode, String targetCode,
+                              BigDecimal amount, String justification,
+                              String userId) {
+        // Find source and target entries
+        BudgetChangeEntry source = repository.findByCode(sourceCode)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Source not found: " + sourceCode));
+        
+        BudgetChangeEntry target = repository.findByCode(targetCode)
+            .orElseThrow(() -> new IllegalArgumentException(
+                "Target not found: " + targetCode));
+        
+        // Create transfer change
+        TransferChange change = new TransferChange(
+            sourceCode, targetCode, amount, justification, userId);
+        
+        // Apply to both entries
+        change.apply(source);
+         change.applyToTarget(target);
+        
+        // Record in history
+        changeHistory.push(change);
+        redoStack.clear();
+        
+        System.out.println("✅ Transfer " + amount + " from " + sourceCode + 
+                          " to " + targetCode);
+    }
