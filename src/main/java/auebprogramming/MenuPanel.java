@@ -25,7 +25,7 @@ public final class MenuPanel extends JPanel {
                 "Επιλέξτε λειτουργία παρακαλώ",
                 SwingConstants.CENTER);
         titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD | Font.ITALIC, 20));
+            new Font("SansSerif", Font.BOLD, 20));
         add(titleLabel);
 
         final JRadioButton viewBudgetButton = new JRadioButton(

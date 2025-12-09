@@ -113,7 +113,7 @@ public final class RevenuePanel extends JPanel {
         bottomPanel.setBorder(
             BorderFactory.createEmptyBorder(10, 10,
                  10, 10));
-
+        bottomPanel.setPreferredSize(new Dimension(200, 70));
         backButton = new JButton("Επιστροφή");
         confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);

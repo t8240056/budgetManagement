@@ -1,6 +1,7 @@
 package auebprogramming;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -101,8 +102,11 @@ public final  class Revenue3Panel extends JPanel {
      * Initializes the bottom panel with navigation and confirmation buttons.
      */
     private void initializeBottomPanel() {
-        JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JPanel bottomPanel = new JPanel(new GridLayout(
+            1, 2, 10, 10));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(
+            10, 10, 10, 10));
+        bottomPanel.setPreferredSize(new Dimension(200, 70));
 
         confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
