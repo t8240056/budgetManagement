@@ -81,7 +81,7 @@ public final class AgencyDetailsPanel extends JPanel {
             BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         backButton = new JButton("Επιστροφή");
-        
+        frame.backButtonColors(backButton);
         // Επιστροφή στο Summary Panel
         backButton.addActionListener(e -> {
             frame.switchTo("expenseByAgency"); 
@@ -95,7 +95,7 @@ public final class AgencyDetailsPanel extends JPanel {
      * Εφαρμόζει το πλάτος των στηλών ώστε να χωράει το κείμενο (π.χ., 60% για την Ονομασία).
      */
     private void applyColumnWidths() {
-        final int preferredWidth = 581; // Χρησιμοποιούμε το μέγεθος του JFrame (900px)
+        final int preferredWidth = 1300; // Χρησιμοποιούμε το μέγεθος του JFrame (900px)
         
         // Ελέγχουμε ότι έχουμε τουλάχιστον 3 στήλες (Κωδικός, Ονομασία, Ποσό)
         if (detailsTable.getColumnCount() >= 3) {
