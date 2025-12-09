@@ -81,3 +81,38 @@ public class TransferChange extends BudgetChange {
         BigDecimal oldAmount = currentAmount.subtract(transferAmount);
         targetEntry.setAmount(oldAmount);
     }
+    
+    /**
+     * Returns the difference for the source entry (negative since it loses amount)
+     * @return negative transfer amount
+     */
+    @Override
+    public BigDecimal getDifference() {
+        return transferAmount.negate(); // Negative for source entry
+    }
+    
+    /**
+     * Returns the type of this change
+     * @return TRANSFER
+     */
+    @Override
+    public ChangeType getType() {
+        return ChangeType.TRANSFER;
+    }
+    
+    /**
+     * Returns the code of the target entry
+     * @return target entry code
+     */
+    public String getTargetEntryCode() {
+        return targetEntryCode;
+    }
+    
+    /**
+     * Returns the amount being transferred
+     * @return transfer amount
+     */
+    public BigDecimal getTransferAmount() {
+        return transferAmount;
+    }
+}
