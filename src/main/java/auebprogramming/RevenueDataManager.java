@@ -92,6 +92,34 @@ public final class RevenueDataManager {
         }
         return false;
     }
+
+    /**
+     * Validates that the code exists in the correct CSV file.
+     */
+    public void validateCodeExists(String code) throws AppException {
+        boolean exists = false;
+
+        switch (code.length()) {
+            case 2:
+                exists = codeExists(codes2, code);
+                break;
+            case 3:
+                exists = codeExists(codes3, code);
+                break;
+            case 5:
+                exists = codeExists(codes5, code);
+                break;
+            case 7:
+                exists = codeExists(codes7, code);
+                break;
+            default:
+                throw new AppException("Μη αποδεκτό μήκος κωδικού: " + code);
+        }
+
+        if (!exists) {
+            throw new AppException("Ο κωδικός " + code + " δεν υπάρχει στα δεδομένα.");
+        }
+    }
 }
 
 
