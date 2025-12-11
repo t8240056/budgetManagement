@@ -43,6 +43,8 @@ public final class Revenue2Panel extends JPanel {
     /** The two-digit code selected from the previous panel. */
     private final String parentCode;
 
+    private RevenueDataManager revdata;
+
     /**
      * Constructs the Revenue2Panel.
      *
@@ -64,7 +66,7 @@ public final class Revenue2Panel extends JPanel {
      */
     private void initializeTable() {
         JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        RevenueDataManager revdata = new RevenueDataManager();
+        revdata = new RevenueDataManager();
         String[][] emptyData = revdata.get3DigitCodes(parentCode);
         String[] columnNames = { "Κωδικός", "Κατηγορία","Ποσό" };
 
@@ -137,13 +139,21 @@ public final class Revenue2Panel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                String code = getCode3();
-                frame.showRevenue3(code);
-            } else {
+                if (codeField.isVisible()
+                    && !codeField.getText().trim().isEmpty()) {
+                    try {
+                        String code = getCode3();
+                        revdata.validateUserInput(parentCode, code);
+                        frame.showRevenue3(code);
+                    } catch (AppException  e) {
+                        AppException.showError(e.getMessage());
+                    }
+
+
+                } else {
                 AppException.showError(
                     "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
-            }
+                }
             }
         });
 
