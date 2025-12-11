@@ -39,6 +39,8 @@ public final class RevenuePanel extends JPanel {
     /** Reference to main frame for panel switching. */
     private final MainFrame frame;
 
+    private RevenueDataManager revdata;
+
     /**
      * Constructs the RevenuePanel.
      *
@@ -58,7 +60,7 @@ public final class RevenuePanel extends JPanel {
      */
     private void initializeTable() {
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        RevenueDataManager revdata = new RevenueDataManager();
+         revdata = new RevenueDataManager();
         String[][] Data = revdata.get2DigitCodes();
         String[] columnNames = { "Κωδικός", "Κατηγορία" ,"Ποσό"};
 
@@ -130,15 +132,17 @@ public final class RevenuePanel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if (codeField.isVisible() && !codeField.getText().trim().isEmpty()){
-                //try {
+                if (codeField.isVisible() &&
+                !codeField.getText().trim().isEmpty()){
+                try {
                     // Εδώ θα μπε η μέθοδος του Θανάση if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
                     String code = getCode2();
+                    revdata.validateUserInput(null, code);
                     frame.showRevenue2(code);
                     //}
-                //} catch (AppException ex) {
-                    //AppException.showError(ex.getMessage());
-                //}
+                } catch (AppException ex) {
+                    AppException.showError(ex.getMessage());
+                }
                 } else {
                     AppException.showError(
                     "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή");
