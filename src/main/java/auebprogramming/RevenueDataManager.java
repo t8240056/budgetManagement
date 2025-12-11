@@ -120,6 +120,22 @@ public final class RevenueDataManager {
             throw new AppException("Ο κωδικός " + code + " δεν υπάρχει στα δεδομένα.");
         }
     }
+
+    /**
+     * Ensures child code starts with parent code (hierarchy rule).
+     */
+    public void validateHierarchy(String parent, String child) throws AppException {
+        if (parent == null || parent.isEmpty()) {
+            return; // πρώτη εισαγωγή
+        }
+
+        if (!child.startsWith(parent)) {
+            throw new AppException(
+                "Ο κωδικός " + child +
+                " δεν ανήκει στην κατηγορία του " + parent + "."
+            );
+        }
+    }
 }
 
 
