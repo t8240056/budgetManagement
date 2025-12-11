@@ -72,7 +72,8 @@ public final class RevenueDataManager {
      */
     public void validateCodeLength(String code) throws AppException {
         if (code == null || !code.matches("\\d+")) {
-            throw new AppException("Ο κωδικός πρέπει να περιέχει μόνο ψηφία.");
+            throw new AppException(
+                "Ο κωδικός πρέπει να περιέχει μόνο ψηφία.");
         }
 
         int len = code.length();
@@ -117,14 +118,16 @@ public final class RevenueDataManager {
         }
 
         if (!exists) {
-            throw new AppException("Ο κωδικός " + code + " δεν υπάρχει στα δεδομένα.");
+            throw new AppException(
+                "Ο κωδικός " + code + " δεν υπάρχει στα δεδομένα.");
         }
     }
 
     /**
      * Ensures child code starts with parent code (hierarchy rule).
      */
-    public void validateHierarchy(String parent, String child) throws AppException {
+    public void validateHierarchy(
+        String parent, String child) throws AppException {
         if (parent == null || parent.isEmpty()) {
             return; // πρώτη εισαγωγή
         }
