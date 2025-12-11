@@ -136,6 +136,18 @@ public final class RevenueDataManager {
             );
         }
     }
+
+    /**
+     * Full validation for user input:
+     * 1. Check digits + correct length
+     * 2. Check hierarchy with previous input
+     * 3. Check existence in CSV
+     */
+    public void validateUserInput(String previousCode, String userInput)
+            throws AppException {
+
+        validateCodeLength(userInput);
+        validateHierarchy(previousCode, userInput);
+        validateCodeExists(userInput);
+    }
 }
-
-
