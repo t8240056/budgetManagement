@@ -80,6 +80,18 @@ public final class RevenueDataManager {
             throw new AppException("Μη έγκυρο μήκος κωδικού: " + code);
         }
     }
+
+    /**
+     * Checks if a code exists in a specific CSV array.
+     */
+    private boolean codeExists(String[][] data, String code) {
+        for (String[] row : data) {
+            if (row.length > 0 && row[0].equals(code)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
 
 
