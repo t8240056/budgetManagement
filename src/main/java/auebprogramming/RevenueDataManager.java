@@ -61,6 +61,25 @@ public final class RevenueDataManager {
 
         return filtered.toArray(new String[0][]);
     }
+
+    /* ============================================================
+       VALIDATION METHODS
+       ============================================================ */
+
+    /**
+     * Validates that the given code contains only digits and has
+     * allowed length (2, 3, 5, 7).
+     */
+    public void validateCodeLength(String code) throws AppException {
+        if (code == null || !code.matches("\\d+")) {
+            throw new AppException("Ο κωδικός πρέπει να περιέχει μόνο ψηφία.");
+        }
+
+        int len = code.length();
+        if (len != 2 && len != 3 && len != 5 && len != 7) {
+            throw new AppException("Μη έγκυρο μήκος κωδικού: " + code);
+        }
+    }
 }
 
 
