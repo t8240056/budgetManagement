@@ -68,6 +68,8 @@ public final class MenuPanel extends JPanel {
                     frame.switchTo("changes");
                 } else if (exitButton.isSelected()) {
                     System.exit(0);
+                } else {
+                    AppException.showError("Επιλέξτε μια λειτουργία");
                 }
             }
         });
