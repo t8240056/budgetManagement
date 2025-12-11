@@ -56,4 +56,35 @@ public class RevenueDataManagerTest {
         }
     }
 
+    /* =====================
+       Negative tests: Λάθη
+       ===================== */
+
+    @Test
+    public void testInvalidLength() {
+        assertThrows(AppException.class, () -> manager.validateUserInput(null, "1234"),
+                "Expected exception for invalid length");
+        assertThrows(AppException.class, () -> manager.validateUserInput(null, "1"),
+                "Expected exception for invalid length");
+        assertThrows(AppException.class, () -> manager.validateUserInput(null, "11111111"),
+                "Expected exception for invalid length");
+    }
+
+    @Test
+    public void testNonExistingCode() {
+        assertThrows(AppException.class, () -> manager.validateUserInput(null, "99"),
+                "Expected exception for non-existing 2-digit code");
+        assertThrows(AppException.class, () -> manager.validateUserInput("11", "999"),
+                "Expected exception for non-existing 3-digit code");
+    }
+
+    @Test
+    public void testHierarchyViolation() {
+        // 3-digit code δεν ανήκει στον 2-digit γονέα
+        String valid2Digit = manager.get2DigitCodes()[0][0];
+        String invalid3Digit = "999"; // πρέπει να μην ξεκινά με valid2Digit
+        assertThrows(AppException.class, () -> manager.validateUserInput(valid2Digit, invalid3Digit),
+                "Expected exception for hierarchy violation");
+    }
 }
+
