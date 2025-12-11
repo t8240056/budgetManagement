@@ -44,7 +44,7 @@ public final class MainFrame extends JFrame {
         expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
         cardPanel.add(expenseByCategoryPanel,
          "expenseByCategory");
-        String expcodes = expenseByCategoryPanel.getCodes();
+
 
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
