@@ -1,24 +1,17 @@
 package auebprogramming;
 
 /**
- * Enumeration of all supported change types in the budget system
+ * Enumeration defining the types of changes that can be applied to the budget.
  */
 public enum ChangeType {
-    /** Absolute increase by a fixed amount (e.g., +1,000,000) */
+    /** Represents an absolute increase in the amount. */
     ABSOLUTE_INCREASE,
-    
-    /** Absolute decrease by a fixed amount (e.g., -500,000) */
+    /** Represents an absolute decrease in the amount. */
     ABSOLUTE_DECREASE,
-    
-    /** Percentage increase (e.g., +10%) */
-    PERCENTAGE_INCREASE,
-    
-    /** Percentage decrease (e.g., -5%) */
-    PERCENTAGE_DECREASE,
-    
-    /** Transfer amount from one entry to another */
+    /** Represents a transfer of funds between two entries. */
     TRANSFER,
-    
-    /** Correction of an error in an entry */
-    CORRECTION
+    /** Represents a creation of a new entry. */
+    CREATION,
+    /** Represents a deletion of an entry. */
+    DELETION
 }
