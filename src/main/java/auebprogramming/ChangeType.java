@@ -13,5 +13,5 @@ public enum ChangeType {
     /** Represents a creation of a new entry. */
     CREATION,
     /** Represents a deletion of an entry. */
-    DELETION
+    DELETION, PERCENTAGE_DECREASE, PERCENTAGE_INCREASE
 }
