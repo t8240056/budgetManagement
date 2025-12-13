@@ -36,10 +36,10 @@ public class Main1 {
         if (chooseBudgetType == 0) { 
             loadRevenueData(repository); 
             
-        // --- ΛΟΓΙΚΗ ΕΞΟΔΩΝ (ΤΡΟΠΟΠΟΙΗΜΕΝΗ) ---
+        // --- ΛΟΓΙΚΗ ΕΞΟΔΩΝ ---
         } else if (chooseBudgetType == 1) { 
             
-            // 1. Εμφάνιση λίστας Φορέων (Μία φορά)
+            // 1. Εμφάνιση λίστας Φορέων
             loadMinistries(); 
 
             boolean orgLoaded = false;
@@ -50,14 +50,17 @@ public class Main1 {
                 String orgCode = scanner.nextLine().trim();
 
                 // 3. Φόρτωση δεδομένων
-                // Η μέθοδος επιστρέφει true αν πετύχει, false αν αποτύχει
                 orgLoaded = loadOrganizationExpenses(repository, orgCode);
                 
                 if (!orgLoaded) {
                     System.out.println("⚠️ Παρακαλώ έλεγξε τον κωδικό και προσπάθησε ξανά.");
+                } else {
+                    // --- ΝΕΑ ΠΡΟΣΘΗΚΗ: Εμφάνιση πίνακα αμέσως μετά τη φόρτωση ---
+                    // Εφόσον φορτώθηκαν επιτυχώς, δείχνουμε τα δεδομένα στον χρήστη
+                    printAllEntries(repository);
                 }
             }
-            // Αν βγει από το while, σημαίνει ότι orgLoaded == true, άρα συνεχίζουμε!
+            // Συνεχίζουμε στο κυρίως μενού...
 
         } else {
             System.out.println("Invalid choice. Please enter 0 or 1.");
