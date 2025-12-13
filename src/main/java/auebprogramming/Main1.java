@@ -138,7 +138,7 @@ public class Main1 {
         }
         BudgetChangesEntry entry = entryOpt.get();
 
-        System.out.print("Δώσε ποσό αλλαγής (π.χ. 500 για αύξηση, -200 για μείωση): ");
+        System.out.print("Δώσε ποσό αλλαγής (π.χ. +500 για αύξηση, -200 για μείωση): ");
         try {
             String amountInput = scanner.nextLine();
             BigDecimal amount = new BigDecimal(amountInput); 
@@ -169,7 +169,7 @@ public class Main1 {
         }
         BudgetChangesEntry entry = entryOpt.get();
 
-        System.out.print("Δώσε ποσοστό % (π.χ. 10 για +10%, -50 για -50%): ");
+        System.out.print("Δώσε ποσοστό % (π.χ. +10 για +10%, -50 για -50%): ");
         try {
             double percent = Double.parseDouble(scanner.nextLine());
             System.out.print("Αιτιολογία: ");
