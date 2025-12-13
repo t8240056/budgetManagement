@@ -100,33 +100,40 @@ public class Main1 {
 
     // --- Βοηθητικές Μέθοδοι ---
 
-    private static void handleAbsoluteChange(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
-        String code = scanner.nextLine();
-        
-        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
-        if (entryOpt.isEmpty()) {
-            System.out.println("Ο κωδικός '" + code + "' δεν βρέθηκε.");
-            return;
-        }
-        BudgetChangesEntry entry = entryOpt.get();
-
-        System.out.print("Δώσε ποσό αλλαγής (π.χ. 500 για αύξηση, -200 για μείωση): ");
-        try {
-            BigDecimal amount = new BigDecimal(scanner.nextLine());
-            System.out.print("Αιτιολογία: ");
-            String just = scanner.nextLine();
-
-            AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
-            change.apply(entry);
-            
-            System.out.println("Επιτυχία! " + change.getType());
-            System.out.println("Νέο ποσό: " + entry.getAmount());
-            
-        } catch (Exception e) {
-            System.out.println("Σφάλμα: " + e.getMessage());
-        }
+private static void handleAbsoluteChange(BudgetRepository repo, Scanner scanner) {
+    System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
+    String code = scanner.nextLine();
+    
+    Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
+    if (entryOpt.isEmpty()) {
+        System.out.println("Ο κωδικός '" + code + "' δεν βρέθηκε.");
+        return;
     }
+    BudgetChangesEntry entry = entryOpt.get();
+
+    System.out.print("Δώσε ποσό αλλαγής (π.χ. 500 για αύξηση, -200 για μείωση): ");
+    try {
+        String amountInput = scanner.nextLine();
+        BigDecimal amount = new BigDecimal(amountInput); // Αυτό είναι το changeAmount
+
+        System.out.print("Αιτιολογία: ");
+        String just = scanner.nextLine();
+
+        // 🎯 Σωστή χρήση του constructor που μου έδωσες:
+        // AbsoluteAmountChange(String entryCode, BigDecimal changeAmount, String justification, String userId)
+        AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
+        
+        // Ο τύπος (INCREASE/DECREASE) θα υπολογιστεί αυτόματα μέσα στην κλάση change!
+        change.apply(entry); 
+        
+        // 💡 Χρησιμοποιούμε τη μέθοδο getType() της AbsoluteAmountChange για εμφάνιση
+        System.out.println("Επιτυχία! Τύπος: " + change.getType());
+        System.out.println("Νέο ποσό: " + entry.getAmount());
+        
+    } catch (Exception e) {
+        System.out.println("Σφάλμα: " + e.getMessage());
+    }
+}
 
     private static void handlePercentageChange(BudgetRepository repo, Scanner scanner) {
         System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
