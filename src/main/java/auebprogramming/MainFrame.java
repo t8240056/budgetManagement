@@ -20,6 +20,7 @@ public final class MainFrame extends JFrame {
     private final AgencyDetailsPanel agencyDetailsPanel;
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
     private  ExpenseByCategory2Panel expenseByCategory2Panel;
+    private InsertChangePanel insertChangePanel;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -49,7 +50,9 @@ public final class MainFrame extends JFrame {
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
         cardPanel.add(new BudgetPanel(this), "budget");
-        // cardPanel.add(new ChangesPanel(this), "changes");
+        this.insertChangePanel = new InsertChangePanel(this);
+        cardPanel.add(this.insertChangePanel, "insert");
+
 
         add(cardPanel);
         setLocationRelativeTo(null);
