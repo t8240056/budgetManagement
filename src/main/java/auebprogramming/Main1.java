@@ -181,7 +181,7 @@ public class Main1 {
 
             if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
                 System.out.println("❌ Σφάλμα: Η ποσοστιαία μείωση οδηγεί σε αρνητικό ποσό.");
-                System.out.println("   Αποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount));
+                System.out.println("Αποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount));
                 return;
             }
 
@@ -192,7 +192,7 @@ public class Main1 {
             change.apply(entry);
             
             System.out.println("✅ Επιτυχία! Διαφορά ποσού: " + NumberFormat.getInstance().format(change.getDifference()));
-            System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
+            System.out.println("Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
 
         } catch (Exception e) {
             System.out.println("Σφάλμα: " + e.getMessage());
@@ -222,8 +222,8 @@ public class Main1 {
             BigDecimal sourceBalance = sourceOpt.get().getAmount();
             if (sourceBalance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
                 System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο στην πηγή (" + sourceCode + ").");
-                System.out.println("   Διαθέσιμα: " + NumberFormat.getInstance().format(sourceBalance));
-                System.out.println("   Ζητούμενα: " + NumberFormat.getInstance().format(amount));
+                System.out.println("Διαθέσιμα: " + NumberFormat.getInstance().format(sourceBalance));
+                System.out.println("Ζητούμενα: " + NumberFormat.getInstance().format(amount));
                 return;
             }
 
@@ -236,8 +236,8 @@ public class Main1 {
             transfer.applyToTarget(targetOpt.get()); 
 
             System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
-            System.out.println("   Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
-            System.out.println("   Νέο ποσό Προορισμού: " + NumberFormat.getInstance().format(targetOpt.get().getAmount()));
+            System.out.println("Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
+            System.out.println("Νέο ποσό Προορισμού: " + NumberFormat.getInstance().format(targetOpt.get().getAmount()));
 
         } catch (Exception e) {
             System.out.println("Σφάλμα μεταφοράς: " + e.getMessage());
