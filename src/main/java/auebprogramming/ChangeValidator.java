@@ -99,7 +99,7 @@ public class ChangeValidator {
         
         // If both exist, check if source has enough amount
         if (errors.isEmpty()) {
-            BudgetEntry source = repository.findByCode(sourceCode).get();
+            BudgetChangesEntry source = repository.findByCode(sourceCode).get();
             
             if (source.getAmount().compareTo(amount) < 0) {
                 errors.add("Insufficient amount: " + source.getAmount() + 
