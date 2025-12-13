@@ -2,6 +2,7 @@ package auebprogramming;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -44,9 +45,9 @@ public final class InsertChangePanel extends JPanel {
         this.frame = frame;
         setLayout(new BorderLayout());
         
-        // 1. Initialize and add the center panel with options
-        final JPanel centerPanel = initializeCenterPanel();
-        add(centerPanel, BorderLayout.CENTER);
+        // 1. Initialize and add the North panel with options and title
+        final JPanel northPanel = initializeNorthPanel();
+        add(northPanel, BorderLayout.NORTH); // Τοποθέτηση στο NORTH
 
         // 2. Initialize and add the bottom buttons
         final JPanel bottomPanel = initializeBottomButtons();
@@ -55,52 +56,63 @@ public final class InsertChangePanel extends JPanel {
         // 3. Setup event listeners
         setupListeners();
         
-        // Initialize the radio buttons here, after the center panel is ready
-        this.revenueButton = (JRadioButton) ((JPanel) centerPanel.getComponent(1))
-            .getComponent(0);
-        this.expenseButton = (JRadioButton) ((JPanel) centerPanel.getComponent(1))
-            .getComponent(1);
+        // The rest of the initialization remains the same but adjusted for new structure
+        this.revenueButton = (JRadioButton) ((JPanel) ((JPanel) northPanel.getComponent(1))
+            .getComponent(0)).getComponent(0);
+        this.expenseButton = (JRadioButton) ((JPanel) ((JPanel) northPanel.getComponent(1))
+            .getComponent(1)).getComponent(0);
         this.confirmButton = (JButton) bottomPanel.getComponent(0);
         this.backButton = (JButton) bottomPanel.getComponent(1);
 
     }
     
     /**
-     * Initializes the center area containing the title and the radio buttons.
+     * Initializes the north area containing the title and the radio buttons.
+     * This panel uses BorderLayout and is added to BorderLayout.NORTH of the main panel.
      *
      * @return the JPanel containing the title and the options
      */
-    private JPanel initializeCenterPanel() {
-        final JPanel centerContainer = new JPanel(new GridLayout(2, 1));
-        centerContainer.setBorder(
-            BorderFactory.createEmptyBorder(50, 50, 50, 50)); // Adds padding
+    private JPanel initializeNorthPanel() {
+        // Use a container with FlowLayout or BoxLayout to pack content to the top
+        final JPanel topContainer = new JPanel(new GridLayout(2, 1));
+        topContainer.setBorder(
+            BorderFactory.createEmptyBorder(50, 50, 20, 50)); 
 
         // Title Label
         final JLabel titleLabel = new JLabel(
             "Επιλέξτε τύπο δεδομένων:", SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 22));
-        centerContainer.add(titleLabel);
+        topContainer.add(titleLabel);
 
-        // Radio Buttons Panel
-        final JPanel radioPanel = new JPanel(new GridLayout(2, 1, 10, 10));
-        radioPanel.setBorder(
-            BorderFactory.createEmptyBorder(20, 100, 20, 100)); // Indentation
+        // Radio Buttons Panel Container (FlowLayout for grouping)
+        final JPanel radioContainer = new JPanel(new FlowLayout(FlowLayout.CENTER, 50, 10));
 
         final JRadioButton revButton = new JRadioButton("Έσοδα");
         revButton.setFont(new Font("Arial", Font.PLAIN, 20));
 
         final JRadioButton expButton = new JRadioButton("Έξοδα");
         expButton.setFont(new Font("Arial", Font.PLAIN, 20));
+        
+        // Use a simple panel for each radio button to keep them left-aligned relative to the center
+        final JPanel revPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        revPanel.add(revButton);
+        final JPanel expPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        expPanel.add(expButton);
+
 
         final ButtonGroup group = new ButtonGroup();
         group.add(revButton);
         group.add(expButton);
 
-        radioPanel.add(revButton);
-        radioPanel.add(expButton);
+        // Adding radio buttons to a panel with GridLayout for proper spacing/alignment
+        final JPanel radioPanel = new JPanel(new GridLayout(2, 1, 10, 10));
+        radioPanel.setBorder(BorderFactory.createEmptyBorder(20, 100, 20, 100));
         
-        centerContainer.add(radioPanel);
-        return centerContainer;
+        radioPanel.add(revPanel); 
+        radioPanel.add(expPanel);
+
+        topContainer.add(radioPanel);
+        return topContainer;
     }
 
     /**
@@ -136,11 +148,7 @@ public final class InsertChangePanel extends JPanel {
             .getComponent(0);
         final JButton retButton = (JButton) ((JPanel) getComponent(1))
             .getComponent(1);
-        final JRadioButton revButton = (JRadioButton) ((JPanel) 
-            ((JPanel) getComponent(0)).getComponent(1)).getComponent(0);
-        final JRadioButton expButton = (JRadioButton) ((JPanel) 
-            ((JPanel) getComponent(0)).getComponent(1)).getComponent(1);
-            
+        
         // Listener for the BACK button
         retButton.addActionListener(new ActionListener() {
             @Override
@@ -154,6 +162,12 @@ public final class InsertChangePanel extends JPanel {
         confButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
+                // Need to use the correct references now based on the new North Panel structure
+                final JRadioButton revButton = (JRadioButton) ((JPanel) 
+                    ((JPanel) ((JPanel) getComponent(0)).getComponent(1)).getComponent(0)).getComponent(0);
+                final JRadioButton expButton = (JRadioButton) ((JPanel) 
+                    ((JPanel) ((JPanel) getComponent(0)).getComponent(1)).getComponent(1)).getComponent(0);
+
                 if (revButton.isSelected()) {
                     // TODO: Εδώ θα πάει στο επόμενο panel για Εισαγωγή Αλλαγής Εσόδων
                     AppException.showError("Επιλέχθηκε: Έσοδα - Επόμενο βήμα...");
