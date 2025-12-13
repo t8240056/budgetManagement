@@ -138,9 +138,9 @@ public class Main1 {
             BigDecimal potentialNewAmount = entry.getAmount().add(amount);
             if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
                 System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο!");
-                System.out.println("\tΤρέχον ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + "€");
-                System.out.println("\tΠροσπάθεια αφαίρεσης: " + NumberFormat.getInstance().format(amount.abs()) + "€");
-                System.out.println("\tΑποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount) + "€");
+                System.out.println("   Τρέχον ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
+                System.out.println("   Προσπάθεια αφαίρεσης: " + NumberFormat.getInstance().format(amount.abs()) + " €");
+                System.out.println("   Αποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount) + " €");
                 return; // Επιστροφή στο μενού χωρίς να ζητήσει αιτιολογία
             }
 
@@ -151,7 +151,7 @@ public class Main1 {
             change.apply(entry); 
             
             System.out.println("✅ Επιτυχία! Τύπος: " + change.getType());
-            System.out.println("Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + "€");
+            System.out.println("Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
             
         } catch (Exception e) {
             System.out.println("Σφάλμα: " + e.getMessage());
