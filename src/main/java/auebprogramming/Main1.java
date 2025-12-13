@@ -9,5 +9,13 @@ public class Main1 {
         System.out.println("Please choose budget type (0 for revenue, 1 for expense): ");
         chooseBudgetType = scanner.nextInt();
 
+        if (chooseBudgetType == 0) { //Revenue
+            //Display revenue categories
+            
+        } else if (chooseBudgetType == 1) { //Expense
+            //Display expense categories
+        } else {
+            System.out.println("Invalid choice. Please enter 0 or 1.");
+        }
     }
 }
