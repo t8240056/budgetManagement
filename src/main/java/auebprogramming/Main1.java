@@ -11,7 +11,6 @@ import java.util.Scanner;
 public class Main1 {
     
     private static final String CURRENT_USER = "admin"; 
-    // Βασικό path για τα resources (φρόντισε να είναι σωστό στο σύστημά σου)
     private static final String RESOURCES_PATH = "src/main/resources/";
 
     public static void main(String[] args) {
@@ -35,26 +34,30 @@ public class Main1 {
 
         // --- ΛΟΓΙΚΗ ΕΣΟΔΩΝ ---
         if (chooseBudgetType == 0) { 
-            loadRevenueData(repository); // (Φορτώνει και δείχνει preview όπως πριν)
+            loadRevenueData(repository); 
             
-        // --- ΛΟΓΙΚΗ ΕΞΟΔΩΝ (ΝΕΟ) ---
+        // --- ΛΟΓΙΚΗ ΕΞΟΔΩΝ (ΤΡΟΠΟΠΟΙΗΜΕΝΗ) ---
         } else if (chooseBudgetType == 1) { 
             
-            // 1. Εμφάνιση λίστας Φορέων
+            // 1. Εμφάνιση λίστας Φορέων (Μία φορά)
             loadMinistries(); 
 
-            // 2. Επιλογή Φορέα
-            System.out.print("\nΕπίλεξε Κωδικό Φορέα (π.χ. 1003) για επεξεργασία: ");
-            String orgCode = scanner.nextLine().trim();
-
-            // 3. Φόρτωση δεδομένων του συγκεκριμένου Φορέα (π.χ. 1003.csv)
-            boolean loaded = loadOrganizationExpenses(repository, orgCode);
+            boolean orgLoaded = false;
             
-            if (!loaded) {
-                System.out.println("Δεν ήταν δυνατή η φόρτωση του φορέα. Τερματισμός.");
-                scanner.close();
-                return;
+            // 2. Loop μέχρι να δώσει σωστό κωδικό
+            while (!orgLoaded) {
+                System.out.print("\nΕπίλεξε Κωδικό Φορέα (π.χ. 1003) για επεξεργασία: ");
+                String orgCode = scanner.nextLine().trim();
+
+                // 3. Φόρτωση δεδομένων
+                // Η μέθοδος επιστρέφει true αν πετύχει, false αν αποτύχει
+                orgLoaded = loadOrganizationExpenses(repository, orgCode);
+                
+                if (!orgLoaded) {
+                    System.out.println("⚠️ Παρακαλώ έλεγξε τον κωδικό και προσπάθησε ξανά.");
+                }
             }
+            // Αν βγει από το while, σημαίνει ότι orgLoaded == true, άρα συνεχίζουμε!
 
         } else {
             System.out.println("Invalid choice. Please enter 0 or 1.");
@@ -62,7 +65,7 @@ public class Main1 {
             return;
         }
 
-        // --- ΒΗΜΑ 2: Κύριο Μενού (ΚΟΙΝΟ ΓΙΑ ΕΣΟΔΑ & ΕΞΟΔΑ) ---
+        // --- ΒΗΜΑ 2: Κύριο Μενού (ΚΟΙΝΟ) ---
         boolean keepRunning = true;
         while (keepRunning) {
             System.out.println("\n=== BUDGET MANAGEMENT MENU ===");
@@ -103,12 +106,9 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                            ΜΕΘΟΔΟΙ ΕΞΟΔΩΝ (NEW)
+    //                            ΜΕΘΟΔΟΙ ΕΞΟΔΩΝ
     // =========================================================================
 
-    /**
-     * Διαβάζει το expense_ministries_2025.csv και εμφανίζει τους φορείς.
-     */
     private static void loadMinistries() {
         System.out.println("\n--- Λίστα Φορέων Κεντρικής Διοίκησης ---");
         System.out.printf("%-10s %-70s %20s%n", "ΚΩΔΙΚΟΣ", "ΦΟΡΕΑΣ", "ΣΥΝΟΛΟ (€)");
@@ -121,17 +121,13 @@ public class Main1 {
             while (csvScanner.hasNextLine()) {
                 String line = csvScanner.nextLine();
                 if (line.trim().isEmpty()) continue;
-                // Αγνοούμε την επικεφαλίδα
                 if (line.startsWith("Κωδικός") || line.startsWith("Code")) continue;
 
-                // Προσοχή: Το αρχείο αυτό δεν έχει quotes στα νούμερα, είναι απλό CSV
                 String[] parts = line.split(",");
-                
-                // Δομή: Κωδικός(0), Φορέας(1), Τακτικός(2), ΠΔΕ(3), Σύνολο(4)
                 if (parts.length >= 5) {
                     String code = parts[0].trim();
                     String name = parts[1].trim();
-                    String totalStr = parts[4].trim(); // Παίρνουμε το γενικό σύνολο
+                    String totalStr = parts[4].trim(); 
 
                     try {
                         BigDecimal total = new BigDecimal(totalStr);
@@ -140,7 +136,7 @@ public class Main1 {
                             name.length() > 68 ? name.substring(0, 68) + ".." : name, 
                             NumberFormat.getInstance().format(total));
                     } catch (NumberFormatException e) {
-                        // Αν δεν είναι νούμερο, το αγνοούμε ή το τυπώνουμε απλά
+                        // ignore
                     }
                 }
             }
@@ -151,9 +147,6 @@ public class Main1 {
         }
     }
 
-    /**
-     * Φορτώνει τα έξοδα ενός συγκεκριμένου φορέα (π.χ. 1003.csv) στο Repository.
-     */
     private static boolean loadOrganizationExpenses(BudgetRepository repository, String orgCode) {
         String filename = RESOURCES_PATH + orgCode + ".csv";
         System.out.println("--- Φόρτωση εξόδων από: " + filename + " ---");
@@ -164,25 +157,16 @@ public class Main1 {
 
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
-                
                 if (line.isEmpty()) continue;
-
-                // Λογική Parsing για τα ειδικά αρχεία (π.χ. 1003.csv)
-                // Αγνοούμε γραμμές που είναι metadata (π.χ. "ΒΟΥΛΗ..", "Οικονομικό έτος..")
-                // Κρατάμε μόνο γραμμές που ξεκινάνε με νούμερο (Κωδικός Μείζ. κατηγορίας)
                 if (!Character.isDigit(line.charAt(0))) {
                     continue; 
                 }
 
-                // Το αρχείο έχει μορφή: 21,"Παροχές σε εργαζομένους",127657000
-                // Χρησιμοποιούμε split στο κόμμα
                 String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
-                // (Το παραπάνω regex κάνει split στο κόμμα ΑΛΛΑ αγνοεί κόμματα μέσα σε quotes " ", αν υπάρχουν)
-                // Αν σε δυσκολεύει, το απλό split(",") δουλεύει αν δεν υπάρχουν κόμματα μέσα στα ονόματα.
 
                 if (parts.length >= 3) {
                     String code = parts[0].trim();
-                    String desc = parts[1].trim().replace("\"", ""); // Αφαιρούμε τα εισαγωγικά "
+                    String desc = parts[1].trim().replace("\"", ""); 
                     String amountStr = parts[2].trim();
 
                     try {
@@ -190,7 +174,7 @@ public class Main1 {
                         BudgetChangesEntry entry = new BudgetChangesEntry(code, desc, amount);
                         repository.save(entry);
                     } catch (NumberFormatException e) {
-                        // Αν η γραμμή μοιάζει με νούμερο αλλά δεν έχει ποσό, την αγνοούμε
+                        // ignore
                     }
                 }
             }
@@ -213,7 +197,6 @@ public class Main1 {
     // =========================================================================
 
     private static void loadRevenueData(BudgetRepository repository) {
-        // --- PREVIEW (ΟΠΩΣ ΠΡΙΝ) ---
         System.out.println("\n--- Προεπισκόπηση Αρχείου Εσόδων ---");
         System.out.printf("%-10s %-50s %20s%n", "ΚΩΔΙΚΟΣ", "ΚΑΤΗΓΟΡΙΑ", "ΠΟΣΟ (€)");
         System.out.println("----------------------------------------------------------------------------------");
@@ -249,7 +232,6 @@ public class Main1 {
         }
         System.out.println(); 
 
-        // --- LOAD INTO REPO ---
         try {
             File file = new File(RESOURCES_PATH + "revenue_categories2_2025.csv");
             Scanner fileScanner = new Scanner(file);
@@ -269,7 +251,7 @@ public class Main1 {
                         BudgetChangesEntry entry = new BudgetChangesEntry(code, desc, new BigDecimal(amountStr));
                         repository.save(entry);
                     } catch (Exception ex) {
-                        // ignore malformed lines
+                        // ignore
                     }
                 }
             }
@@ -279,8 +261,6 @@ public class Main1 {
             System.out.println("Σφάλμα: " + e.getMessage());
         }
     }
-
-    // --- ΟΙ ΓΝΩΣΤΕΣ ΜΕΘΟΔΟΙ ΕΠΕΞΕΡΓΑΣΙΑΣ (ΜΕ PRE-CHECKS) ---
 
     private static void printAllEntries(BudgetRepository repo) {
         System.out.println("\n--- Λίστα Εγγραφών (Ταξινομημένη κατά Κωδικό) ---");
@@ -317,7 +297,6 @@ public class Main1 {
             String amountInput = scanner.nextLine();
             BigDecimal amount = new BigDecimal(amountInput); 
 
-            // PRE-CHECK
             BigDecimal potentialNewAmount = entry.getAmount().add(amount);
             if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
                 System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο!");
@@ -355,7 +334,6 @@ public class Main1 {
         try {
             double percent = Double.parseDouble(scanner.nextLine());
             
-            // PRE-CHECK
             BigDecimal currentAmount = entry.getAmount();
             BigDecimal percentageDecimal = BigDecimal.valueOf(percent).divide(BigDecimal.valueOf(100));
             BigDecimal changeAmount = currentAmount.multiply(percentageDecimal);
@@ -399,7 +377,6 @@ public class Main1 {
         try {
             BigDecimal amount = new BigDecimal(scanner.nextLine());
 
-            // PRE-CHECK
             BigDecimal sourceBalance = sourceOpt.get().getAmount();
             if (sourceBalance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
                 System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο στην πηγή (" + sourceCode + ").");
