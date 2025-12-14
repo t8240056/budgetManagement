@@ -2,49 +2,81 @@ package auebprogramming;
 
 import java.math.BigDecimal;
 
+/**
+ * Represents a transfer of amount from one budget entry to another
+ */
 public class TransferChange extends BudgetChange {
-    private final String targetCode;
-    private final BigDecimal amount;
+    private final String targetEntryCode; // Code of the entry receiving the amount
+    private final BigDecimal transferAmount; // Amount to transfer
 
-    public TransferChange(String sourceCode, String targetCode, BigDecimal amount, 
-                         String justification, String userId) {
-        super(sourceCode, justification, userId); // entryCode is sourceCode
-        this.targetCode = targetCode;
-        this.amount = amount;
+    /**
+     * Constructs a transfer change
+     */
+    public TransferChange(String sourceEntryCode, String targetEntryCode,
+                          BigDecimal transferAmount, String justification, 
+                          String userId) {
+        super(sourceEntryCode, justification, userId);
+        this.targetEntryCode = targetEntryCode;
+        this.transferAmount = transferAmount;
     }
-
-    public String getTargetCode() { return targetCode; }
 
     @Override
     public BigDecimal apply(BudgetChangesEntry sourceEntry) {
-        // Αφαιρούμε από την πηγή
-        BigDecimal newSourceAmount = sourceEntry.getAmount().subtract(amount);
-        if (newSourceAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Insufficient funds in source");
+        BigDecimal oldAmount = sourceEntry.getAmount();
+        BigDecimal newAmount = oldAmount.subtract(transferAmount);
+        
+        if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "Insufficient amount for transfer: " + oldAmount);
         }
-        sourceEntry.setAmount(newSourceAmount);
-        return newSourceAmount;
+        
+        sourceEntry.setAmount(newAmount);
+        return newAmount;
     }
 
-    // Ειδική μέθοδος για τον προορισμό
+    /**
+     * Applies the transfer to the target entry (adds amount)
+     */
     public void applyToTarget(BudgetChangesEntry targetEntry) {
-        targetEntry.setAmount(targetEntry.getAmount().add(amount));
-    }
-
-    @Override
-    public void undo(BudgetChangesEntry sourceEntry) {
-        // Επιστρέφουμε τα λεφτά στην πηγή
-        sourceEntry.setAmount(sourceEntry.getAmount().add(amount));
+        BigDecimal oldAmount = targetEntry.getAmount();
+        BigDecimal newAmount = oldAmount.add(transferAmount);
+        targetEntry.setAmount(newAmount);
     }
     
-    // Ειδική undo για τον προορισμό
-    public void undoTarget(BudgetChangesEntry targetEntry) {
-        // Παίρνουμε τα λεφτά πίσω από τον προορισμό
-        targetEntry.setAmount(targetEntry.getAmount().subtract(amount));
+    @Override
+    public BigDecimal undo(BudgetChangesEntry sourceEntry) {
+        BigDecimal currentAmount = sourceEntry.getAmount();
+        BigDecimal oldAmount = currentAmount.add(transferAmount);
+        sourceEntry.setAmount(oldAmount);
+        return oldAmount;
     }
-
+    
+    /**
+     * Reverses the transfer on the target entry (subtracts the amount)
+     * (Επανήλθε το παλιό όνομα undoFromTarget)
+     */
+    public void undoFromTarget(BudgetChangesEntry targetEntry) {
+        BigDecimal currentAmount = targetEntry.getAmount();
+        BigDecimal oldAmount = currentAmount.subtract(transferAmount);
+        targetEntry.setAmount(oldAmount);
+    }
+    
+    @Override
+    public BigDecimal getDifference() {
+        return transferAmount.negate(); // Negative for source entry
+    }
+    
     @Override
     public ChangeType getType() {
         return ChangeType.TRANSFER;
+    }
+    
+    // (Επανήλθε το παλιό όνομα getTargetEntryCode)
+    public String getTargetEntryCode() {
+        return targetEntryCode;
+    }
+    
+    public BigDecimal getTransferAmount() {
+        return transferAmount;
     }
 }
