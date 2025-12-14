@@ -126,7 +126,7 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                        SAVE FUNCTIONALITY (NEW)
+    //                        SAFE SAVE FUNCTIONALITY
     // =========================================================================
 
     private static void handleSave(BudgetRepository repo) {
@@ -135,44 +135,52 @@ public class Main1 {
             return;
         }
 
-        System.out.println("💾 Αποθήκευση αλλαγών στο αρχείο: " + currentLoadedFilePath + " ...");
+        // 1. Δημιουργία φακέλου για τα αποθηκευμένα, αν δεν υπάρχει
+        File saveDir = new File("saved_budgets");
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
+
+        // 2. Εξαγωγή του ονόματος αρχείου (π.χ. από "src/resources/1003.csv" παίρνουμε "1003.csv")
+        File originalFile = new File(currentLoadedFilePath);
+        String filename = originalFile.getName();
+        
+        // 3. Δημιουργία νέου ονόματος (π.χ. "1003_updated.csv")
+        String newFilename = filename.replace(".csv", "_updated.csv");
+        File destinationFile = new File(saveDir, newFilename);
+        String destinationPath = destinationFile.getPath();
+
+        System.out.println("💾 Αποθήκευση αντιγράφου στο: " + destinationPath + " ...");
         
         boolean success = false;
         if (currentBudgetType == 0) {
-            success = saveRevenueData(repo);
+            success = saveRevenueData(repo, destinationPath);
         } else {
-            success = saveExpenseData(repo);
+            success = saveExpenseData(repo, destinationPath);
         }
 
         if (success) {
-            System.out.println("✅ Η αποθήκευση ολοκληρώθηκε επιτυχώς!");
-            logAction("Αποθήκευση αλλαγών στο δίσκο (" + currentLoadedFilePath + ")");
-            // Καθαρίζουμε τη στοίβα undo μετά το save (προαιρετικό, αλλά καλή πρακτική)
-            // changeHistory.clear(); 
+            System.out.println("✅ Η αποθήκευση ολοκληρώθηκε! Τα αρχικά αρχεία παρέμειναν άθικτα.");
+            logAction("Αποθήκευση αλλαγών στο νέο αρχείο: " + destinationPath);
         } else {
             System.out.println("❌ Η αποθήκευση απέτυχε.");
         }
     }
 
-    private static boolean saveRevenueData(BudgetRepository repo) {
-        try (FileWriter writer = new FileWriter(currentLoadedFilePath)) {
-            // Γράφουμε την επικεφαλίδα (αν υπάρχει, αλλιώς μπορείς να την παραλείψεις)
-            // Στο αρχείο σου δεν είδαμε ξεκάθαρη επικεφαλίδα στην πρώτη γραμμή που να κρατάμε, 
-            // αλλά ας βάλουμε μια τυπική ή ας ξεκινήσουμε κατευθείαν τα data αν το αρχείο δεν είχε header.
-            // Βάσει του κώδικα load, αγνοούσαμε γραμμές που ξεκινούν με "Κωδικός". Ας τη βάλουμε.
+    private static boolean saveRevenueData(BudgetRepository repo, String destinationPath) {
+        try (FileWriter writer = new FileWriter(destinationPath)) {
+            // Γράφουμε την επικεφαλίδα
             writer.write("Κωδικός,Κατηγορία,Ποσό\n");
 
             // Γράφουμε τα δεδομένα
-            // Προσοχή: Χρησιμοποιούμε stream για να τα γράψουμε ταξινομημένα
             repo.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
                     try {
-                        // Format: Code,Description,Amount (χωρίς formatting αριθμών π.χ. κόμματα)
                         writer.write(String.format("%s,%s,%s\n", 
                             entry.getCode(), 
                             entry.getDescription(), 
-                            entry.getAmount().toPlainString())); // toPlainString για να μην βγάλει επιστημονική μορφή
+                            entry.getAmount().toPlainString()));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -184,42 +192,39 @@ public class Main1 {
         }
     }
 
-    private static boolean saveExpenseData(BudgetRepository repo) {
-        // Εδώ είναι πιο δύσκολα τα πράγματα. Πρέπει να διατηρήσουμε τις πρώτες γραμμές (Metadata)
-        // του αρχικού αρχείου (Υπουργείο, Έτος κλπ).
-        
+    private static boolean saveExpenseData(BudgetRepository repo, String destinationPath) {
         List<String> headerLines = new ArrayList<>();
-        File file = new File(currentLoadedFilePath);
+        
+        // ΔΙΑΒΑΖΟΥΜΕ από το ΠΡΩΤΟΤΥΠΟ (currentLoadedFilePath) για να πάρουμε τα metadata
+        File originalFile = new File(currentLoadedFilePath);
 
-        // 1. Διαβάζουμε τις επικεφαλίδες από το υπάρχον αρχείο
-        try (Scanner fileScanner = new Scanner(file)) {
+        try (Scanner fileScanner = new Scanner(originalFile)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
-                // Αν η γραμμή ξεκινάει με νούμερο, θεωρούμε ότι αρχίζουν τα data, άρα σταματάμε
+                // Σταματάμε μόλις βρούμε νούμερο (άρα αρχίζουν τα data)
                 if (!line.trim().isEmpty() && Character.isDigit(line.charAt(0))) {
                     break;
                 }
                 headerLines.add(line);
             }
         } catch (FileNotFoundException e) {
-            System.out.println("Το αρχείο χάθηκε πριν την αποθήκευση!");
+            System.out.println("Το αρχικό αρχείο δεν βρέθηκε για αντιγραφή επικεφαλίδων.");
             return false;
         }
 
-        // 2. Γράφουμε τα πάντα στο αρχείο (Overwriting)
-        try (FileWriter writer = new FileWriter(file)) {
-            // Α. Γράφουμε τις επικεφαλίδες που κρατήσαμε
+        // ΓΡΑΦΟΥΜΕ στο ΝΕΟ ΑΡΧΕΙΟ (destinationPath)
+        try (FileWriter writer = new FileWriter(destinationPath)) {
+            // Α. Γράφουμε τις παλιές επικεφαλίδες
             for (String header : headerLines) {
                 writer.write(header + "\n");
             }
 
-            // Β. Γράφουμε τα δεδομένα από το Repository
+            // Β. Γράφουμε τα νέα δεδομένα
             repo.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
                     try {
-                        // Format των εξόδων: Code,"Description",Amount
-                        // Πρέπει να προσθέσουμε τα εισαγωγικά στην περιγραφή
+                        // Format: Code,"Description",Amount
                         writer.write(String.format("%s,\"%s\",%s\n", 
                             entry.getCode(), 
                             entry.getDescription(), 
