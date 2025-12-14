@@ -53,20 +53,26 @@ public class Main1 {
         }
 
         if (currentBudgetType == 0) { 
-            loadRevenueData(repository, null); // null = load default original
+            // Φόρτωση Εσόδων (με Preview)
+            loadRevenueData(repository, null); 
             logAction("Φόρτωση δεδομένων Εσόδων");
         } else if (currentBudgetType == 1) { 
+            // Φόρτωση Λίστας Φορέων
             loadMinistries(); 
+            
             boolean orgLoaded = false;
             while (!orgLoaded) {
                 System.out.print("\nΕπίλεξε Κωδικό Φορέα (π.χ. 1003) για επεξεργασία: ");
                 String orgCode = scanner.nextLine().trim();
-                // null = load default original logic
+                
+                // Φόρτωση Εξόδων Φορέα
                 orgLoaded = loadOrganizationExpenses(repository, orgCode, null); 
+                
                 if (!orgLoaded) {
                     System.out.println("⚠️ Παρακαλώ έλεγξε τον κωδικό και προσπάθησε ξανά.");
                 } else {
                     logAction("Φόρτωση δεδομένων Φορέα: " + orgCode);
+                    // ΕΜΦΑΝΙΣΗ ΠΙΝΑΚΑ ΑΜΕΣΩΣ ΜΕΤΑ ΤΗ ΦΟΡΤΩΣΗ (όπως το ζήτησες)
                     printAllEntries(repository);
                 }
             }
@@ -84,10 +90,10 @@ public class Main1 {
             System.out.println("2. Αλλαγή Ποσού (Απόλυτη τιμή)");
             System.out.println("3. Αλλαγή Ποσού (Ποσοστό %)");
             System.out.println("4. Μεταφορά Ποσού (Transfer)");
-            System.out.println("5. Undo (Αναίρεση) 🔙"); 
-            System.out.println("6. Προβολή Ιστορικού (Audit Log) 📜"); 
-            System.out.println("7. Αποθήκευση Αλλαγών (Save As) 💾"); 
-            System.out.println("8. Φόρτωση από Αρχείο (Load) 📂"); // ΝΕΑ ΕΠΙΛΟΓΗ
+            System.out.println("5. Undo (Αναίρεση)"); 
+            System.out.println("6. Προβολή Ιστορικού (Audit Log)"); 
+            System.out.println("7. Αποθήκευση Αλλαγών (Save As)"); 
+            System.out.println("8. Φόρτωση από Αρχείο (Load)"); 
             System.out.println("9. Έξοδος");
             System.out.print("Επιλογή: ");
 
@@ -104,7 +110,7 @@ public class Main1 {
                 case "5": handleUndo(repository); break;
                 case "6": printAuditLog(); break;
                 case "7": handleSave(repository); break;
-                case "8": handleLoadSaved(repository); break; // ΝΕΟ HANDLER
+                case "8": handleLoadSaved(repository); break;
                 case "9":
                     keepRunning = false;
                     logAction("Έξοδος από την εφαρμογή");
@@ -117,116 +123,14 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                        NEW LOAD MENU HANDLER
+    //                        LOAD METHODS (RESTORED FORMATTING)
     // =========================================================================
-
-    private static void handleLoadSaved(BudgetRepository repo) {
-        System.out.println("\n--- Φόρτωση Αποθηκευμένου Αρχείου ---");
-        
-        File savedDir = new File(SAVED_PATH);
-        if (!savedDir.exists() || !savedDir.isDirectory()) {
-            System.out.println("⚠️ Δεν βρέθηκε φάκελος saved_budgets.");
-            return;
-        }
-
-        // Φιλτράρισμα αρχείων: Δείχνουμε μόνο αυτά που ταιριάζουν στο τρέχον context
-        // Αν είμαστε στο 1003, ψάχνουμε αρχεία που ξεκινούν με "1003"
-        // Αν είμαστε στα έσοδα, ψάχνουμε "revenue"
-        File[] files = savedDir.listFiles((dir, name) -> name.startsWith(currentEntityPrefix));
-
-        if (files == null || files.length == 0) {
-            System.out.println("⚠️ Δεν βρέθηκαν αποθηκευμένα αρχεία για: " + currentEntityPrefix);
-            return;
-        }
-
-        System.out.println("Διαθέσιμα αρχεία:");
-        for (int i = 0; i < files.length; i++) {
-            System.out.println((i + 1) + ". " + files[i].getName());
-        }
-        System.out.println("0. Ακύρωση");
-
-        System.out.print("Επίλεξε αρχείο: ");
-        try {
-            int selection = Integer.parseInt(scanner.nextLine());
-            if (selection == 0) return;
-            
-            if (selection > 0 && selection <= files.length) {
-                File selectedFile = files[selection - 1];
-                System.out.println("🔄 Φόρτωση: " + selectedFile.getName() + "...");
-                
-                // ΚΑΘΑΡΙΣΜΟΣ ΥΠΑΡΧΟΝΤΩΝ ΔΕΔΟΜΕΝΩΝ
-                repo.clear(); // ΠΡΕΠΕΙ ΝΑ ΥΠΑΡΧΕΙ ΣΤΟ REPO
-                changeHistory.clear(); // Καθαρίζουμε το Undo history γιατί αλλάξαμε αρχείο
-                
-                boolean success;
-                if (currentBudgetType == 0) {
-                    success = loadRevenueData(repo, selectedFile); // Load specific
-                } else {
-                    success = loadOrganizationExpenses(repo, currentEntityPrefix, selectedFile);
-                }
-
-                if (success) {
-                    System.out.println("✅ Το αρχείο φορτώθηκε επιτυχώς!");
-                    logAction("Φόρτωση αρχείου χρήστη: " + selectedFile.getName());
-                    printAllEntries(repo);
-                }
-            } else {
-                System.out.println("❌ Μη έγκυρη επιλογή.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("❌ Μη έγκυρη είσοδος.");
-        }
-    }
-
-
-    // =========================================================================
-    //                        LOAD METHODS (UPDATED)
-    // =========================================================================
-
-    // Υποστηρίζει φόρτωση είτε του default είτε συγκεκριμένου αρχείου (overrideFile)
-    private static boolean loadRevenueData(BudgetRepository repository, File overrideFile) {
-        currentEntityPrefix = "revenue_categories2_2025"; // Set context
-        
-        File fileToLoad;
-        if (overrideFile != null) {
-            fileToLoad = overrideFile;
-        } else {
-            // Default logic
-            String originalPath = RESOURCES_PATH + "revenue_categories2_2025.csv";
-            fileToLoad = new File(originalPath);
-            // Check for updated version automatically only on startup (optional)
-            // Εδώ το απλοποιούμε: Στην αρχή φορτώνει το original, και το load menu κάνει τα υπόλοιπα
-        }
-        
-        System.out.println("--- Φόρτωση εσόδων από: " + fileToLoad.getName() + " ---");
-
-        try {
-            Scanner fileScanner = new Scanner(fileToLoad);
-            while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
-                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
-                String[] parts = line.split(","); 
-                if (parts.length >= 3) {
-                    try {
-                        String code = parts[0].trim().replace("\uFEFF", ""); 
-                        BudgetChangesEntry entry = new BudgetChangesEntry(code, parts[1].trim(), new BigDecimal(parts[2].trim()));
-                        repository.save(entry);
-                    } catch (Exception ex) { }
-                }
-            }
-            fileScanner.close();
-            System.out.println("Φορτώθηκαν " + repository.count() + " εγγραφές.");
-            currentLoadedFilePath = fileToLoad.getPath();
-            return true;
-        } catch (Exception e) { 
-            System.out.println("Error loading revenue: " + e.getMessage());
-            return false;
-        }
-    }
 
     private static void loadMinistries() {
-        // ... (Ίδιος κώδικας με πριν) ...
         System.out.println("\n--- Λίστα Φορέων Κεντρικής Διοίκησης ---");
+        // Εδώ επανέφερα το %-70s που είχες για να χωράνε τα ονόματα
+        System.out.printf("%-10s %-70s %20s%n", "ΚΩΔΙΚΟΣ", "ΦΟΡΕΑΣ", "ΣΥΝΟΛΟ (€)");
+        System.out.println("--------------------------------------------------------------------------------------------------------");
         try {
             File file = new File(RESOURCES_PATH + "expense_ministries_2025.csv");
             Scanner csvScanner = new Scanner(file);
@@ -235,18 +139,21 @@ public class Main1 {
                 if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
                 String[] parts = line.split(",");
                 if (parts.length >= 5) {
-                    System.out.printf("%-10s %-70s %20s%n", parts[0].trim(), 
-                        parts[1].trim().length() > 68 ? parts[1].trim().substring(0, 68) + ".." : parts[1].trim(), 
-                        parts[4].trim());
+                    try {
+                        BigDecimal total = new BigDecimal(parts[4].trim());
+                        System.out.printf("%-10s %-70s %20s%n", parts[0].trim(), 
+                            parts[1].trim().length() > 68 ? parts[1].trim().substring(0, 68) + ".." : parts[1].trim(), 
+                            NumberFormat.getInstance().format(total));
+                    } catch (NumberFormatException e) { }
                 }
             }
             csvScanner.close();
+            System.out.println("--------------------------------------------------------------------------------------------------------");
         } catch (FileNotFoundException e) { System.out.println("File not found"); }
     }
 
-    // Υποστηρίζει φόρτωση είτε του default είτε συγκεκριμένου αρχείου
     private static boolean loadOrganizationExpenses(BudgetRepository repository, String orgCode, File overrideFile) {
-        currentEntityPrefix = orgCode; // Set context (π.χ. "1003")
+        currentEntityPrefix = orgCode; 
         
         File fileToLoad;
         if (overrideFile != null) {
@@ -284,6 +191,125 @@ public class Main1 {
         }
     }
 
+    private static boolean loadRevenueData(BudgetRepository repository, File overrideFile) {
+        currentEntityPrefix = "revenue_categories2_2025"; 
+        
+        File fileToLoad;
+        if (overrideFile != null) {
+            fileToLoad = overrideFile;
+        } else {
+            String originalPath = RESOURCES_PATH + "revenue_categories2_2025.csv";
+            fileToLoad = new File(originalPath);
+        }
+        
+        // --- RESTORED PREVIEW TABLE ---
+        // Αυτό το κομμάτι έλειπε και το ξαναέβαλα. Τυπώνει τον πίνακα ΠΡΙΝ τη φόρτωση.
+        System.out.println("\n--- Προεπισκόπηση Αρχείου Εσόδων ---");
+        System.out.printf("%-10s %-50s %20s%n", "ΚΩΔΙΚΟΣ", "ΚΑΤΗΓΟΡΙΑ", "ΠΟΣΟ (€)");
+        System.out.println("----------------------------------------------------------------------------------");
+        try {
+            Scanner csvScanner = new Scanner(fileToLoad);
+            while (csvScanner.hasNextLine()) {
+                String line = csvScanner.nextLine();
+                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
+                String[] parts = line.split(","); 
+                if (parts.length >= 3) {
+                    try {
+                        String code = parts[0].trim().replace("\uFEFF", ""); 
+                        BigDecimal amount = new BigDecimal(parts[2].trim());
+                        System.out.printf("%-10s %-50s %20s%n", code, 
+                            parts[1].trim().length() > 48 ? parts[1].trim().substring(0, 48)+".." : parts[1].trim(), 
+                            NumberFormat.getInstance().format(amount));
+                    } catch (Exception ex) { }
+                }
+            }
+            csvScanner.close();
+            System.out.println("----------------------------------------------------------------------------------");
+        } catch (FileNotFoundException e) { System.out.println("CSV not found for preview"); }
+        System.out.println();
+        
+        // --- ACTUAL LOAD ---
+        try {
+            Scanner fileScanner = new Scanner(fileToLoad);
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
+                String[] parts = line.split(","); 
+                if (parts.length >= 3) {
+                    try {
+                        String code = parts[0].trim().replace("\uFEFF", ""); 
+                        BudgetChangesEntry entry = new BudgetChangesEntry(code, parts[1].trim(), new BigDecimal(parts[2].trim()));
+                        repository.save(entry);
+                    } catch (Exception ex) { }
+                }
+            }
+            fileScanner.close();
+            System.out.println("Φορτώθηκαν επιτυχώς " + repository.count() + " εγγραφές εσόδων.");
+            currentLoadedFilePath = fileToLoad.getPath();
+            return true;
+        } catch (Exception e) { 
+            System.out.println("Error loading revenue: " + e.getMessage());
+            return false;
+        }
+    }
+
+    // =========================================================================
+    //                        NEW LOAD MENU HANDLER
+    // =========================================================================
+
+    private static void handleLoadSaved(BudgetRepository repo) {
+        System.out.println("\n--- Φόρτωση Αποθηκευμένου Αρχείου ---");
+        
+        File savedDir = new File(SAVED_PATH);
+        if (!savedDir.exists() || !savedDir.isDirectory()) {
+            System.out.println("⚠️ Δεν βρέθηκε φάκελος saved_budgets.");
+            return;
+        }
+
+        File[] files = savedDir.listFiles((dir, name) -> name.startsWith(currentEntityPrefix));
+
+        if (files == null || files.length == 0) {
+            System.out.println("⚠️ Δεν βρέθηκαν αποθηκευμένα αρχεία για: " + currentEntityPrefix);
+            return;
+        }
+
+        System.out.println("Διαθέσιμα αρχεία:");
+        for (int i = 0; i < files.length; i++) {
+            System.out.println((i + 1) + ". " + files[i].getName());
+        }
+        System.out.println("0. Ακύρωση");
+
+        System.out.print("Επίλεξε αρχείο: ");
+        try {
+            int selection = Integer.parseInt(scanner.nextLine());
+            if (selection == 0) return;
+            
+            if (selection > 0 && selection <= files.length) {
+                File selectedFile = files[selection - 1];
+                System.out.println("🔄 Φόρτωση: " + selectedFile.getName() + "...");
+                
+                repo.clear(); 
+                changeHistory.clear();
+                
+                boolean success;
+                if (currentBudgetType == 0) {
+                    success = loadRevenueData(repo, selectedFile); 
+                } else {
+                    success = loadOrganizationExpenses(repo, currentEntityPrefix, selectedFile);
+                }
+
+                if (success) {
+                    System.out.println("✅ Το αρχείο φορτώθηκε επιτυχώς!");
+                    logAction("Φόρτωση αρχείου χρήστη: " + selectedFile.getName());
+                    printAllEntries(repo);
+                }
+            } else {
+                System.out.println("❌ Μη έγκυρη επιλογή.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("❌ Μη έγκυρη είσοδος.");
+        }
+    }
 
     // =========================================================================
     //                        PRETTY PRINT & HANDLERS
@@ -301,7 +327,10 @@ public class Main1 {
             BigDecimal amount = new BigDecimal(scanner.nextLine()); 
             BigDecimal potentialNewAmount = entry.getAmount().add(amount);
             if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο!"); return; 
+                System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο!"); 
+                System.out.println("   Τρέχον ποσό: " + NumberFormat.getInstance().format(entry.getAmount()));
+                System.out.println("   Αποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount));
+                return; 
             }
             System.out.print("Αιτιολογία: "); String just = scanner.nextLine();
             AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
@@ -333,7 +362,9 @@ public class Main1 {
             change.apply(entry);
             changeHistory.push(change); 
             logAction("Ποσοστιαία Αλλαγή (" + percent + "%): " + code);
-            System.out.println("✅ Επιτυχία! Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
+            
+            System.out.println("✅ Επιτυχία! Διαφορά ποσού: " + NumberFormat.getInstance().format(change.getDifference()));
+            System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
         } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
     }
 
@@ -355,10 +386,17 @@ public class Main1 {
             transfer.apply(sourceOpt.get());        
             transfer.applyToTarget(targetOpt.get()); 
             changeHistory.push(transfer); 
-            logAction("Μεταφορά: " + amount + " € από " + sourceCode + " σε " + targetCode);
+            logAction("Μεταφορά: " + NumberFormat.getInstance().format(amount) + " € από " + sourceCode + " σε " + targetCode);
+            
             System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
+            System.out.println("   Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
+            System.out.println("   Νέο ποσό Προορισμού: " + NumberFormat.getInstance().format(targetOpt.get().getAmount()));
         } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
     }
+
+    // =========================================================================
+    //                        SAVE FUNCTIONALITY
+    // =========================================================================
 
     private static void handleSave(BudgetRepository repo) {
         if (currentLoadedFilePath == null) {
@@ -367,10 +405,6 @@ public class Main1 {
         File saveDir = new File(SAVED_PATH);
         if (!saveDir.exists()) saveDir.mkdir();
 
-        // Ζητάμε όνομα αρχείου ή αφήνουμε το default με timestamp για μοναδικότητα;
-        // Για απλότητα κρατάμε τη λογική _updated, αλλά αν ο χρήστης θέλει Scenarios,
-        // θα μπορούσαμε να ζητάμε όνομα. Εδώ κάνουμε απλό versioning ή overwrite updated.
-        
         System.out.print("Δώσε όνομα για αποθήκευση (ή πάτα Enter για default '_updated'): ");
         String userFilename = scanner.nextLine().trim();
         
@@ -383,7 +417,6 @@ public class Main1 {
             }
         } else {
             if (!userFilename.endsWith(".csv")) userFilename += ".csv";
-            // Προσθέτουμε το prefix αν δεν το έβαλε ο χρήστης για να μπορούμε να το βρούμε στο Load
             if (!userFilename.startsWith(currentEntityPrefix)) {
                 userFilename = currentEntityPrefix + "_" + userFilename;
             }
@@ -420,8 +453,6 @@ public class Main1 {
 
     private static boolean saveExpenseData(BudgetRepository repo, String destinationPath) {
         List<String> headerLines = new ArrayList<>();
-        // Προσπαθούμε να βρούμε τα headers από το τρέχον αρχείο ή το original αν το τρέχον είναι νέο clean
-        // Εδώ για απλότητα διαβάζουμε από το currentLoadedFilePath
         File sourceFile = new File(currentLoadedFilePath);
         try (Scanner fileScanner = new Scanner(sourceFile)) {
             while (fileScanner.hasNextLine()) {
@@ -443,6 +474,10 @@ public class Main1 {
             return true;
         } catch (IOException e) { return false; }
     }
+
+    // =========================================================================
+    //                        LOGGING & UNDO & HELPER
+    // =========================================================================
 
     private static void logAction(String actionDetail) {
         auditLog.add(String.format("[%s] USER: %s | %s", dtf.format(LocalDateTime.now()), CURRENT_USER, actionDetail));
