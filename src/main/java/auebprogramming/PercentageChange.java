@@ -1,92 +1,49 @@
 package auebprogramming;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 
-/**
- * Represents a change by a percentage (positive for increase, negative for decrease)
- */
+import java.math.BigDecimal;
+
 public class PercentageChange extends BudgetChange {
-    private final double percentage;     // Percentage to change by (e.g., 10.0 for 10%)
-    private BigDecimal actualChange;    // The actual amount calculated from percentage
-    
-    /**
-     * Constructs a percentage-based change
-     * @param entryCode code of the entry to change
-     * @param percentage percentage to change by (positive for increase, negative for decrease)
-     * @param justification reason for the change
-     * @param userId who is making the change
-     */
-    public PercentageChange(String entryCode, double percentage,
+    private final double percent;
+    private BigDecimal calculatedDifference; // Αποθηκεύουμε τη διαφορά για το undo
+
+    public PercentageChange(String entryCode, double percent, 
                            String justification, String userId) {
         super(entryCode, justification, userId);
-        this.percentage = percentage;
+        this.percent = percent;
     }
 
-        /**
-     * Applies this percentage change to the given entry
-     * Calculates the actual amount based on percentage and adds it to current amount
-     * @param entry the entry to modify
-     * @return the new amount after the change
-     * @throws IllegalArgumentException if the new amount would be negative
-     */
     @Override
     public BigDecimal apply(BudgetChangesEntry entry) {
-        BigDecimal oldAmount = entry.getAmount();
-        BigDecimal percentageDecimal = BigDecimal.valueOf(percentage / 100.0);
+        BigDecimal currentAmount = entry.getAmount();
+        BigDecimal percentageDecimal = BigDecimal.valueOf(percent).divide(BigDecimal.valueOf(100));
         
-        // Calculate the actual change amount
-        actualChange = oldAmount.multiply(percentageDecimal)
-                              .setScale(2, RoundingMode.HALF_UP);
+        // Υπολογίζουμε και αποθηκεύουμε τη διαφορά
+        this.calculatedDifference = currentAmount.multiply(percentageDecimal);
         
-        BigDecimal newAmount = oldAmount.add(actualChange);
+        BigDecimal newAmount = currentAmount.add(calculatedDifference);
         
-        // Validate that the new amount is not negative
         if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(
-                "Το Καινούριο ποσό δεν μπορεί να είναι αρνητικό: " + newAmount);
+             throw new IllegalArgumentException("New amount cannot be negative");
         }
         
         entry.setAmount(newAmount);
         return newAmount;
     }
 
-     @Override
-    public BigDecimal undo(BudgetChangesEntry entry) {
-        if (actualChange == null) {
-            throw new IllegalStateException("Η αλλαγή δεν έχει εκχωρηθεί ακόμα");
+    @Override
+    public void undo(BudgetChangesEntry entry) {
+        // Αφαιρούμε ακριβώς το ποσό που είχε προστεθεί/αφαιρεθεί
+        if (calculatedDifference != null) {
+            entry.setAmount(entry.getAmount().subtract(calculatedDifference));
         }
-        
-        BigDecimal currentAmount = entry.getAmount();
-        BigDecimal oldAmount = currentAmount.subtract(actualChange);
-        entry.setAmount(oldAmount);
-        return oldAmount;
     }
 
-        /**
-     * Returns the actual amount difference caused by this change
-     * @return the calculated change amount, or zero if not applied yet
-     */
-    @Override
     public BigDecimal getDifference() {
-        return actualChange != null ? actualChange : BigDecimal.ZERO;
+        return calculatedDifference;
     }
-    
-    /**
-     * Determines the type based on whether percentage is positive or negative
-     * @return PERCENTAGE_INCREASE if percentage > 0, PERCENTAGE_DECREASE otherwise
-     */
+
     @Override
     public ChangeType getType() {
-        return percentage > 0 
-            ? ChangeType.PERCENTAGE_INCREASE 
-            : ChangeType.PERCENTAGE_DECREASE;
-    }
-    
-    /**
-     * Returns the percentage value of this change
-     * @return the percentage (positive for increase, negative for decrease)
-     */
-    public double getPercentage() {
-        return percentage;
+        return percent > 0 ? ChangeType.PERCENTAGE_INCREASE : ChangeType.PERCENTAGE_DECREASE;
     }
 }
