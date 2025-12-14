@@ -18,6 +18,7 @@ import java.util.Stack;
 public class Main1 {
     
     private static final String CURRENT_USER = "admin"; 
+    // Αυτό δείχνει στο budgetManagement/src/main/resources/
     private static final String RESOURCES_PATH = "src/main/resources/";
     
     // --- STATE VARIABLES ---
@@ -125,7 +126,7 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                        PRETTY PRINT & HANDLERS (ΕΔΩ ΕΙΝΑΙ ΤΑ ΜΗΝΥΜΑΤΑ ΣΟΥ)
+    //                        PRETTY PRINT & HANDLERS
     // =========================================================================
 
     private static void handleAbsoluteChange(BudgetRepository repo, Scanner scanner) {
@@ -162,7 +163,6 @@ public class Main1 {
             
             logAction("Αλλαγή Ποσού (" + change.getType() + "): " + NumberFormat.getInstance().format(amount) + " € στον κωδικό " + code + ". Αιτία: " + just);
 
-            // --- ΤΑ ΟΜΟΡΦΑ ΜΗΝΥΜΑΤΑ ---
             System.out.println("✅ Επιτυχία! Τύπος: " + change.getType());
             System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
             
@@ -206,7 +206,6 @@ public class Main1 {
             
             logAction("Ποσοστιαία Αλλαγή (" + percent + "%): Διαφορά " + NumberFormat.getInstance().format(change.getDifference()) + " € στον κωδικό " + code);
 
-            // --- ΤΑ ΟΜΟΡΦΑ ΜΗΝΥΜΑΤΑ ---
             System.out.println("✅ Επιτυχία! Διαφορά ποσού: " + NumberFormat.getInstance().format(change.getDifference()));
             System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
 
@@ -252,7 +251,6 @@ public class Main1 {
             
             logAction("Μεταφορά: " + NumberFormat.getInstance().format(amount) + " € από " + sourceCode + " σε " + targetCode + ". Αιτία: " + just);
 
-            // --- ΤΑ ΟΜΟΡΦΑ ΜΗΝΥΜΑΤΑ ---
             System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
             System.out.println("   Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
             System.out.println("   Νέο ποσό Προορισμού: " + NumberFormat.getInstance().format(targetOpt.get().getAmount()));
@@ -263,7 +261,7 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                        SAFE SAVE FUNCTIONALITY (ΝΕΟ & ΑΣΦΑΛΕΣ)
+    //                        SAFE SAVE FUNCTIONALITY (ΣΤΑ RESOURCES)
     // =========================================================================
 
     private static void handleSave(BudgetRepository repo) {
@@ -272,16 +270,18 @@ public class Main1 {
             return;
         }
 
-        // 1. Δημιουργία φακέλου
-        File saveDir = new File("saved_budgets");
+        // 1. Δημιουργία φακέλου ΜΕΣΑ στα RESOURCES
+        File saveDir = new File(RESOURCES_PATH + "saved_budgets");
         if (!saveDir.exists()) {
-            saveDir.mkdir();
+            saveDir.mkdir(); // Δημιουργεί τον φάκελο αν δεν υπάρχει
         }
 
         // 2. Δημιουργία ονόματος αρχείου (Original_updated.csv)
         File originalFile = new File(currentLoadedFilePath);
         String filename = originalFile.getName();
         String newFilename = filename.replace(".csv", "_updated.csv");
+        
+        // Το νέο αρχείο θα μπει στο src/main/resources/saved_budgets/
         File destinationFile = new File(saveDir, newFilename);
         String destinationPath = destinationFile.getPath();
 
@@ -326,7 +326,6 @@ public class Main1 {
         List<String> headerLines = new ArrayList<>();
         File originalFile = new File(currentLoadedFilePath);
 
-        // Διάβασμα Metadata από το πρωτότυπο
         try (Scanner fileScanner = new Scanner(originalFile)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
@@ -340,7 +339,6 @@ public class Main1 {
             return false;
         }
 
-        // Εγγραφή στο νέο
         try (FileWriter writer = new FileWriter(destinationPath)) {
             for (String header : headerLines) {
                 writer.write(header + "\n");
@@ -397,7 +395,6 @@ public class Main1 {
 
         if (lastChange instanceof TransferChange) {
             TransferChange transfer = (TransferChange) lastChange;
-            // Χρήση των διορθωμένων ονομάτων
             Optional<BudgetChangesEntry> sourceOpt = repo.findByCode(transfer.getEntryCode());
             Optional<BudgetChangesEntry> targetOpt = repo.findByCode(transfer.getTargetEntryCode());
             if (sourceOpt.isPresent() && targetOpt.isPresent()) {
@@ -456,7 +453,6 @@ public class Main1 {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
                 if (line.isEmpty() || !Character.isDigit(line.charAt(0))) { continue; }
-                // Regex για split κόμματος εκτός εισαγωγικών
                 String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
                 if (parts.length >= 3) {
                     try {
