@@ -414,7 +414,8 @@ public class Main1 {
         if (!saveDir.exists()) saveDir.mkdir();
 
         System.out.print("Δώσε όνομα για αποθήκευση (ή πάτα Enter για default '_updated'): ");
-        String userFilename = scanner.nextLine().trim();
+        // Το replaceAll παίρνει τα κενά (spaces) και τα κάνει κάτω παύλες (_)
+        String userFilename = scanner.nextLine().trim().replaceAll("\\s+", "_");
         
         String filename;
         if (userFilename.isEmpty()) {
