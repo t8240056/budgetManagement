@@ -80,9 +80,9 @@ public class Main1 {
             System.out.println("2. Αλλαγή Ποσού (Απόλυτη τιμή)");
             System.out.println("3. Αλλαγή Ποσού (Ποσοστό %)");
             System.out.println("4. Μεταφορά Ποσού (Transfer)");
-            System.out.println("5. Undo (Αναίρεση) 🔙"); 
-            System.out.println("6. Προβολή Ιστορικού (Audit Log) 📜"); 
-            System.out.println("7. Αποθήκευση Αλλαγών (Save As) 💾"); 
+            System.out.println("5. Undo (Αναίρεση)"); 
+            System.out.println("6. Προβολή Ιστορικού (Audit Log)"); 
+            System.out.println("7. Αποθήκευση Αλλαγών (Save As)"); 
             System.out.println("8. Έξοδος");
             System.out.print("Επιλογή: ");
 
