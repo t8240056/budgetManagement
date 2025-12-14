@@ -4,7 +4,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 import java.util.Stack; 
@@ -14,12 +18,19 @@ public class Main1 {
     private static final String CURRENT_USER = "admin"; 
     private static final String RESOURCES_PATH = "src/main/resources/";
     
-    // Στοίβα Ιστορικού
+    // --- UNDO STACK ---
     private static Stack<BudgetChange> changeHistory = new Stack<>();
+
+    // --- AUDIT LOG (ΝΕΟ) ---
+    private static List<String> auditLog = new ArrayList<>();
+    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
     public static void main(String[] args) {
         BudgetRepository repository = new BudgetRepository();
         Scanner scanner = new Scanner(System.in);
+
+        // Αρχική καταγραφή στο Log
+        logAction("Εκκίνηση εφαρμογής από τον χρήστη " + CURRENT_USER);
 
         System.out.println("Please choose budget type (0 for revenue, 1 for expense): ");
         int chooseBudgetType = -1;
@@ -37,6 +48,7 @@ public class Main1 {
 
         if (chooseBudgetType == 0) { 
             loadRevenueData(repository); 
+            logAction("Φόρτωση δεδομένων Εσόδων");
         } else if (chooseBudgetType == 1) { 
             loadMinistries(); 
             boolean orgLoaded = false;
@@ -47,6 +59,7 @@ public class Main1 {
                 if (!orgLoaded) {
                     System.out.println("⚠️ Παρακαλώ έλεγξε τον κωδικό και προσπάθησε ξανά.");
                 } else {
+                    logAction("Φόρτωση δεδομένων Φορέα: " + orgCode);
                     printAllEntries(repository);
                 }
             }
@@ -60,12 +73,13 @@ public class Main1 {
         boolean keepRunning = true;
         while (keepRunning) {
             System.out.println("\n=== BUDGET MANAGEMENT MENU ===");
-            System.out.println("1. Προβολή όλων των εγγραφών (Ταξινομημένη)");
+            System.out.println("1. Προβολή όλων των εγγραφών");
             System.out.println("2. Αλλαγή Ποσού (Απόλυτη τιμή)");
             System.out.println("3. Αλλαγή Ποσού (Ποσοστό %)");
             System.out.println("4. Μεταφορά Ποσού (Transfer)");
-            System.out.println("5. Undo (Αναίρεση Τελευταίας Κίνησης) 🔙"); 
-            System.out.println("6. Έξοδος");
+            System.out.println("5. Undo (Αναίρεση) 🔙"); 
+            System.out.println("6. Προβολή Ιστορικού (Audit Log) 📜"); // ΝΕΑ ΕΠΙΛΟΓΗ
+            System.out.println("7. Έξοδος");
             System.out.print("Επιλογή: ");
 
             String choice = "";
@@ -90,7 +104,11 @@ public class Main1 {
                     handleUndo(repository); 
                     break;
                 case "6":
+                    printAuditLog(); // ΝΕΑ ΜΕΘΟΔΟΣ
+                    break;
+                case "7":
                     keepRunning = false;
+                    logAction("Έξοδος από την εφαρμογή");
                     System.out.println("Έξοδος...");
                     break;
                 default:
@@ -101,7 +119,30 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                        UNDO FUNCTIONALITY (ΔΙΟΡΘΩΜΕΝΗ)
+    //                        LOGGING METHODS (NEW)
+    // =========================================================================
+
+    private static void logAction(String actionDetail) {
+        String timestamp = dtf.format(LocalDateTime.now());
+        // Μορφή: [Ημερομηνία] USER | DETAIL
+        String entry = String.format("[%s] USER: %s | %s", timestamp, CURRENT_USER, actionDetail);
+        auditLog.add(entry);
+    }
+
+    private static void printAuditLog() {
+        System.out.println("\n=================== SYSTEM AUDIT LOG ===================");
+        if (auditLog.isEmpty()) {
+            System.out.println("   (Κανένα καταγεγραμμένο συμβάν)");
+        } else {
+            for (String entry : auditLog) {
+                System.out.println(entry);
+            }
+        }
+        System.out.println("========================================================");
+    }
+
+    // =========================================================================
+    //                        UNDO FUNCTIONALITY
     // =========================================================================
 
     private static void handleUndo(BudgetRepository repo) {
@@ -115,10 +156,12 @@ public class Main1 {
         System.out.println("🔄 Αναίρεση κίνησης: " + lastChange.getType());
         System.out.println("   Αιτιολογία αρχικής κίνησης: " + lastChange.getDescription());
 
+        // Καταγραφή στο Audit Log ότι έγινε Undo
+        logAction("UNDO ACTION: Αναιρέθηκε η κίνηση -> " + lastChange.toString());
+
         if (lastChange instanceof TransferChange) {
             TransferChange transfer = (TransferChange) lastChange;
             
-            // Χρήση των διορθωμένων ονομάτων (getTargetEntryCode, undoFromTarget)
             Optional<BudgetChangesEntry> sourceOpt = repo.findByCode(transfer.getEntryCode());
             Optional<BudgetChangesEntry> targetOpt = repo.findByCode(transfer.getTargetEntryCode());
 
@@ -128,8 +171,6 @@ public class Main1 {
                 System.out.println("✅ Η μεταφορά αναιρέθηκε επιτυχώς.");
             } else {
                 System.out.println("❌ Σφάλμα: Δεν βρέθηκαν οι εγγραφές για την αναίρεση.");
-                // Αν αποτύχει, ίσως πρέπει να το ξαναβάλουμε στη στοίβα; 
-                // Για απλότητα το αφήνουμε εκτός προς το παρόν.
             }
 
         } else {
@@ -328,7 +369,10 @@ public class Main1 {
 
             AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
             change.apply(entry); 
-            changeHistory.push(change); // PUSH TO STACK
+            changeHistory.push(change); 
+            
+            // LOGGING
+            logAction("Αλλαγή Ποσού (" + change.getType() + "): " + NumberFormat.getInstance().format(amount) + " € στον κωδικό " + code + ". Αιτία: " + just);
 
             System.out.println("✅ Επιτυχία! Τύπος: " + change.getType());
             System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
@@ -368,8 +412,11 @@ public class Main1 {
 
             PercentageChange change = new PercentageChange(code, percent, just, CURRENT_USER);
             change.apply(entry);
-            changeHistory.push(change); // PUSH TO STACK
+            changeHistory.push(change); 
             
+            // LOGGING
+            logAction("Ποσοστιαία Αλλαγή (" + percent + "%): Διαφορά " + NumberFormat.getInstance().format(change.getDifference()) + " € στον κωδικό " + code);
+
             System.out.println("✅ Επιτυχία! Διαφορά ποσού: " + NumberFormat.getInstance().format(change.getDifference()));
             System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
 
@@ -409,7 +456,10 @@ public class Main1 {
             TransferChange transfer = new TransferChange(sourceCode, targetCode, amount, just, CURRENT_USER);
             transfer.apply(sourceOpt.get());        
             transfer.applyToTarget(targetOpt.get()); 
-            changeHistory.push(transfer); // PUSH TO STACK
+            changeHistory.push(transfer); 
+            
+            // LOGGING
+            logAction("Μεταφορά: " + NumberFormat.getInstance().format(amount) + " € από " + sourceCode + " σε " + targetCode + ". Αιτία: " + just);
 
             System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
             System.out.println("   Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
