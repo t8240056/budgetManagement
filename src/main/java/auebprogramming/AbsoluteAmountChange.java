@@ -2,80 +2,37 @@ package auebprogramming;
 
 import java.math.BigDecimal;
 
-/**
- * Represents a change by an absolute amount (positive for increase, negative for decrease)
- */
 public class AbsoluteAmountChange extends BudgetChange {
-    private final BigDecimal changeAmount; // The amount to add/subtract
+    private final BigDecimal changeAmount;
 
-    /**
-     * Constructs a change by an absolute amount
-     * @param entryCode code of the entry to change
-     * @param changeAmount amount to change by (positive for increase, negative for decrease)
-     * @param justification reason for the change
-     * @param userId who is making the change
-     */
     public AbsoluteAmountChange(String entryCode, BigDecimal changeAmount, 
                                String justification, String userId) {
         super(entryCode, justification, userId);
         this.changeAmount = changeAmount;
     }
 
-     /** Applies this absolute amount change to the given entry
-     * Adds the changeAmount to the current amount
-     * @param entry the entry to modify
-     * @return the new amount after the change
-     * @throws IllegalArgumentException if the new amount would be negative
-     */
     @Override
     public BigDecimal apply(BudgetChangesEntry entry) {
-        BigDecimal oldAmount = entry.getAmount();
-        BigDecimal newAmount = oldAmount.add(changeAmount);
-        
-        // Validate that the new amount is not negative
+        BigDecimal newAmount = entry.getAmount().add(changeAmount);
         if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException(
-                "New amount cannot be negative: " + newAmount);
+            throw new IllegalArgumentException("New amount cannot be negative");
         }
-        
         entry.setAmount(newAmount);
         return newAmount;
     }
 
-      @Override
-    public BigDecimal undo(BudgetChangesEntry entry) {
-        BigDecimal currentAmount = entry.getAmount();
-        BigDecimal oldAmount = currentAmount.subtract(changeAmount);
+    @Override
+    public void undo(BudgetChangesEntry entry) {
+        // Η αναίρεση είναι απλώς η αφαίρεση του ποσού που προσθέσαμε
+        // (Αν το changeAmount ήταν αρνητικό, η αφαίρεσή του σημαίνει πρόσθεση, άρα δουλεύει σωστά)
+        BigDecimal oldAmount = entry.getAmount().subtract(changeAmount);
         entry.setAmount(oldAmount);
-        return oldAmount;
     }
 
-        /**
-     * Returns the amount difference caused by this change
-     * @return the changeAmount (positive for increase, negative for decrease)
-     */
-    @Override
-    public BigDecimal getDifference() {
-        return changeAmount;
-    }
-    
-    /**
-     * Determines the type based on whether changeAmount is positive or negative
-     * @return ABSOLUTE_INCREASE if changeAmount > 0, ABSOLUTE_DECREASE otherwise
-     */
     @Override
     public ChangeType getType() {
         return changeAmount.compareTo(BigDecimal.ZERO) > 0 
             ? ChangeType.ABSOLUTE_INCREASE 
             : ChangeType.ABSOLUTE_DECREASE;
     }
-    
-    /**
-     * Returns the absolute amount of this change
-     * @return the change amount
-     */
-    public BigDecimal getChangeAmount() {
-        return changeAmount;
-    }
 }
-    
