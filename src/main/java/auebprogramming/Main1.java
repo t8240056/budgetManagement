@@ -2,8 +2,8 @@ package auebprogramming;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter; // ΝΕΟ IMPORT
-import java.io.IOException; // ΝΕΟ IMPORT
+import java.io.FileWriter;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -25,9 +25,8 @@ public class Main1 {
     private static List<String> auditLog = new ArrayList<>();
     private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
     
-    // Κρατάμε ποιο αρχείο είναι φορτωμένο για να ξέρουμε πού να αποθηκεύσουμε
+    // Μεταβλητές για το Save
     private static String currentLoadedFilePath = null; 
-    // Κρατάμε τον τύπο για να ξέρουμε ποια μέθοδο save να καλέσουμε
     private static int currentBudgetType = -1; 
 
     public static void main(String[] args) {
@@ -82,7 +81,7 @@ public class Main1 {
             System.out.println("4. Μεταφορά Ποσού (Transfer)");
             System.out.println("5. Undo (Αναίρεση) 🔙"); 
             System.out.println("6. Προβολή Ιστορικού (Audit Log) 📜"); 
-            System.out.println("7. Αποθήκευση Αλλαγών (Save) 💾"); // ΝΕΑ ΕΠΙΛΟΓΗ
+            System.out.println("7. Αποθήκευση Αλλαγών (Save As) 💾"); 
             System.out.println("8. Έξοδος");
             System.out.print("Επιλογή: ");
 
@@ -111,7 +110,7 @@ public class Main1 {
                     printAuditLog(); 
                     break;
                 case "7":
-                    handleSave(repository); // ΝΕΑ ΜΕΘΟΔΟΣ
+                    handleSave(repository); 
                     break;
                 case "8":
                     keepRunning = false;
@@ -126,7 +125,145 @@ public class Main1 {
     }
 
     // =========================================================================
-    //                        SAFE SAVE FUNCTIONALITY
+    //                        PRETTY PRINT & HANDLERS (ΕΔΩ ΕΙΝΑΙ ΤΑ ΜΗΝΥΜΑΤΑ ΣΟΥ)
+    // =========================================================================
+
+    private static void handleAbsoluteChange(BudgetRepository repo, Scanner scanner) {
+        System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
+        String code = scanner.nextLine();
+        
+        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
+        if (entryOpt.isEmpty()) {
+            System.out.println("Ο κωδικός '" + code + "' δεν βρέθηκε.");
+            return;
+        }
+        BudgetChangesEntry entry = entryOpt.get();
+
+        System.out.print("Δώσε ποσό αλλαγής (π.χ. +500 για αύξηση, -200 για μείωση): ");
+        try {
+            String amountInput = scanner.nextLine();
+            BigDecimal amount = new BigDecimal(amountInput); 
+
+            // Pre-check
+            BigDecimal potentialNewAmount = entry.getAmount().add(amount);
+            if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
+                System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο!");
+                System.out.println("   Τρέχον ποσό: " + NumberFormat.getInstance().format(entry.getAmount()));
+                System.out.println("   Αποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount));
+                return; 
+            }
+
+            System.out.print("Αιτιολογία: ");
+            String just = scanner.nextLine();
+
+            AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
+            change.apply(entry); 
+            changeHistory.push(change); 
+            
+            logAction("Αλλαγή Ποσού (" + change.getType() + "): " + NumberFormat.getInstance().format(amount) + " € στον κωδικό " + code + ". Αιτία: " + just);
+
+            // --- ΤΑ ΟΜΟΡΦΑ ΜΗΝΥΜΑΤΑ ---
+            System.out.println("✅ Επιτυχία! Τύπος: " + change.getType());
+            System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
+            
+        } catch (Exception e) {
+            System.out.println("Σφάλμα: " + e.getMessage());
+        }
+    }
+
+    private static void handlePercentageChange(BudgetRepository repo, Scanner scanner) {
+        System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
+        String code = scanner.nextLine();
+
+        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
+        if (entryOpt.isEmpty()) {
+            System.out.println("Ο κωδικός '" + code + "' δεν βρέθηκε.");
+            return;
+        }
+        BudgetChangesEntry entry = entryOpt.get();
+
+        System.out.print("Δώσε ποσοστό % (π.χ. 10 για +10%, -50 για -50%): ");
+        try {
+            double percent = Double.parseDouble(scanner.nextLine());
+            
+            // Pre-check
+            BigDecimal currentAmount = entry.getAmount();
+            BigDecimal percentageDecimal = BigDecimal.valueOf(percent).divide(BigDecimal.valueOf(100));
+            BigDecimal changeAmount = currentAmount.multiply(percentageDecimal);
+            BigDecimal potentialNewAmount = currentAmount.add(changeAmount);
+
+            if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
+                System.out.println("❌ Σφάλμα: Η ποσοστιαία μείωση οδηγεί σε αρνητικό ποσό.");
+                return;
+            }
+
+            System.out.print("Αιτιολογία: ");
+            String just = scanner.nextLine();
+
+            PercentageChange change = new PercentageChange(code, percent, just, CURRENT_USER);
+            change.apply(entry);
+            changeHistory.push(change); 
+            
+            logAction("Ποσοστιαία Αλλαγή (" + percent + "%): Διαφορά " + NumberFormat.getInstance().format(change.getDifference()) + " € στον κωδικό " + code);
+
+            // --- ΤΑ ΟΜΟΡΦΑ ΜΗΝΥΜΑΤΑ ---
+            System.out.println("✅ Επιτυχία! Διαφορά ποσού: " + NumberFormat.getInstance().format(change.getDifference()));
+            System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
+
+        } catch (Exception e) {
+            System.out.println("Σφάλμα: " + e.getMessage());
+        }
+    }
+
+    private static void handleTransfer(BudgetRepository repo, Scanner scanner) {
+        System.out.print("Δώσε τον Κωδικό ΠΗΓΗΣ (Source Code): ");
+        String sourceCode = scanner.nextLine();
+        
+        System.out.print("Δώσε τον Κωδικό ΠΡΟΟΡΙΣΜΟΥ (Target Code): ");
+        String targetCode = scanner.nextLine();
+
+        Optional<BudgetChangesEntry> sourceOpt = repo.findByCode(sourceCode);
+        Optional<BudgetChangesEntry> targetOpt = repo.findByCode(targetCode);
+
+        if (sourceOpt.isEmpty() || targetOpt.isEmpty()) {
+            System.out.println("Ένας από τους κωδικούς δεν βρέθηκε.");
+            return;
+        }
+
+        System.out.print("Δώσε ποσό μεταφοράς: ");
+        try {
+            BigDecimal amount = new BigDecimal(scanner.nextLine());
+
+            // Pre-check
+            BigDecimal sourceBalance = sourceOpt.get().getAmount();
+            if (sourceBalance.subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+                System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο στην πηγή (" + sourceCode + ").");
+                System.out.println("   Διαθέσιμα: " + NumberFormat.getInstance().format(sourceBalance));
+                return;
+            }
+
+            System.out.print("Αιτιολογία: ");
+            String just = scanner.nextLine();
+
+            TransferChange transfer = new TransferChange(sourceCode, targetCode, amount, just, CURRENT_USER);
+            transfer.apply(sourceOpt.get());        
+            transfer.applyToTarget(targetOpt.get()); 
+            changeHistory.push(transfer); 
+            
+            logAction("Μεταφορά: " + NumberFormat.getInstance().format(amount) + " € από " + sourceCode + " σε " + targetCode + ". Αιτία: " + just);
+
+            // --- ΤΑ ΟΜΟΡΦΑ ΜΗΝΥΜΑΤΑ ---
+            System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
+            System.out.println("   Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
+            System.out.println("   Νέο ποσό Προορισμού: " + NumberFormat.getInstance().format(targetOpt.get().getAmount()));
+
+        } catch (Exception e) {
+            System.out.println("Σφάλμα μεταφοράς: " + e.getMessage());
+        }
+    }
+
+    // =========================================================================
+    //                        SAFE SAVE FUNCTIONALITY (ΝΕΟ & ΑΣΦΑΛΕΣ)
     // =========================================================================
 
     private static void handleSave(BudgetRepository repo) {
@@ -135,17 +272,15 @@ public class Main1 {
             return;
         }
 
-        // 1. Δημιουργία φακέλου για τα αποθηκευμένα, αν δεν υπάρχει
+        // 1. Δημιουργία φακέλου
         File saveDir = new File("saved_budgets");
         if (!saveDir.exists()) {
             saveDir.mkdir();
         }
 
-        // 2. Εξαγωγή του ονόματος αρχείου (π.χ. από "src/resources/1003.csv" παίρνουμε "1003.csv")
+        // 2. Δημιουργία ονόματος αρχείου (Original_updated.csv)
         File originalFile = new File(currentLoadedFilePath);
         String filename = originalFile.getName();
-        
-        // 3. Δημιουργία νέου ονόματος (π.χ. "1003_updated.csv")
         String newFilename = filename.replace(".csv", "_updated.csv");
         File destinationFile = new File(saveDir, newFilename);
         String destinationPath = destinationFile.getPath();
@@ -169,10 +304,7 @@ public class Main1 {
 
     private static boolean saveRevenueData(BudgetRepository repo, String destinationPath) {
         try (FileWriter writer = new FileWriter(destinationPath)) {
-            // Γράφουμε την επικεφαλίδα
             writer.write("Κωδικός,Κατηγορία,Ποσό\n");
-
-            // Γράφουμε τα δεδομένα
             repo.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
@@ -181,9 +313,7 @@ public class Main1 {
                             entry.getCode(), 
                             entry.getDescription(), 
                             entry.getAmount().toPlainString()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (IOException e) { e.printStackTrace(); }
                 });
             return true;
         } catch (IOException e) {
@@ -194,14 +324,12 @@ public class Main1 {
 
     private static boolean saveExpenseData(BudgetRepository repo, String destinationPath) {
         List<String> headerLines = new ArrayList<>();
-        
-        // ΔΙΑΒΑΖΟΥΜΕ από το ΠΡΩΤΟΤΥΠΟ (currentLoadedFilePath) για να πάρουμε τα metadata
         File originalFile = new File(currentLoadedFilePath);
 
+        // Διάβασμα Metadata από το πρωτότυπο
         try (Scanner fileScanner = new Scanner(originalFile)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
-                // Σταματάμε μόλις βρούμε νούμερο (άρα αρχίζουν τα data)
                 if (!line.trim().isEmpty() && Character.isDigit(line.charAt(0))) {
                     break;
                 }
@@ -212,26 +340,20 @@ public class Main1 {
             return false;
         }
 
-        // ΓΡΑΦΟΥΜΕ στο ΝΕΟ ΑΡΧΕΙΟ (destinationPath)
+        // Εγγραφή στο νέο
         try (FileWriter writer = new FileWriter(destinationPath)) {
-            // Α. Γράφουμε τις παλιές επικεφαλίδες
             for (String header : headerLines) {
                 writer.write(header + "\n");
             }
-
-            // Β. Γράφουμε τα νέα δεδομένα
             repo.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
                     try {
-                        // Format: Code,"Description",Amount
                         writer.write(String.format("%s,\"%s\",%s\n", 
                             entry.getCode(), 
                             entry.getDescription(), 
                             entry.getAmount().toPlainString()));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    } catch (IOException e) { e.printStackTrace(); }
                 });
             return true;
         } catch (IOException e) {
@@ -240,9 +362,8 @@ public class Main1 {
         }
     }
 
-
     // =========================================================================
-    //                        LOGGING & UNDO (UNCHANGED)
+    //                        LOGGING & UNDO
     // =========================================================================
 
     private static void logAction(String actionDetail) {
@@ -270,11 +391,13 @@ public class Main1 {
         }
         BudgetChange lastChange = changeHistory.pop();
         System.out.println("🔄 Αναίρεση κίνησης: " + lastChange.getType());
+        System.out.println("   Αιτιολογία αρχικής κίνησης: " + lastChange.getDescription());
         
         logAction("UNDO ACTION: Αναιρέθηκε η κίνηση -> " + lastChange.getDescription());
 
         if (lastChange instanceof TransferChange) {
             TransferChange transfer = (TransferChange) lastChange;
+            // Χρήση των διορθωμένων ονομάτων
             Optional<BudgetChangesEntry> sourceOpt = repo.findByCode(transfer.getEntryCode());
             Optional<BudgetChangesEntry> targetOpt = repo.findByCode(transfer.getTargetEntryCode());
             if (sourceOpt.isPresent() && targetOpt.isPresent()) {
@@ -286,13 +409,13 @@ public class Main1 {
             Optional<BudgetChangesEntry> entryOpt = repo.findByCode(lastChange.getEntryCode());
             if (entryOpt.isPresent()) {
                 lastChange.undo(entryOpt.get());
-                System.out.println("✅ Η αλλαγή αναιρέθηκε.");
+                System.out.println("✅ Η αλλαγή αναιρέθηκε. Το ποσό επανήλθε.");
             }
         }
     }
 
     // =========================================================================
-    //                        LOAD & HELPER METHODS (UPDATED PATH SAVING)
+    //                        LOAD & HELPER METHODS
     // =========================================================================
 
     private static void loadMinistries() {
@@ -333,7 +456,7 @@ public class Main1 {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
                 if (line.isEmpty() || !Character.isDigit(line.charAt(0))) { continue; }
-
+                // Regex για split κόμματος εκτός εισαγωγικών
                 String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
                 if (parts.length >= 3) {
                     try {
@@ -347,10 +470,7 @@ public class Main1 {
             }
             fileScanner.close();
             System.out.println("Επιτυχία! Φορτώθηκαν " + repository.count() + " κατηγορίες.");
-            
-            // --- ΣΗΜΑΝΤΙΚΟ: Αποθηκεύουμε το μονοπάτι του αρχείου ---
             currentLoadedFilePath = filename; 
-            
             return true;
         } catch (FileNotFoundException e) {
             System.out.println("❌ Σφάλμα: Δεν υπάρχει αρχείο για τον φορέα " + orgCode);
@@ -360,10 +480,31 @@ public class Main1 {
 
     private static void loadRevenueData(BudgetRepository repository) {
         String filename = RESOURCES_PATH + "revenue_categories2_2025.csv";
-        // Preview logic omitted for brevity, keep yours
         System.out.println("\n--- Προεπισκόπηση Αρχείου Εσόδων ---");
-        // ... (η λογική preview παραμένει ίδια)
-
+        System.out.printf("%-10s %-50s %20s%n", "ΚΩΔΙΚΟΣ", "ΚΑΤΗΓΟΡΙΑ", "ΠΟΣΟ (€)");
+        System.out.println("----------------------------------------------------------------------------------");
+        try {
+            File file = new File(filename);
+            Scanner csvScanner = new Scanner(file);
+            while (csvScanner.hasNextLine()) {
+                String line = csvScanner.nextLine();
+                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
+                String[] parts = line.split(","); 
+                if (parts.length >= 3) {
+                    try {
+                        String code = parts[0].trim().replace("\uFEFF", ""); 
+                        BigDecimal amount = new BigDecimal(parts[2].trim());
+                        System.out.printf("%-10s %-50s %20s%n", code, 
+                            parts[1].trim().length() > 48 ? parts[1].trim().substring(0, 48)+".." : parts[1].trim(), 
+                            NumberFormat.getInstance().format(amount));
+                    } catch (Exception ex) { }
+                }
+            }
+            csvScanner.close();
+            System.out.println("----------------------------------------------------------------------------------");
+        } catch (FileNotFoundException e) { System.out.println("CSV not found"); }
+        
+        System.out.println();
         try {
             File file = new File(filename);
             Scanner fileScanner = new Scanner(file);
@@ -374,21 +515,15 @@ public class Main1 {
                 if (parts.length >= 3) {
                     try {
                         String code = parts[0].trim().replace("\uFEFF", ""); 
-                        String desc = parts[1].trim();
-                        BudgetChangesEntry entry = new BudgetChangesEntry(code, desc, new BigDecimal(parts[2].trim()));
+                        BudgetChangesEntry entry = new BudgetChangesEntry(code, parts[1].trim(), new BigDecimal(parts[2].trim()));
                         repository.save(entry);
                     } catch (Exception ex) { }
                 }
             }
             fileScanner.close();
             System.out.println("Φορτώθηκαν επιτυχώς " + repository.count() + " εγγραφές εσόδων.");
-            
-            // --- ΣΗΜΑΝΤΙΚΟ: Αποθηκεύουμε το μονοπάτι του αρχείου ---
             currentLoadedFilePath = filename;
-
-        } catch (Exception e) {
-            System.out.println("Σφάλμα: " + e.getMessage());
-        }
+        } catch (Exception e) { System.out.println("Error: " + e.getMessage()); }
     }
 
     private static void printAllEntries(BudgetRepository repo) {
@@ -406,68 +541,5 @@ public class Main1 {
             });
         System.out.println("----------------------------------------------------------------------------------");
         System.out.println("Σύνολο: " + NumberFormat.getInstance().format(repo.calculateTotal()) + " €");
-    }
-
-    private static void handleAbsoluteChange(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Κωδικός: "); String code = scanner.nextLine();
-        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
-        if (entryOpt.isEmpty()) { System.out.println("Δεν βρέθηκε."); return; }
-        BudgetChangesEntry entry = entryOpt.get();
-
-        System.out.print("Ποσό: ");
-        try {
-            BigDecimal amount = new BigDecimal(scanner.nextLine()); 
-            if (entry.getAmount().add(amount).compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("❌ Ανεπαρκές υπόλοιπο!"); return; 
-            }
-            System.out.print("Αιτιολογία: "); String just = scanner.nextLine();
-            AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
-            change.apply(entry); 
-            changeHistory.push(change); 
-            logAction("Αλλαγή Ποσού: " + amount + " σε " + code);
-            System.out.println("✅ Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()));
-        } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
-    }
-
-    private static void handlePercentageChange(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Κωδικός: "); String code = scanner.nextLine();
-        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
-        if (entryOpt.isEmpty()) { System.out.println("Δεν βρέθηκε."); return; }
-        BudgetChangesEntry entry = entryOpt.get();
-
-        System.out.print("Ποσοστό %: ");
-        try {
-            double percent = Double.parseDouble(scanner.nextLine());
-            // Precheck logic here (simplified for space)
-            System.out.print("Αιτιολογία: "); String just = scanner.nextLine();
-            PercentageChange change = new PercentageChange(code, percent, just, CURRENT_USER);
-            change.apply(entry);
-            changeHistory.push(change);
-            logAction("Ποσοστιαία Αλλαγή (" + percent + "%) σε " + code);
-            System.out.println("✅ Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()));
-        } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
-    }
-
-    private static void handleTransfer(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Πηγή: "); String sourceCode = scanner.nextLine();
-        System.out.print("Προορισμός: "); String targetCode = scanner.nextLine();
-        Optional<BudgetChangesEntry> sourceOpt = repo.findByCode(sourceCode);
-        Optional<BudgetChangesEntry> targetOpt = repo.findByCode(targetCode);
-        if (sourceOpt.isEmpty() || targetOpt.isEmpty()) { System.out.println("Λάθος κωδικοί."); return; }
-
-        System.out.print("Ποσό: ");
-        try {
-            BigDecimal amount = new BigDecimal(scanner.nextLine());
-            if (sourceOpt.get().getAmount().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("❌ Ανεπαρκές υπόλοιπο!"); return;
-            }
-            System.out.print("Αιτιολογία: "); String just = scanner.nextLine();
-            TransferChange transfer = new TransferChange(sourceCode, targetCode, amount, just, CURRENT_USER);
-            transfer.apply(sourceOpt.get());        
-            transfer.applyToTarget(targetOpt.get()); 
-            changeHistory.push(transfer); 
-            logAction("Μεταφορά: " + amount + " από " + sourceCode + " σε " + targetCode);
-            System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
-        } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
     }
 }
