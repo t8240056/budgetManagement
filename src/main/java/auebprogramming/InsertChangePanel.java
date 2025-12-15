@@ -38,14 +38,17 @@ public final class InsertChangePanel extends JPanel {
     /** Button for returning to the main menu. */
     private final JButton backButton;
 
+    private final BudgetManager budgetManager;
+
     /**
      * Constructs the InsertChangePanel.
      *
      * @param frame the application's main frame used for switching panels
      */
-    public InsertChangePanel(final MainFrame frame) {
+    public InsertChangePanel(final MainFrame frame, final BudgetManager budgetManager) {
         this.frame = frame;
         setLayout(new BorderLayout());
+        this.budgetManager = budgetManager;
 
         // 1. Initialize and add the North panel with options and title
         final JPanel northPanel = initializeNorthPanel();
@@ -210,15 +213,19 @@ public final class InsertChangePanel extends JPanel {
                 final JRadioButton expButton = (JRadioButton) ((JPanel)
                     radioGroupPanel.getComponent(1)).getComponent(0);
                 // ----------------------------------------------------
-
-                if (revButton.isSelected()) {
-                    // TODO: Εδώ θα πάει στο επόμενο panel για Εισαγωγή Αλλαγής Εσόδων
-                    frame.switchTo("changesMenu");
-                } else if (expButton.isSelected()) {
-                    // TODO: Εδώ θα πάει στο επόμενο panel για Εισαγωγή Αλλαγής Εξόδων
-                    AppException.showError("Επιλέχθηκε: Έξοδα - Επόμενο βήμα...");
-                } else {
-                    AppException.showError("Παρακαλώ επιλέξτε Έσοδα ή Έξοδα.");
+                try {
+                    if (revButton.isSelected()) {
+                        budgetManager.setBudgetType(0);
+                        frame.switchTo("changesMenu");
+                    } else if (expButton.isSelected()) {
+                        // TODO: Εδώ θα πάει στο επόμενο panel για Εισαγωγή Αλλαγής Εξόδων
+                        budgetManager.setBudgetType(1);
+                        AppException.showError("Επιλέχθηκε: Έξοδα - Επόμενο βήμα...");
+                    } else {
+                        AppException.showError("Παρακαλώ επιλέξτε Έσοδα ή Έξοδα.");
+                    }
+                } catch (AppException ex) {
+                    AppException.showError(ex.getMessage());
                 }
             }
         });
