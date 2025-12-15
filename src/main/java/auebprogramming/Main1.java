@@ -13,419 +13,463 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
-import java.util.Stack; 
+import java.util.Stack;
+import java.util.stream.Collectors;
 
-public class Main1 {
-    
-    private static final String CURRENT_USER = "admin"; 
+/**
+ * Controller class for managing budget operations.
+ * Designed to be used by a GUI or CLI.
+ */
+public class BudgetManager {
+
+    private static final String CURRENT_USER = "admin";
     private static final String RESOURCES_PATH = "src/main/resources/";
     private static final String SAVED_PATH = RESOURCES_PATH + "saved_budgets/";
-    
-    // --- STATE VARIABLES ---
-    private static Stack<BudgetChange> changeHistory = new Stack<>();
-    private static List<String> auditLog = new ArrayList<>();
-    private static final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-    
-    // Μεταβλητές State
-    private static String currentLoadedFilePath = null; 
-    private static String currentEntityPrefix = null; 
-    private static int currentBudgetType = -1; 
-    
-    private static Scanner scanner;
+    private static final DateTimeFormatter DTF = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-    public static void main(String[] args) {
-        BudgetRepository repository = new BudgetRepository();
-        scanner = new Scanner(System.in); 
+    private final BudgetRepository repository;
+    private final Stack<BudgetChange> changeHistory;
+    private final List<String> auditLog;
 
-        logAction("Εκκίνηση εφαρμογής από τον χρήστη " + CURRENT_USER);
+    // State variables
+    private String currentLoadedFilePath;
+    private String currentEntityPrefix; // e.g., "1003" or "revenue_categories2_2025"
+    private int currentBudgetType; // 0 for Revenue, 1 for Expense
 
-        System.out.println("Please choose budget type (0 for revenue, 1 for expense): ");
+    /**
+     * Constructor initializes repository and state.
+     */
+    public BudgetManager() {
+        this.repository = new BudgetRepository();
+        this.changeHistory = new Stack<>();
+        this.auditLog = new ArrayList<>();
+        this.currentLoadedFilePath = null;
+        this.currentEntityPrefix = null;
+        this.currentBudgetType = -1;
         
-        try {
-            if (scanner.hasNextLine()) {
-                String input = scanner.nextLine();
-                if (!input.trim().isEmpty()) {
-                    currentBudgetType = Integer.parseInt(input);
-                }
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Invalid input.");
-        }
-
-        if (currentBudgetType == 0) { 
-            loadRevenueData(repository, null); 
-            logAction("Φόρτωση δεδομένων Εσόδων");
-        } else if (currentBudgetType == 1) { 
-            loadMinistries(); 
-            boolean orgLoaded = false;
-            while (!orgLoaded) {
-                System.out.print("\nΕπίλεξε Κωδικό Φορέα (π.χ. 1003) για επεξεργασία: ");
-                String orgCode = scanner.nextLine().trim();
-                orgLoaded = loadOrganizationExpenses(repository, orgCode, null); 
-                if (!orgLoaded) {
-                    System.out.println("⚠️ Παρακαλώ έλεγξε τον κωδικό και προσπάθησε ξανά.");
-                } else {
-                    logAction("Φόρτωση δεδομένων Φορέα: " + orgCode);
-                    printAllEntries(repository);
-                }
-            }
-        } else {
-            System.out.println("Invalid choice. Please enter 0 or 1.");
-            scanner.close();
-            return;
-        }
-
-        // --- ΚΥΡΙΟ ΜΕΝΟΥ ---
-        boolean keepRunning = true;
-        while (keepRunning) {
-            System.out.println("\n=== BUDGET MANAGEMENT MENU ===");
-            System.out.println("1. Προβολή όλων των εγγραφών");
-            System.out.println("2. Αλλαγή Ποσού (Απόλυτη τιμή)");
-            System.out.println("3. Αλλαγή Ποσού (Ποσοστό %)");
-            System.out.println("4. Μεταφορά Ποσού (Transfer)");
-            System.out.println("5. Undo (Αναίρεση) 🔙"); 
-            System.out.println("6. Προβολή Ιστορικού (Audit Log) 📜"); 
-            System.out.println("7. Αποθήκευση Αλλαγών (Save As) 💾"); 
-            System.out.println("8. Φόρτωση από Αρχείο (Load) 📂"); 
-            System.out.println("9. Έξοδος");
-            System.out.print("Επιλογή: ");
-
-            String choice = "";
-            if (scanner.hasNextLine()) {
-                choice = scanner.nextLine();
-            }
-
-            switch (choice) {
-                case "1": printAllEntries(repository); break;
-                case "2": handleAbsoluteChange(repository, scanner); break;
-                case "3": handlePercentageChange(repository, scanner); break;
-                case "4": handleTransfer(repository, scanner); break;
-                case "5": handleUndo(repository); break;
-                case "6": printAuditLog(); break;
-                case "7": handleSave(repository); break;
-                case "8": handleLoadSaved(repository); break;
-                case "9":
-                    keepRunning = false;
-                    logAction("Έξοδος από την εφαρμογή");
-                    System.out.println("Έξοδος...");
-                    break;
-                default: System.out.println("Μη έγκυρη επιλογή.");
-            }
-        }
-        scanner.close();
+        logAction("Application started by user " + CURRENT_USER);
     }
 
     // =========================================================================
-    //                        LOAD METHODS
+    //                        INITIALIZATION & LOADING
     // =========================================================================
 
-    private static void loadMinistries() {
-        System.out.println("\n--- Λίστα Φορέων Κεντρικής Διοίκησης ---");
-        System.out.printf("%-10s %-70s %20s%n", "ΚΩΔΙΚΟΣ", "ΦΟΡΕΑΣ", "ΣΥΝΟΛΟ (€)");
-        System.out.println("--------------------------------------------------------------------------------------------------------");
-        try {
-            File file = new File(RESOURCES_PATH + "expense_ministries_2025.csv");
-            Scanner csvScanner = new Scanner(file);
+    /**
+     * Sets the budget type (Revenue or Expense).
+     * @param type 0 for Revenue, 1 for Expense
+     * @throws AppException if type is invalid
+     */
+    public void setBudgetType(int type) throws AppException {
+        if (type != 0 && type != 1) {
+            throw new AppException("Invalid budget type selected. Please choose 0 or 1.");
+        }
+        this.currentBudgetType = type;
+        
+        if (type == 0) {
+            // Automatically load revenue data
+            loadRevenueData(null);
+            logAction("Revenue data loaded.");
+        }
+        // If type == 1, the GUI should call getMinistriesList() next.
+    }
+
+    /**
+     * Loads revenue data into the repository.
+     * @param overrideFile optional file to load from (can be null for default)
+     * @throws AppException if file not found or load fails
+     */
+    public void loadRevenueData(File overrideFile) throws AppException {
+        this.currentEntityPrefix = "revenue_categories2_2025";
+        File fileToLoad = (overrideFile != null) 
+                ? overrideFile 
+                : new File(RESOURCES_PATH + "revenue_categories2_2025.csv");
+
+        // Check for auto-load of saved file (logic can be handled by GUI, 
+        // here we load what is requested).
+        
+        try (Scanner fileScanner = new Scanner(fileToLoad)) {
+            repository.clear(); // Clear previous data
+            
+            while (fileScanner.hasNextLine()) {
+                String line = fileScanner.nextLine();
+                if (line.trim().isEmpty() || line.startsWith("Κωδικός") || line.startsWith("Code")) {
+                    continue;
+                }
+                
+                String[] parts = line.split(",");
+                if (parts.length >= 3) {
+                    try {
+                        String code = parts[0].trim().replace("\uFEFF", "");
+                        String desc = parts[1].trim();
+                        BigDecimal amount = new BigDecimal(parts[2].trim());
+                        
+                        BudgetChangesEntry entry = new BudgetChangesEntry(code, desc, amount);
+                        repository.save(entry);
+                    } catch (Exception ex) {
+                        // Ignore malformed lines
+                    }
+                }
+            }
+            this.currentLoadedFilePath = fileToLoad.getPath();
+        } catch (FileNotFoundException e) {
+            throw new AppException("Revenue file not found: " + fileToLoad.getPath());
+        }
+    }
+
+    /**
+     * Gets the list of Ministries for display.
+     * Shows ONLY Code and Name, NOT amounts.
+     * @return List of strings (e.g., "1003 - Parliament")
+     * @throws AppException if file missing
+     */
+    public List<String> getMinistriesList() throws AppException {
+        List<String> ministries = new ArrayList<>();
+        File file = new File(RESOURCES_PATH + "expense_ministries_2025.csv");
+        
+        try (Scanner csvScanner = new Scanner(file)) {
             while (csvScanner.hasNextLine()) {
                 String line = csvScanner.nextLine();
-                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
+                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) {
+                    continue;
+                }
+                
                 String[] parts = line.split(",");
-                if (parts.length >= 5) {
-                    try {
-                        BigDecimal total = new BigDecimal(parts[4].trim());
-                        System.out.printf("%-10s %-70s %20s%n", parts[0].trim(), 
-                            parts[1].trim().length() > 68 ? parts[1].trim().substring(0, 68) + ".." : parts[1].trim(), 
-                            NumberFormat.getInstance().format(total));
-                    } catch (NumberFormatException e) { }
+                if (parts.length >= 2) {
+                    // Format: "1003 - Parliament of Greece"
+                    ministries.add(parts[0].trim() + " - " + parts[1].trim());
                 }
             }
-            csvScanner.close();
-            System.out.println("--------------------------------------------------------------------------------------------------------");
-        } catch (FileNotFoundException e) { System.out.println("File not found"); }
+        } catch (FileNotFoundException e) {
+            throw new AppException("Ministries file not found.");
+        }
+        return ministries;
     }
 
-    private static boolean loadOrganizationExpenses(BudgetRepository repository, String orgCode, File overrideFile) {
-        currentEntityPrefix = orgCode; 
-        
-        File fileToLoad;
-        if (overrideFile != null) {
-            fileToLoad = overrideFile;
-        } else {
-            String originalPath = RESOURCES_PATH + orgCode + ".csv";
-            fileToLoad = new File(originalPath);
-        }
+    /**
+     * Loads expenses for a specific organization code.
+     * @param orgCode the organization code (e.g., "1003")
+     * @param overrideFile optional file to load from
+     * @throws AppException if loading fails
+     */
+    public void loadOrganizationExpenses(String orgCode, File overrideFile) throws AppException {
+        this.currentEntityPrefix = orgCode;
+        File fileToLoad = (overrideFile != null) 
+                ? overrideFile 
+                : new File(RESOURCES_PATH + orgCode + ".csv");
 
-        System.out.println("--- Φόρτωση εξόδων από: " + fileToLoad.getName() + " ---");
-
-        try {
-            Scanner fileScanner = new Scanner(fileToLoad);
+        try (Scanner fileScanner = new Scanner(fileToLoad)) {
+            repository.clear(); // Clear previous data
+            
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine().trim();
-                if (line.isEmpty() || !Character.isDigit(line.charAt(0))) { continue; }
-                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1); 
+                // Skip empty lines or metadata lines (lines not starting with digit)
+                if (line.isEmpty() || !Character.isDigit(line.charAt(0))) { 
+                    continue; 
+                }
+
+                // Regex to split by comma ignoring quotes
+                String[] parts = line.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                
                 if (parts.length >= 3) {
                     try {
                         String code = parts[0].trim();
-                        String desc = parts[1].trim().replace("\"", ""); 
+                        String desc = parts[1].trim().replace("\"", "");
                         BigDecimal amount = new BigDecimal(parts[2].trim());
+                        
                         BudgetChangesEntry entry = new BudgetChangesEntry(code, desc, amount);
                         repository.save(entry);
-                    } catch (NumberFormatException e) { }
+                    } catch (NumberFormatException e) {
+                        // Ignore lines where amount is not a number
+                    }
                 }
             }
-            fileScanner.close();
-            System.out.println("Επιτυχία! Φορτώθηκαν " + repository.count() + " κατηγορίες.");
-            currentLoadedFilePath = fileToLoad.getPath(); 
-            return true;
+            this.currentLoadedFilePath = fileToLoad.getPath();
+            logAction("Loaded expenses for organization: " + orgCode);
+            
         } catch (FileNotFoundException e) {
-            System.out.println("❌ Σφάλμα: Δεν υπάρχει αρχείο για τον φορέα " + orgCode);
-            return false;
-        }
-    }
-
-    private static boolean loadRevenueData(BudgetRepository repository, File overrideFile) {
-        currentEntityPrefix = "revenue_categories2_2025"; 
-        
-        File fileToLoad;
-        if (overrideFile != null) {
-            fileToLoad = overrideFile;
-        } else {
-            String originalPath = RESOURCES_PATH + "revenue_categories2_2025.csv";
-            fileToLoad = new File(originalPath);
-        }
-        
-        System.out.println("\n--- Προεπισκόπηση Αρχείου Εσόδων ---");
-        System.out.printf("%-10s %-50s %20s%n", "ΚΩΔΙΚΟΣ", "ΚΑΤΗΓΟΡΙΑ", "ΠΟΣΟ (€)");
-        System.out.println("----------------------------------------------------------------------------------");
-        try {
-            Scanner csvScanner = new Scanner(fileToLoad);
-            while (csvScanner.hasNextLine()) {
-                String line = csvScanner.nextLine();
-                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
-                String[] parts = line.split(","); 
-                if (parts.length >= 3) {
-                    try {
-                        String code = parts[0].trim().replace("\uFEFF", ""); 
-                        BigDecimal amount = new BigDecimal(parts[2].trim());
-                        System.out.printf("%-10s %-50s %20s%n", code, 
-                            parts[1].trim().length() > 48 ? parts[1].trim().substring(0, 48)+".." : parts[1].trim(), 
-                            NumberFormat.getInstance().format(amount));
-                    } catch (Exception ex) { }
-                }
-            }
-            csvScanner.close();
-            System.out.println("----------------------------------------------------------------------------------");
-        } catch (FileNotFoundException e) { System.out.println("CSV not found for preview"); }
-        System.out.println();
-        
-        try {
-            Scanner fileScanner = new Scanner(fileToLoad);
-            while (fileScanner.hasNextLine()) {
-                String line = fileScanner.nextLine();
-                if (line.trim().isEmpty() || line.startsWith("Κωδικός")) continue;
-                String[] parts = line.split(","); 
-                if (parts.length >= 3) {
-                    try {
-                        String code = parts[0].trim().replace("\uFEFF", ""); 
-                        BudgetChangesEntry entry = new BudgetChangesEntry(code, parts[1].trim(), new BigDecimal(parts[2].trim()));
-                        repository.save(entry);
-                    } catch (Exception ex) { }
-                }
-            }
-            fileScanner.close();
-            System.out.println("Φορτώθηκαν επιτυχώς " + repository.count() + " εγγραφές εσόδων.");
-            currentLoadedFilePath = fileToLoad.getPath();
-            return true;
-        } catch (Exception e) { 
-            System.out.println("Error loading revenue: " + e.getMessage());
-            return false;
-        }
-    }
-
-    private static void handleLoadSaved(BudgetRepository repo) {
-        System.out.println("\n--- Φόρτωση Αποθηκευμένου Αρχείου ---");
-        
-        File savedDir = new File(SAVED_PATH);
-        if (!savedDir.exists() || !savedDir.isDirectory()) {
-            System.out.println("⚠️ Δεν βρέθηκε φάκελος saved_budgets.");
-            return;
-        }
-
-        File[] files = savedDir.listFiles((dir, name) -> name.startsWith(currentEntityPrefix));
-
-        if (files == null || files.length == 0) {
-            System.out.println("⚠️ Δεν βρέθηκαν αποθηκευμένα αρχεία για: " + currentEntityPrefix);
-            return;
-        }
-
-        System.out.println("Διαθέσιμα αρχεία:");
-        for (int i = 0; i < files.length; i++) {
-            System.out.println((i + 1) + ". " + files[i].getName());
-        }
-        System.out.println("0. Ακύρωση");
-
-        System.out.print("Επίλεξε αρχείο: ");
-        try {
-            int selection = Integer.parseInt(scanner.nextLine());
-            if (selection == 0) return;
-            
-            if (selection > 0 && selection <= files.length) {
-                File selectedFile = files[selection - 1];
-                System.out.println("🔄 Φόρτωση: " + selectedFile.getName() + "...");
-                
-                repo.clear(); 
-                changeHistory.clear();
-                
-                boolean success;
-                if (currentBudgetType == 0) {
-                    success = loadRevenueData(repo, selectedFile); 
-                } else {
-                    success = loadOrganizationExpenses(repo, currentEntityPrefix, selectedFile);
-                }
-
-                if (success) {
-                    System.out.println("✅ Το αρχείο φορτώθηκε επιτυχώς!");
-                    logAction("Φόρτωση αρχείου χρήστη: " + selectedFile.getName());
-                    printAllEntries(repo);
-                }
-            } else {
-                System.out.println("❌ Μη έγκυρη επιλογή.");
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("❌ Μη έγκυρη είσοδος.");
+            throw new AppException("Budget file for organization " + orgCode + " not found.");
         }
     }
 
     // =========================================================================
-    //                        HANDLERS (ΜΕ ΤΑ ΑΝΑΛΥΤΙΚΑ ΜΗΝΥΜΑΤΑ)
+    //                        VIEW METHODS
     // =========================================================================
 
-    private static void handleAbsoluteChange(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
-        String code = scanner.nextLine();
+    /**
+     * Returns the formatted table view of all entries.
+     * To be used when user clicks "View All Entries" (Option 1).
+     * @return Formatted String table
+     */
+    public String getEntriesView() {
+        StringBuilder sb = new StringBuilder();
         
-        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
+        // Header
+        sb.append(String.format("%-10s %-50s %20s%n", "CODE", "CATEGORY", "AMOUNT (€)"));
+        sb.append("----------------------------------------------------------------------------------\n");
+
+        // Data rows
+        repository.findAll().stream()
+            .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
+            .forEach(entry -> {
+                String desc = entry.getDescription().length() > 48 
+                    ? entry.getDescription().substring(0, 48) + ".." 
+                    : entry.getDescription();
+                
+                sb.append(String.format("%-10s %-50s %20s%n", 
+                    entry.getCode(), 
+                    desc,
+                    NumberFormat.getInstance().format(entry.getAmount())));
+            });
+
+        sb.append("----------------------------------------------------------------------------------\n");
+        sb.append("Total: ").append(NumberFormat.getInstance().format(repository.calculateTotal())).append(" €\n");
+        
+        return sb.toString();
+    }
+    
+    /**
+     * Returns the raw list of entries (useful for GUI Tables).
+     * @return List of BudgetChangesEntry
+     */
+    public List<BudgetChangesEntry> getEntriesList() {
+        return repository.findAll().stream()
+                .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
+                .collect(Collectors.toList());
+    }
+
+    public BigDecimal getTotalAmount() {
+        return repository.calculateTotal();
+    }
+
+    // =========================================================================
+    //                        MODIFICATION HANDLERS
+    // =========================================================================
+
+    /**
+     * Applies an absolute amount change.
+     * @param code Entry code
+     * @param amountStr Amount as string
+     * @param justification Reason
+     * @return Success message
+     * @throws AppException if validation fails
+     */
+    public String makeAbsoluteChange(String code, String amountStr, String justification) throws AppException {
+        Optional<BudgetChangesEntry> entryOpt = repository.findByCode(code);
         if (entryOpt.isEmpty()) {
-            System.out.println("Ο κωδικός '" + code + "' δεν βρέθηκε.");
-            return;
+            throw new AppException("Entry code '" + code + "' not found.");
         }
-        BudgetChangesEntry entry = entryOpt.get();
-
-        // --- RESTORED PROMPT ---
-        System.out.print("Δώσε ποσό αλλαγής (π.χ. +500 για αύξηση, -200 για μείωση): ");
+        
         try {
-            String amountInput = scanner.nextLine();
-            BigDecimal amount = new BigDecimal(amountInput); 
-
-            BigDecimal potentialNewAmount = entry.getAmount().add(amount);
-            if (potentialNewAmount.compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("❌ Σφάλμα: Ανεπαρκές υπόλοιπο!"); 
-                System.out.println("   Τρέχον ποσό: " + NumberFormat.getInstance().format(entry.getAmount()));
-                System.out.println("   Αποτέλεσμα: " + NumberFormat.getInstance().format(potentialNewAmount));
-                return; 
+            BigDecimal amount = new BigDecimal(amountStr);
+            BudgetChangesEntry entry = entryOpt.get();
+            
+            // Pre-check
+            if (entry.getAmount().add(amount).compareTo(BigDecimal.ZERO) < 0) {
+                throw new AppException("Insufficient funds. Result would be negative.");
             }
 
-            System.out.print("Αιτιολογία: ");
-            String just = scanner.nextLine();
-
-            AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, just, CURRENT_USER);
-            change.apply(entry); 
-            changeHistory.push(change); 
+            AbsoluteAmountChange change = new AbsoluteAmountChange(code, amount, justification, CURRENT_USER);
+            change.apply(entry);
+            changeHistory.push(change);
             
-            logAction("Αλλαγή Ποσού (" + change.getType() + "): " + NumberFormat.getInstance().format(amount) + " € στον κωδικό " + code + ". Αιτία: " + just);
-
-            System.out.println("✅ Επιτυχία! Τύπος: " + change.getType());
-            System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
+            logAction("Absolute Change: " + amount + " on " + code + ". Reason: " + justification);
+            return "Success! New Amount: " + NumberFormat.getInstance().format(entry.getAmount()) + " €";
             
-        } catch (Exception e) {
-            System.out.println("Σφάλμα: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            throw new AppException("Invalid amount format.");
         }
     }
 
-    private static void handlePercentageChange(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Δώσε τον Κωδικό (Code) της εγγραφής: ");
-        String code = scanner.nextLine();
-        Optional<BudgetChangesEntry> entryOpt = repo.findByCode(code);
-        if (entryOpt.isEmpty()) { System.out.println("Ο κωδικός δεν βρέθηκε."); return; }
-        BudgetChangesEntry entry = entryOpt.get();
+    /**
+     * Applies a percentage change.
+     * @param code Entry code
+     * @param percentStr Percentage as string (e.g. "10", "-5")
+     * @param justification Reason
+     * @return Success message
+     * @throws AppException if validation fails
+     */
+    public String makePercentageChange(String code, String percentStr, String justification) throws AppException {
+        Optional<BudgetChangesEntry> entryOpt = repository.findByCode(code);
+        if (entryOpt.isEmpty()) {
+            throw new AppException("Entry code '" + code + "' not found.");
+        }
 
-        // --- RESTORED PROMPT ---
-        System.out.print("Δώσε ποσοστό % (π.χ. 10 για +10%, -50 για -50%): ");
         try {
-            double percent = Double.parseDouble(scanner.nextLine());
+            double percent = Double.parseDouble(percentStr);
+            BudgetChangesEntry entry = entryOpt.get();
+            
+            // Pre-check
             BigDecimal currentAmount = entry.getAmount();
             BigDecimal percentageDecimal = BigDecimal.valueOf(percent).divide(BigDecimal.valueOf(100));
             if (currentAmount.add(currentAmount.multiply(percentageDecimal)).compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("❌ Σφάλμα: Αρνητικό υπόλοιπο."); return;
+                throw new AppException("Percentage decrease results in negative amount.");
             }
-            System.out.print("Αιτιολογία: "); String just = scanner.nextLine();
-            PercentageChange change = new PercentageChange(code, percent, just, CURRENT_USER);
+
+            PercentageChange change = new PercentageChange(code, percent, justification, CURRENT_USER);
             change.apply(entry);
-            changeHistory.push(change); 
+            changeHistory.push(change);
             
-            logAction("Ποσοστιαία Αλλαγή (" + percent + "%): " + code);
+            logAction("Percentage Change (" + percent + "%) on " + code);
+            return "Success! New Amount: " + NumberFormat.getInstance().format(entry.getAmount()) + " €";
             
-            System.out.println("✅ Επιτυχία! Διαφορά ποσού: " + NumberFormat.getInstance().format(change.getDifference()));
-            System.out.println("   Νέο ποσό: " + NumberFormat.getInstance().format(entry.getAmount()) + " €");
-        } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
-    }
-
-    private static void handleTransfer(BudgetRepository repo, Scanner scanner) {
-        System.out.print("Δώσε τον Κωδικό ΠΗΓΗΣ (Source Code): ");
-        String sourceCode = scanner.nextLine();
-        
-        System.out.print("Δώσε τον Κωδικό ΠΡΟΟΡΙΣΜΟΥ (Target Code): ");
-        String targetCode = scanner.nextLine();
-        
-        Optional<BudgetChangesEntry> sourceOpt = repo.findByCode(sourceCode);
-        Optional<BudgetChangesEntry> targetOpt = repo.findByCode(targetCode);
-        if (sourceOpt.isEmpty() || targetOpt.isEmpty()) { System.out.println("Λάθος κωδικοί."); return; }
-
-        // --- RESTORED PROMPT ---
-        System.out.print("Δώσε ποσό μεταφοράς: ");
-        try {
-            BigDecimal amount = new BigDecimal(scanner.nextLine());
-            if (sourceOpt.get().getAmount().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
-                System.out.println("❌ Ανεπαρκές υπόλοιπο!"); return;
-            }
-            System.out.print("Αιτιολογία: "); String just = scanner.nextLine();
-            TransferChange transfer = new TransferChange(sourceCode, targetCode, amount, just, CURRENT_USER);
-            transfer.apply(sourceOpt.get());        
-            transfer.applyToTarget(targetOpt.get()); 
-            changeHistory.push(transfer); 
-            
-            logAction("Μεταφορά: " + NumberFormat.getInstance().format(amount) + " € από " + sourceCode + " σε " + targetCode);
-            
-            System.out.println("✅ Μεταφορά ολοκληρώθηκε.");
-            System.out.println("   Νέο ποσό Πηγής: " + NumberFormat.getInstance().format(sourceOpt.get().getAmount()));
-            System.out.println("   Νέο ποσό Προορισμού: " + NumberFormat.getInstance().format(targetOpt.get().getAmount()));
-        } catch (Exception e) { System.out.println("Σφάλμα: " + e.getMessage()); }
-    }
-
-    // =========================================================================
-    //                        SAVE FUNCTIONALITY
-    // =========================================================================
-
-    private static void handleSave(BudgetRepository repo) {
-        if (currentLoadedFilePath == null) {
-            System.out.println("❌ Σφάλμα: Δεν υπάρχει φορτωμένο αρχείο."); return;
+        } catch (NumberFormatException e) {
+            throw new AppException("Invalid percentage format.");
         }
-        File saveDir = new File(SAVED_PATH);
-        if (!saveDir.exists()) saveDir.mkdir();
+    }
 
-        System.out.print("Δώσε όνομα για αποθήκευση (ή πάτα Enter για default '_updated'): ");
-        // Το replaceAll παίρνει τα κενά (spaces) και τα κάνει κάτω παύλες (_)
-        String userFilename = scanner.nextLine().trim().replaceAll("\\s+", "_");
+    /**
+     * Transfers funds between entries.
+     * @param sourceCode Source code
+     * @param targetCode Target code
+     * @param amountStr Amount to transfer
+     * @param justification Reason
+     * @return Success message
+     * @throws AppException if validation fails
+     */
+    public String makeTransfer(String sourceCode, String targetCode, String amountStr, String justification) throws AppException {
+        Optional<BudgetChangesEntry> sourceOpt = repository.findByCode(sourceCode);
+        Optional<BudgetChangesEntry> targetOpt = repository.findByCode(targetCode);
+
+        if (sourceOpt.isEmpty() || targetOpt.isEmpty()) {
+            throw new AppException("One or both codes not found.");
+        }
+
+        try {
+            BigDecimal amount = new BigDecimal(amountStr);
+            if (sourceOpt.get().getAmount().subtract(amount).compareTo(BigDecimal.ZERO) < 0) {
+                throw new AppException("Insufficient funds in source: " + sourceCode);
+            }
+
+            TransferChange transfer = new TransferChange(sourceCode, targetCode, amount, justification, CURRENT_USER);
+            transfer.apply(sourceOpt.get());
+            transfer.applyToTarget(targetOpt.get());
+            changeHistory.push(transfer);
+            
+            logAction("Transfer: " + amount + " from " + sourceCode + " to " + targetCode);
+            return "Transfer Complete.";
+            
+        } catch (NumberFormatException e) {
+            throw new AppException("Invalid amount format.");
+        }
+    }
+
+    /**
+     * Undoes the last action.
+     * @return Message describing what was undone
+     * @throws AppException if nothing to undo
+     */
+    public String undoLastAction() throws AppException {
+        if (changeHistory.isEmpty()) {
+            throw new AppException("Nothing to undo.");
+        }
+
+        BudgetChange lastChange = changeHistory.pop();
         
+        if (lastChange instanceof TransferChange) {
+            TransferChange t = (TransferChange) lastChange;
+            Optional<BudgetChangesEntry> s = repository.findByCode(t.getEntryCode());
+            Optional<BudgetChangesEntry> tr = repository.findByCode(t.getTargetEntryCode());
+            
+            if (s.isPresent() && tr.isPresent()) {
+                t.undo(s.get());
+                t.undoFromTarget(tr.get());
+            }
+        } else {
+            Optional<BudgetChangesEntry> e = repository.findByCode(lastChange.getEntryCode());
+            if (e.isPresent()) {
+                lastChange.undo(e.get());
+            }
+        }
+        
+        logAction("UNDO: " + lastChange.getDescription());
+        return "Undone: " + lastChange.getType();
+    }
+
+    // =========================================================================
+    //                        FILE MANAGEMENT (SAVE / LOAD)
+    // =========================================================================
+
+    /**
+     * Gets a list of saved scenario files for the current context.
+     * Used for populating GUI dropdowns.
+     * @return List of filenames
+     * @throws AppException if directory issues
+     */
+    public List<String> getAvailableSavedFiles() throws AppException {
+        if (currentEntityPrefix == null) {
+            throw new AppException("No active budget entity loaded.");
+        }
+
+        File savedDir = new File(SAVED_PATH);
+        if (!savedDir.exists()) {
+            return new ArrayList<>(); // Return empty list
+        }
+
+        File[] files = savedDir.listFiles((dir, name) -> name.startsWith(currentEntityPrefix));
+        
+        if (files == null) {
+            return new ArrayList<>();
+        }
+
+        List<String> filenames = new ArrayList<>();
+        for (File f : files) {
+            filenames.add(f.getName());
+        }
+        return filenames;
+    }
+
+    /**
+     * Loads a specific saved scenario file.
+     * @param filename Name of the file in saved_budgets
+     * @throws AppException if load fails
+     */
+    public void loadSavedScenario(String filename) throws AppException {
+        File file = new File(SAVED_PATH + filename);
+        if (!file.exists()) {
+            throw new AppException("File not found: " + filename);
+        }
+
+        // Clear history as we are loading a new state
+        changeHistory.clear();
+
+        if (currentBudgetType == 0) {
+            loadRevenueData(file);
+        } else {
+            // Prefix is presumably set, but we pass null override to use the logic inside
+            // Actually, we need to call loadOrganizationExpenses with this file
+            loadOrganizationExpenses(currentEntityPrefix, file);
+        }
+        logAction("Loaded scenario: " + filename);
+    }
+
+    /**
+     * Saves the current state to a file.
+     * @param userFilename Desired filename (can be empty for default)
+     * @return The full path where it was saved
+     * @throws AppException if save fails
+     */
+    public String saveWork(String userFilename) throws AppException {
+        if (currentLoadedFilePath == null) {
+            throw new AppException("No data loaded to save.");
+        }
+
+        File saveDir = new File(SAVED_PATH);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
+
         String filename;
-        if (userFilename.isEmpty()) {
+        if (userFilename == null || userFilename.trim().isEmpty()) {
             File originalFile = new File(currentLoadedFilePath);
             filename = originalFile.getName();
             if (!filename.contains("_updated")) {
                 filename = filename.replace(".csv", "_updated.csv");
             }
         } else {
-            if (!userFilename.endsWith(".csv")) userFilename += ".csv";
+            if (!userFilename.endsWith(".csv")) {
+                userFilename += ".csv";
+            }
+            // Enforce prefix consistency
             if (!userFilename.startsWith(currentEntityPrefix)) {
                 userFilename = currentEntityPrefix + "_" + userFilename;
             }
@@ -433,97 +477,94 @@ public class Main1 {
         }
 
         File destinationFile = new File(saveDir, filename);
-        System.out.println("💾 Αποθήκευση στο: " + destinationFile.getPath() + " ...");
         
-        boolean success = (currentBudgetType == 0) ? saveRevenueData(repo, destinationFile.getPath()) : saveExpenseData(repo, destinationFile.getPath());
-
-        if (success) {
-            System.out.println("✅ Η αποθήκευση ολοκληρώθηκε!");
-            logAction("Αποθήκευση: " + filename);
-            currentLoadedFilePath = destinationFile.getPath();
+        boolean success;
+        if (currentBudgetType == 0) {
+            success = saveRevenueDataInternal(destinationFile.getPath());
         } else {
-            System.out.println("❌ Η αποθήκευση απέτυχε.");
+            success = saveExpenseDataInternal(destinationFile.getPath());
         }
+
+        if (!success) {
+            throw new AppException("Save operation failed.");
+        }
+
+        this.currentLoadedFilePath = destinationFile.getPath();
+        logAction("Saved to: " + filename);
+        return destinationFile.getPath();
     }
 
-    private static boolean saveRevenueData(BudgetRepository repo, String destinationPath) {
-        try (FileWriter writer = new FileWriter(destinationPath)) {
-            writer.write("Κωδικός,Κατηγορία,Ποσό\n");
-            repo.findAll().stream()
+    // --- Internal Save Helpers ---
+
+    private boolean saveRevenueDataInternal(String path) {
+        try (FileWriter writer = new FileWriter(path)) {
+            writer.write("Code,Category,Amount\n");
+            repository.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
                     try {
-                        writer.write(String.format("%s,%s,%s\n", entry.getCode(), entry.getDescription(), entry.getAmount().toPlainString()));
-                    } catch (IOException e) { e.printStackTrace(); }
+                        writer.write(String.format("%s,%s,%s%n", 
+                            entry.getCode(), 
+                            entry.getDescription(), 
+                            entry.getAmount().toPlainString()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 });
             return true;
-        } catch (IOException e) { return false; }
+        } catch (IOException e) {
+            return false;
+        }
     }
 
-    private static boolean saveExpenseData(BudgetRepository repo, String destinationPath) {
+    private boolean saveExpenseDataInternal(String path) {
         List<String> headerLines = new ArrayList<>();
         File sourceFile = new File(currentLoadedFilePath);
+        
         try (Scanner fileScanner = new Scanner(sourceFile)) {
             while (fileScanner.hasNextLine()) {
                 String line = fileScanner.nextLine();
-                if (!line.trim().isEmpty() && Character.isDigit(line.charAt(0))) break;
+                if (!line.trim().isEmpty() && Character.isDigit(line.charAt(0))) {
+                    break;
+                }
                 headerLines.add(line);
             }
-        } catch (FileNotFoundException e) { }
+        } catch (FileNotFoundException e) {
+            // Proceed without headers if source lost
+        }
 
-        try (FileWriter writer = new FileWriter(destinationPath)) {
-            for (String header : headerLines) writer.write(header + "\n");
-            repo.findAll().stream()
+        try (FileWriter writer = new FileWriter(path)) {
+            for (String header : headerLines) {
+                writer.write(header + "\n");
+            }
+            repository.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
                     try {
-                        writer.write(String.format("%s,\"%s\",%s\n", entry.getCode(), entry.getDescription(), entry.getAmount().toPlainString()));
-                    } catch (IOException e) { e.printStackTrace(); }
+                        writer.write(String.format("%s,\"%s\",%s%n", 
+                            entry.getCode(), 
+                            entry.getDescription(), 
+                            entry.getAmount().toPlainString()));
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 });
             return true;
-        } catch (IOException e) { return false; }
-    }
-
-    // =========================================================================
-    //                        LOGGING & UNDO & HELPER
-    // =========================================================================
-
-    private static void logAction(String actionDetail) {
-        auditLog.add(String.format("[%s] USER: %s | %s", dtf.format(LocalDateTime.now()), CURRENT_USER, actionDetail));
-    }
-
-    private static void printAuditLog() {
-        System.out.println("\n=================== SYSTEM AUDIT LOG ===================");
-        if (auditLog.isEmpty()) System.out.println("   (Κανένα καταγεγραμμένο συμβάν)");
-        else for (String entry : auditLog) System.out.println(entry);
-        System.out.println("========================================================");
-    }
-
-    private static void handleUndo(BudgetRepository repo) {
-        if (changeHistory.isEmpty()) { System.out.println("⚠️ Τίποτα για αναίρεση."); return; }
-        BudgetChange lastChange = changeHistory.pop();
-        System.out.println("🔄 Αναίρεση: " + lastChange.getType());
-        logAction("UNDO: " + lastChange.getDescription());
-        if (lastChange instanceof TransferChange) {
-            TransferChange t = (TransferChange) lastChange;
-            Optional<BudgetChangesEntry> s = repo.findByCode(t.getEntryCode());
-            Optional<BudgetChangesEntry> tr = repo.findByCode(t.getTargetEntryCode());
-            if (s.isPresent() && tr.isPresent()) { t.undo(s.get()); t.undoFromTarget(tr.get()); }
-        } else {
-            Optional<BudgetChangesEntry> e = repo.findByCode(lastChange.getEntryCode());
-            if (e.isPresent()) lastChange.undo(e.get());
+        } catch (IOException e) {
+            return false;
         }
     }
 
-    private static void printAllEntries(BudgetRepository repo) {
-        System.out.println("\n--- Λίστα Εγγραφών ---");
-        System.out.printf("%-10s %-50s %20s%n", "ΚΩΔΙΚΟΣ", "ΚΑΤΗΓΟΡΙΑ", "ΠΟΣΟ (€)");
-        System.out.println("----------------------------------------------------------------------------------");
-        repo.findAll().stream().sorted(Comparator.comparing(BudgetChangesEntry::getCode)).forEach(entry -> 
-            System.out.printf("%-10s %-50s %20s%n", entry.getCode(), 
-                entry.getDescription().length() > 48 ? entry.getDescription().substring(0, 48) + ".." : entry.getDescription(), 
-                NumberFormat.getInstance().format(entry.getAmount())));
-        System.out.println("----------------------------------------------------------------------------------");
-        System.out.println("Σύνολο: " + NumberFormat.getInstance().format(repo.calculateTotal()) + " €");
+    // =========================================================================
+    //                        LOGGING & UTILS
+    // =========================================================================
+
+    public List<String> getAuditLog() {
+        return new ArrayList<>(auditLog);
+    }
+
+    private void logAction(String detail) {
+        auditLog.add(String.format("[%s] USER: %s | %s", 
+            DTF.format(LocalDateTime.now()), CURRENT_USER, detail));
     }
 }
