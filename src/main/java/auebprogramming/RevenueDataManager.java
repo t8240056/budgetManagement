@@ -166,5 +166,6 @@ public final class RevenueDataManager {
         validateCodeLength(userInput);
         validateHierarchy(previousCode, userInput);
         validateCodeExists(userInput);
+        validateExpectedLength(userInput, expectedLength);
     }
 }
