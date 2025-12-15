@@ -137,7 +137,7 @@ public final class RevenuePanel extends JPanel {
                 try {
                     // Εδώ θα μπε η μέθοδος του Θανάση if (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
                     String code = getCode2();
-                    revdata.validateUserInput(null, code);
+                    revdata.validateUserInput(null, code, 2);
                     frame.showRevenue2(code);
                     //}
                 } catch (AppException ex) {
