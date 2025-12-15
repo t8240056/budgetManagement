@@ -1,49 +1,76 @@
 package auebprogramming;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
+/**
+ * Represents a change by a percentage (positive for increase, negative for decrease)
+ */
 public class PercentageChange extends BudgetChange {
-    private final double percent;
-    private BigDecimal calculatedDifference; // Αποθηκεύουμε τη διαφορά για το undo
-
-    public PercentageChange(String entryCode, double percent, 
+    private final double percentage;    // Percentage to change by (e.g., 10.0 for 10%)
+    private BigDecimal actualChange;    // The actual amount calculated from percentage
+    
+    /**
+     * Constructs a percentage-based change
+     */
+    public PercentageChange(String entryCode, double percentage,
                            String justification, String userId) {
         super(entryCode, justification, userId);
-        this.percent = percent;
+        this.percentage = percentage;
     }
 
+    /**
+     * Applies this percentage change to the given entry
+     * Calculates the actual amount based on percentage and adds it to current amount
+     */
     @Override
     public BigDecimal apply(BudgetChangesEntry entry) {
-        BigDecimal currentAmount = entry.getAmount();
-        BigDecimal percentageDecimal = BigDecimal.valueOf(percent).divide(BigDecimal.valueOf(100));
+        BigDecimal oldAmount = entry.getAmount();
+        BigDecimal percentageDecimal = BigDecimal.valueOf(percentage / 100.0);
         
-        // Υπολογίζουμε και αποθηκεύουμε τη διαφορά
-        this.calculatedDifference = currentAmount.multiply(percentageDecimal);
+        // Calculate the actual change amount
+        actualChange = oldAmount.multiply(percentageDecimal)
+                              .setScale(2, RoundingMode.HALF_UP);
         
-        BigDecimal newAmount = currentAmount.add(calculatedDifference);
+        BigDecimal newAmount = oldAmount.add(actualChange);
         
         if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
-             throw new IllegalArgumentException("New amount cannot be negative");
+            throw new IllegalArgumentException(
+                "Το Καινούριο ποσό δεν μπορεί να είναι αρνητικό: " + newAmount);
         }
         
         entry.setAmount(newAmount);
         return newAmount;
     }
 
+    /**
+     * Reverses the change using the stored actualChange value
+     */
     @Override
-    public void undo(BudgetChangesEntry entry) {
-        // Αφαιρούμε ακριβώς το ποσό που είχε προστεθεί/αφαιρεθεί
-        if (calculatedDifference != null) {
-            entry.setAmount(entry.getAmount().subtract(calculatedDifference));
+    public BigDecimal undo(BudgetChangesEntry entry) {
+        if (actualChange == null) {
+            throw new IllegalStateException("Η αλλαγή δεν έχει εκχωρηθεί ακόμα");
         }
+        
+        BigDecimal currentAmount = entry.getAmount();
+        BigDecimal oldAmount = currentAmount.subtract(actualChange);
+        entry.setAmount(oldAmount);
+        return oldAmount;
     }
 
+    @Override
     public BigDecimal getDifference() {
-        return calculatedDifference;
+        return actualChange != null ? actualChange : BigDecimal.ZERO;
     }
-
+    
     @Override
     public ChangeType getType() {
-        return percent > 0 ? ChangeType.PERCENTAGE_INCREASE : ChangeType.PERCENTAGE_DECREASE;
+        return percentage > 0 
+            ? ChangeType.PERCENTAGE_INCREASE 
+            : ChangeType.PERCENTAGE_DECREASE;
+    }
+    
+    public double getPercentage() {
+        return percentage;
     }
 }
