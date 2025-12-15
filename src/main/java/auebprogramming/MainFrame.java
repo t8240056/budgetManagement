@@ -21,6 +21,7 @@ public final class MainFrame extends JFrame {
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
     private  ExpenseByCategory2Panel expenseByCategory2Panel;
     private InsertChangePanel insertChangePanel;
+    private final BudgetManager budgetManager;
 
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
@@ -53,6 +54,7 @@ public final class MainFrame extends JFrame {
         this.insertChangePanel = new InsertChangePanel(this);
         cardPanel.add(this.insertChangePanel, "insert");
         cardPanel.add(new ChangeMenuPanel(this), "changesMenu");
+        budgetManager = new BudgetManager();
 
 
         add(cardPanel);
