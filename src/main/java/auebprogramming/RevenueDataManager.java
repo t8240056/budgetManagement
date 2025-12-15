@@ -141,6 +141,20 @@ public final class RevenueDataManager {
     }
 
     /**
+ * Validates that the given code contains only digits
+ * and has exactly the expected length for the current panel.
+ */
+
+    public void validateExpectedLength(String code, int expectedLength)
+        throws AppException {
+
+        if (code.length() != expectedLength) {
+        throw new AppException(
+            "Ο κωδικός πρέπει να έχει μήκος " + expectedLength + " ψηφία.");
+        }
+    }
+
+    /**
      * Full validation for user input:
      * 1. Check digits + correct length
      * 2. Check hierarchy with previous input
