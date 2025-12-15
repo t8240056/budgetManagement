@@ -143,7 +143,7 @@ public final class Revenue2Panel extends JPanel {
                     && !codeField.getText().trim().isEmpty()) {
                     try {
                         String code = getCode3();
-                        revdata.validateUserInput(parentCode, code);
+                        revdata.validateUserInput(parentCode, code, 3);
                         frame.showRevenue3(code);
                     } catch (AppException  e) {
                         AppException.showError(e.getMessage());
