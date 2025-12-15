@@ -36,6 +36,16 @@ public final class ChangeMenuPanel extends JPanel {
     private final JRadioButton radioButton7;
     private final JRadioButton radioButton8;
     private static final int RADIOBUTTON_FONT_SIZE = 20;
+    private static final int TITLE_FONT_SIZE = 20;
+
+    private static final int OPTIONS_ROWS = 4;
+    private static final int TWO = 2;
+    private static final int OPTIONS_H_GAP = 20;
+    private static final int TEN = 10;
+    private static final int BOTTOM_ROWS = 1;
+    private static final int BOTTOM_PANEL_WIDTH = 200;
+    private static final int BOTTOM_PANEL_HEIGHT = 70;
+
 
 
     /**
@@ -54,16 +64,18 @@ public final class ChangeMenuPanel extends JPanel {
             SwingConstants.CENTER
         );
         titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD, 20));
+            new Font("SansSerif", Font.BOLD, TITLE_FONT_SIZE));
         titleLabel.setBorder(
-            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+            BorderFactory.createEmptyBorder(
+                TEN, TEN, TEN, TEN)
         );
         add(titleLabel, BorderLayout.NORTH);
 
         JPanel optionsPanel = new JPanel(new GridLayout(
-            4, 2, 20, 10));
+            OPTIONS_ROWS, TWO, OPTIONS_H_GAP, TEN));
         optionsPanel.setBorder(
-            BorderFactory.createEmptyBorder(10, 20, 10, 20)
+            BorderFactory.createEmptyBorder(
+                TEN, OPTIONS_H_GAP, TEN, OPTIONS_H_GAP)
         );
 
         radioButton1 = new JRadioButton("Increase allocated amount");
@@ -119,11 +131,12 @@ public final class ChangeMenuPanel extends JPanel {
         add(optionsPanel, BorderLayout.CENTER);
 
         JPanel bottomPanel =
-        new JPanel(new GridLayout(1, 2, 10, 10));
+        new JPanel(new GridLayout(BOTTOM_ROWS, TWO, TEN, TEN));
         bottomPanel.setBorder(
-            BorderFactory.createEmptyBorder(10, 10,
-                 10, 10));
-        bottomPanel.setPreferredSize(new Dimension(200, 70));
+            BorderFactory.createEmptyBorder(TEN, TEN,
+                 TEN, TEN));
+        bottomPanel.setPreferredSize(new Dimension(
+            BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
         JButton backButton = new JButton("Επιστροφή");
         JButton confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
