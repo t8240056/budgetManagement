@@ -52,6 +52,7 @@ public final class MainFrame extends JFrame {
         cardPanel.add(new BudgetPanel(this), "budget");
         this.insertChangePanel = new InsertChangePanel(this);
         cardPanel.add(this.insertChangePanel, "insert");
+        cardPanel.add(new ChangeMenuPanel(this), "changesMenu");
 
 
         add(cardPanel);
