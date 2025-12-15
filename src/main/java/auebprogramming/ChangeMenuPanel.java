@@ -167,6 +167,22 @@ public final class ChangeMenuPanel extends JPanel {
      * The implementation will be added later.
      */
     private void handleConfirmation() {
-        /* Intentionally left empty */
+        if (radioButton1.isSelected()) {
+            // TODO: implement action for radioButton1
+        } else if (radioButton2.isSelected()) {
+            // TODO: implement action for radioButton2
+        } else if (radioButton3.isSelected()) {
+            // TODO: implement action for radioButton3
+        } else if (radioButton4.isSelected()) {
+            // TODO: implement action for radioButton4
+        } else if (radioButton5.isSelected()) {
+            // TODO: implement action for radioButton5
+        } else if (radioButton6.isSelected()) {
+            // TODO: implement action for radioButton6
+        } else if (radioButton7.isSelected()) {
+            // TODO: implement action for radioButton7
+        } else if (radioButton8.isSelected()) {
+            // TODO: implement action for radioButton8
+        }
     }
 }
