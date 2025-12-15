@@ -1,8 +1,12 @@
 package auebprogramming;
-import java.math.BigDecimal;
-import java.util.*;
 
-import main.java.auebprogramming.BudgetChangesEntry;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
    
 /**
@@ -91,5 +95,11 @@ public class BudgetRepository {
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    /**
+     * Clears all entries from the repository
+     */
+    public void clear() {
+        this.entries.clear(); 
     }
 
+}

@@ -14,35 +14,34 @@ public class BudgetChangesEntry {
         this.description = Objects.requireNonNull(description, "Description cannot be null");
         this.amount = Objects.requireNonNull(amount, "Amount cannot be null");
     }
-    
+
     // Returns the unique code of this entry
     public String getCode() { return code; }
-    
+
     // Returns the description of this entry
     public String getDescription() { return description; }
-    
-    
+
     // Returns the current amount of this entry
     public BigDecimal getAmount() { return amount; }
-    
+
     //Updates the amount of this entry
     public void setAmount(BigDecimal newAmount) {
         this.amount = Objects.requireNonNull(newAmount, "New amount cannot be null");
     }
-    /**
+   /**
      * Compares this entry with another object for equality
      * Two entries are considered equal if they have the same code
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BudgetChangesEntry)) return false;
+
+        if (this == o) {return true;}
+        if (!(o instanceof BudgetChangesEntry)) {return false;}
         BudgetChangesEntry that = (BudgetChangesEntry) o;
         return code.equals(that.code);
     }
- 
 
-    
+
     /**
      * Returns the hash code of this entry based on its code
      */
@@ -50,7 +49,7 @@ public class BudgetChangesEntry {
     public int hashCode() {
         return Objects.hash(code);
     }
-    
+
     /**
      * Returns a string representation of this entry
      * Format: "CODE: DESCRIPTION - AMOUNT €"
@@ -60,7 +59,3 @@ public class BudgetChangesEntry {
         return String.format("%s: %s - %,.2f €", code, description, amount);
     }
 }
- 
-
-
-   

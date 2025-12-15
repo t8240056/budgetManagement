@@ -1,0 +1,68 @@
+package auebprogramming;
+
+import java.math.BigDecimal;
+
+/**
+ * Represents a change by an absolute amount (positive for increase, negative for decrease)
+ */
+public class AbsoluteAmountChange extends BudgetChange {
+    private final BigDecimal changeAmount; // The amount to add/subtract
+
+    /**
+     * Constructs a change by an absolute amount
+     * @param entryCode code of the entry to change
+     * @param changeAmount amount to change by (positive for increase, negative for decrease)
+     * @param justification reason for the change
+     * @param userId who is making the change
+     */
+    public AbsoluteAmountChange(String entryCode, BigDecimal changeAmount, 
+                               String justification, String userId) {
+        super(entryCode, justification, userId);
+        this.changeAmount = changeAmount;
+    }
+
+    /** * Applies this absolute amount change to the given entry
+     * Adds the changeAmount to the current amount
+     */
+    @Override
+    public BigDecimal apply(BudgetChangesEntry entry) {
+        BigDecimal oldAmount = entry.getAmount();
+        BigDecimal newAmount = oldAmount.add(changeAmount);
+        
+        // Validate that the new amount is not negative
+        if (newAmount.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException(
+                "New amount cannot be negative: " + newAmount);
+        }
+        
+        entry.setAmount(newAmount);
+        return newAmount;
+    }
+
+    /**
+     * Reverses the change: Subtracts the amount that was added.
+     */
+    @Override
+    public BigDecimal undo(BudgetChangesEntry entry) {
+        BigDecimal currentAmount = entry.getAmount();
+        BigDecimal oldAmount = currentAmount.subtract(changeAmount);
+        entry.setAmount(oldAmount);
+        return oldAmount;
+    }
+
+    @Override
+    public BigDecimal getDifference() {
+        return changeAmount;
+    }
+    
+    @Override
+    public ChangeType getType() {
+        return changeAmount.compareTo(BigDecimal.ZERO) > 0 
+            ? ChangeType.ABSOLUTE_INCREASE 
+            : ChangeType.ABSOLUTE_DECREASE;
+    }
+    
+    public BigDecimal getChangeAmount() {
+        return changeAmount;
+    }
+}
