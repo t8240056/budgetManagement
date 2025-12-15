@@ -78,35 +78,35 @@ public final class ChangeMenuPanel extends JPanel {
                 TEN, OPTIONS_H_GAP, TEN, OPTIONS_H_GAP)
         );
 
-        radioButton1 = new JRadioButton("Increase allocated amount");
+        radioButton1 = new JRadioButton("Προβολή Εγγραφών");
         radioButton1.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton2 = new JRadioButton("Decrease allocated amount");
+        radioButton2 = new JRadioButton("Αλλαγή Ποσού κατά απόλυτη τιμή");
         radioButton2.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton3 = new JRadioButton("Transfer amount to another code");
+        radioButton3 = new JRadioButton("Αλλαγή Ποσού κατά ποσοστό");
         radioButton3.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton4 = new JRadioButton("Create new budget code");
+        radioButton4 = new JRadioButton("Μεταφορά Ποσού");
         radioButton4.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton5 = new JRadioButton("Delete existing budget code");
+        radioButton5 = new JRadioButton("Αναίρεση (Undo)");
         radioButton5.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton6 = new JRadioButton("Merge two budget codes");
+        radioButton6 = new JRadioButton("Προβολή Ιστορικού");
         radioButton6.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton7 = new JRadioButton("Split budget code into sub-codes");
+        radioButton7 = new JRadioButton("Αποθήκευση");
         radioButton7.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
-        radioButton8 = new JRadioButton("Correct data entry error");
+        radioButton8 = new JRadioButton("Φόρτωση από αρχείο");
         radioButton8.setFont(new Font(
             "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
 
