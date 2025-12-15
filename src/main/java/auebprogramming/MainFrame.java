@@ -51,10 +51,10 @@ public final class MainFrame extends JFrame {
 
         // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
         cardPanel.add(new BudgetPanel(this), "budget");
-        this.insertChangePanel = new InsertChangePanel(this);
+        budgetManager = new BudgetManager();
+        this.insertChangePanel = new InsertChangePanel(this, budgetManager);
         cardPanel.add(this.insertChangePanel, "insert");
         cardPanel.add(new ChangeMenuPanel(this), "changesMenu");
-        budgetManager = new BudgetManager();
 
 
         add(cardPanel);
