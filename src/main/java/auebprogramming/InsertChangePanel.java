@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -17,7 +18,7 @@ import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
 /**
- * Panel responsible for choosing whether the user wants to insert 
+ * Panel responsible for choosing whether the user wants to insert
  * changes in Revenue (ΕΣΟΔΑ) or Expense (ΕΞΟΔΑ).
  */
 public final class InsertChangePanel extends JPanel {
@@ -45,10 +46,10 @@ public final class InsertChangePanel extends JPanel {
     public InsertChangePanel(final MainFrame frame) {
         this.frame = frame;
         setLayout(new BorderLayout());
-        
+
         // 1. Initialize and add the North panel with options and title
         final JPanel northPanel = initializeNorthPanel();
-        add(northPanel, BorderLayout.NORTH); 
+        add(northPanel, BorderLayout.NORTH);
 
         // 2. Initialize and add the bottom buttons
         final JPanel bottomPanel = initializeBottomButtons();
@@ -56,14 +57,14 @@ public final class InsertChangePanel extends JPanel {
 
         // 3. Setup event listeners
         setupListeners();
-        
+
         // --- ΑΡΧΙΚΟΠΟΙΗΣΗ FIELDS (ΠΡΟΣΒΑΣΗ ΣΤΗ ΝΕΑ ΔΟΜΗ) ---
         // northPanel (BoxLayout) -> contentWrapper (0) [BorderLayout]
-        
+
         final JPanel contentWrapper = (JPanel) northPanel.getComponent(0);
-        
+
         // radioAligner είναι το component(2) του contentWrapper (NORTH=0, CENTER=1, SOUTH=2)
-        final JPanel radioAligner = (JPanel) contentWrapper.getComponent(2); 
+        final JPanel radioAligner = (JPanel) contentWrapper.getComponent(2);
         final JPanel radioGroupPanel = (JPanel) radioAligner.getComponent(0);
 
         this.revenueButton = (JRadioButton) ((JPanel) radioGroupPanel.getComponent(0))
@@ -76,7 +77,7 @@ public final class InsertChangePanel extends JPanel {
         this.backButton = (JButton) bottomPanel.getComponent(1);
         // ----------------------------------------------------
     }
-    
+
     /**
      * Initializes the north area containing the title and the radio buttons.
      * Uses BorderLayout for overall structure and EmptyBorder in the center
@@ -86,14 +87,14 @@ public final class InsertChangePanel extends JPanel {
      */
     private JPanel initializeNorthPanel() {
         // Main container (northContentPanel) returned to MainFrame
-        final JPanel northContentPanel = new JPanel(); 
-        northContentPanel.setLayout(new BoxLayout(northContentPanel, BoxLayout.Y_AXIS)); 
-        
+        final JPanel northContentPanel = new JPanel();
+        northContentPanel.setLayout(new BoxLayout(northContentPanel, BoxLayout.Y_AXIS));
+
         // Αυτό το wrapper θα περιέχει το περιεχόμενο (τίτλος, κενό, radio buttons).
         final JPanel contentWrapper = new JPanel(new BorderLayout());
-        
+
         // ΔΙΟΡΘΩΣΗ: Αφαίρεση σχεδόν όλης της οριζόντιας εσοχής
-        contentWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10)); 
+        contentWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 0, 10));
 
         // 1. Title Label (Centered) - Μπαίνει στο NORTH του contentWrapper
         final JLabel titleLabel = new JLabel("Επιλέξτε τύπο δεδομένων:", SwingConstants.CENTER);
@@ -104,7 +105,7 @@ public final class InsertChangePanel extends JPanel {
         // Αυτό το panel μπαίνει στο CENTER και καταλαμβάνει το μεγάλο κενό.
         final JPanel spacingPanel = new JPanel();
         // 150px κάθετο padding για να κατέβει πολύ κάτω
-        spacingPanel.setBorder(BorderFactory.createEmptyBorder(150, 0, 0, 0)); 
+        spacingPanel.setBorder(BorderFactory.createEmptyBorder(150, 0, 0, 0));
         contentWrapper.add(spacingPanel, BorderLayout.CENTER);
 
 
@@ -114,22 +115,22 @@ public final class InsertChangePanel extends JPanel {
 
         final JRadioButton expButton = new JRadioButton("Έξοδα");
         expButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        
+
         final ButtonGroup group = new ButtonGroup();
         group.add(revButton);
         group.add(expButton);
 
         // Panel to hold the stacked buttons.
-        final JPanel radioGroupPanel = new JPanel(new GridLayout(2, 1, 0, 0)); 
-        
+        final JPanel radioGroupPanel = new JPanel(new GridLayout(2, 1, 0, 0));
+
         // Wrap radio buttons in FlowLayout.LEFT panels for left alignment & vertical spacing
         final JPanel revPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         revPanel.add(revButton);
-        
+
         // 4. ΑΥΞΗΣΗ ΚΕΝΟΥ ΜΕΤΑΞΥ ΕΣΟΔΑ / ΕΞΟΔΑ
         revPanel.setBorder(
             BorderFactory.createEmptyBorder(0, 0, 70, 0)); // Αύξηση σε 70px
-        
+
         final JPanel expPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         expPanel.add(expButton);
 
@@ -138,16 +139,16 @@ public final class InsertChangePanel extends JPanel {
 
         // Wrapper to align radio buttons left
         // ΔΙΟΡΘΩΣΗ: Μηδενισμός hgap για κόλλημα αριστερά
-        final JPanel radioAligner = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0)); 
+        final JPanel radioAligner = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         radioAligner.add(radioGroupPanel);
-        
+
         // Προσθήκη των radio buttons κάτω από το μεγάλο κενό.
         contentWrapper.add(radioAligner, BorderLayout.SOUTH);
 
         // northContentPanel περιέχει μόνο το contentWrapper.
         northContentPanel.add(contentWrapper);
-        
-        return northContentPanel; 
+
+        return northContentPanel;
     }
 
     /**
@@ -173,7 +174,7 @@ public final class InsertChangePanel extends JPanel {
         bottomPanel.add(retButton);
         return bottomPanel;
     }
-    
+
     /**
      * Sets up the ActionListeners for the buttons.
      */
@@ -183,12 +184,12 @@ public final class InsertChangePanel extends JPanel {
             .getComponent(0);
         final JButton retButton = (JButton) ((JPanel) getComponent(1))
             .getComponent(1);
-        
+
         // Listener for the BACK button
         retButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                frame.switchTo("menu"); 
+                frame.switchTo("menu");
             }
         });
 
@@ -199,20 +200,20 @@ public final class InsertChangePanel extends JPanel {
                 // --- ΠΡΟΣΒΑΣΗ ΣΤΑ RADIO BUTTONΣ ---
                 final JPanel northPanel = (JPanel) getComponent(0);
                 final JPanel contentWrapper = (JPanel) northPanel.getComponent(0);
-                
+
                 // contentWrapper: NORTH=0 (Τίτλος), CENTER=1 (Κενό), SOUTH=2 (radioAligner)
                 final JPanel radioAligner = (JPanel) contentWrapper.getComponent(2);
                 final JPanel radioGroupPanel = (JPanel) radioAligner.getComponent(0);
 
-                final JRadioButton revButton = (JRadioButton) ((JPanel) 
+                final JRadioButton revButton = (JRadioButton) ((JPanel)
                     radioGroupPanel.getComponent(0)).getComponent(0);
-                final JRadioButton expButton = (JRadioButton) ((JPanel) 
+                final JRadioButton expButton = (JRadioButton) ((JPanel)
                     radioGroupPanel.getComponent(1)).getComponent(0);
                 // ----------------------------------------------------
 
                 if (revButton.isSelected()) {
                     // TODO: Εδώ θα πάει στο επόμενο panel για Εισαγωγή Αλλαγής Εσόδων
-                    AppException.showError("Επιλέχθηκε: Έσοδα - Επόμενο βήμα...");
+                    frame.switchTo("changesMenu");
                 } else if (expButton.isSelected()) {
                     // TODO: Εδώ θα πάει στο επόμενο panel για Εισαγωγή Αλλαγής Εξόδων
                     AppException.showError("Επιλέχθηκε: Έξοδα - Επόμενο βήμα...");
