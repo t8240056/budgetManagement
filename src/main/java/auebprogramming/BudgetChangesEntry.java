@@ -28,7 +28,8 @@ public class BudgetChangesEntry {
     //Updates the amount of this entry
     public void setAmount(BigDecimal newAmount) {
         this.amount = Objects.requireNonNull(newAmount, "New amount cannot be null");
-   /**
+    }
+    /**
      * Compares this entry with another object for equality
      * Two entries are considered equal if they have the same code
      */
@@ -39,7 +40,7 @@ public class BudgetChangesEntry {
         BudgetChangesEntry that = (BudgetChangesEntry) o;
         return code.equals(that.code);
     }
- }
+ 
 
     
     /**
