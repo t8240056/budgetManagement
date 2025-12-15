@@ -160,7 +160,7 @@ public final class RevenueDataManager {
      * 2. Check hierarchy with previous input
      * 3. Check existence in CSV
      */
-    public void validateUserInput(String previousCode, String userInput)
+    public void validateUserInput(String previousCode, String userInput, int expectedLength)
             throws AppException {
 
         validateCodeLength(userInput);
