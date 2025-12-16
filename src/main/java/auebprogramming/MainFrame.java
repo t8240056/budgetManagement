@@ -127,24 +127,24 @@ public final class MainFrame extends JFrame {
  */
     public void showRevenue4(final String code) {
 
-    // Remove previous instance if it exists
-    if (revenue4Panel != null) {
-        cardPanel.remove(revenue4Panel);
+        // Remove previous instance if it exists
+        if (revenue4Panel != null) {
+            cardPanel.remove(revenue4Panel);
+        }
+
+        // Create a new panel using the provided code
+        revenue4Panel = new Revenue4Panel(this, code);
+
+        // Add the panel to the card layout with a consistent name
+        cardPanel.add(revenue4Panel, "revenue4panel");
+
+        // Refresh layout
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
+        // Switch to the revenue4panel screen
+        switchTo("revenue4panel");
     }
-
-    // Create a new panel using the provided code
-    revenue4Panel = new Revenue4Panel(this, code);
-
-    // Add the panel to the card layout with a consistent name
-    cardPanel.add(revenue4Panel, "revenue4panel");
-
-    // Refresh layout
-    cardPanel.revalidate();
-    cardPanel.repaint();
-
-    // Switch to the revenue4panel screen
-    switchTo("revenue4panel");
-}
  /**
  * Shows the panel with detailed expense reports for the selected categories.
  *
@@ -152,24 +152,24 @@ public final class MainFrame extends JFrame {
  */
     public void showExpenseCategory2(final String codesString) {
 
-    // Remove previous instance if it exists
-    if (expenseByCategory2Panel != null) {
+        // Remove previous instance if it exists
+        if (expenseByCategory2Panel != null) {
         cardPanel.remove(expenseByCategory2Panel);
+        }
+
+        // Create a new panel using the provided codes
+        expenseByCategory2Panel = new ExpenseByCategory2Panel(this, codesString);
+
+        // Add the panel to the CardLayout with a consistent name
+        cardPanel.add(expenseByCategory2Panel, "expenseCategory2");
+
+        // Refresh the layout
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
+        // Switch to the expenseCategory2 panel
+        switchTo("expenseCategory2");
     }
-
-    // Create a new panel using the provided codes
-    expenseByCategory2Panel = new ExpenseByCategory2Panel(this, codesString);
-
-    // Add the panel to the CardLayout with a consistent name
-    cardPanel.add(expenseByCategory2Panel, "expenseCategory2");
-
-    // Refresh the layout
-    cardPanel.revalidate();
-    cardPanel.repaint();
-
-    // Switch to the expenseCategory2 panel
-    switchTo("expenseCategory2");
-}
  /**Shows the panel of ViewEntries */
     public void openViewEntriesPanel() {
         ViewEntriesPanel panel =
@@ -181,7 +181,15 @@ public final class MainFrame extends JFrame {
             AppException.showError("Δεν έχουν φορτωθεί δεδομένα.");
         }
 
-}
+    }
+    public void showAuditLogPanel() {
+        ViewAuditLogPanel panel =
+            new ViewAuditLogPanel(this, budgetManager);
+
+        cardPanel.add(panel, "auditLog");
+        cardLayout.show(cardPanel, "auditLog");
+    }
+
 
 /**
  * Applies custom styling to a JButton.
