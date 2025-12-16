@@ -170,7 +170,7 @@ public final class ChangeMenuPanel extends JPanel {
      */
     private void handleConfirmation() {
         if (radioButton1.isSelected()) {
-            // TODO: implement action for radioButton1
+            mainFrame.openViewEntriesPanel();
         } else if (radioButton2.isSelected()) {
             mainFrame.switchTo("absoluteChange");
         } else if (radioButton3.isSelected()) {
