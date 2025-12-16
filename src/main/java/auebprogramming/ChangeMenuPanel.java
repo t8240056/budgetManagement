@@ -7,7 +7,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -16,11 +15,25 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
+
 /**
  * Panel that displays the available change options
  * for the budget modification process.
  */
 public final class ChangeMenuPanel extends JPanel {
+
+    private static final long serialVersionUID = 1L;
+
+    // Layout Constants
+    private static final int RADIOBUTTON_FONT_SIZE = 20;
+    private static final int TITLE_FONT_SIZE = 20;
+    private static final int OPTIONS_ROWS = 4;
+    private static final int TWO = 2; // Columns
+    private static final int OPTIONS_H_GAP = 20;
+    private static final int TEN = 10; // Padding/Gap
+    private static final int BOTTOM_ROWS = 1;
+    private static final int BOTTOM_PANEL_WIDTH = 200;
+    private static final int BOTTOM_PANEL_HEIGHT = 70;
 
     /** Reference to the main application frame. */
     private final MainFrame mainFrame;
@@ -30,31 +43,20 @@ public final class ChangeMenuPanel extends JPanel {
     private final ButtonGroup buttonGroup;
 
     /** Radio buttons for change options. */
-    private final JRadioButton radioButton1;
-    private final JRadioButton radioButton2;
-    private final JRadioButton radioButton3;
-    private final JRadioButton radioButton4;
-    private final JRadioButton radioButton5;
-    private final JRadioButton radioButton6;
-    private final JRadioButton radioButton7;
-    private final JRadioButton radioButton8;
-    private static final int RADIOBUTTON_FONT_SIZE = 20;
-    private static final int TITLE_FONT_SIZE = 20;
-
-    private static final int OPTIONS_ROWS = 4;
-    private static final int TWO = 2;
-    private static final int OPTIONS_H_GAP = 20;
-    private static final int TEN = 10;
-    private static final int BOTTOM_ROWS = 1;
-    private static final int BOTTOM_PANEL_WIDTH = 200;
-    private static final int BOTTOM_PANEL_HEIGHT = 70;
-
-
+    private final JRadioButton viewButton;
+    private final JRadioButton absChangeButton;
+    private final JRadioButton percChangeButton;
+    private final JRadioButton transferButton;
+    private final JRadioButton undoButton;
+    private final JRadioButton historyButton;
+    private final JRadioButton saveButton;
+    private final JRadioButton loadButton;
 
     /**
      * Constructs the change menu panel.
      *
-     * @param frame the main application frame
+     * @param frame   the main application frame
+     * @param manager the budget manager instance
      */
     public ChangeMenuPanel(final MainFrame frame, final BudgetManager manager) {
         this.mainFrame = frame;
@@ -63,86 +65,81 @@ public final class ChangeMenuPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JLabel titleLabel = new JLabel(
-            "Επιλέξτε λειτουργία",
-            SwingConstants.CENTER
-        );
-        titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD, TITLE_FONT_SIZE));
-        titleLabel.setBorder(
-            BorderFactory.createEmptyBorder(
-                TEN, TEN, TEN, TEN)
-        );
+        // 1. Title
+        final JLabel titleLabel = new JLabel("Επιλέξτε λειτουργία",
+                SwingConstants.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, TITLE_FONT_SIZE));
+        titleLabel.setBorder(BorderFactory.createEmptyBorder(
+                TEN, TEN, TEN, TEN));
         add(titleLabel, BorderLayout.NORTH);
 
-        JPanel optionsPanel = new JPanel(new GridLayout(
-            OPTIONS_ROWS, TWO, OPTIONS_H_GAP, TEN));
-        optionsPanel.setBorder(
-            BorderFactory.createEmptyBorder(
-                TEN, OPTIONS_H_GAP, TEN, OPTIONS_H_GAP)
-        );
+        // 2. Options Grid
+        final JPanel optionsPanel = new JPanel(new GridLayout(
+                OPTIONS_ROWS, TWO, OPTIONS_H_GAP, TEN));
+        optionsPanel.setBorder(BorderFactory.createEmptyBorder(
+                TEN, OPTIONS_H_GAP, TEN, OPTIONS_H_GAP));
 
-        radioButton1 = new JRadioButton("Προβολή Εγγραφών");
-        radioButton1.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        // Initialize Radio Buttons
+        final Font rbFont = new Font("Arial", Font.PLAIN,
+                RADIOBUTTON_FONT_SIZE);
 
-        radioButton2 = new JRadioButton("Αλλαγή Ποσού κατά απόλυτη τιμή");
-        radioButton2.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        viewButton = new JRadioButton("Προβολή Εγγραφών");
+        viewButton.setFont(rbFont);
 
-        radioButton3 = new JRadioButton("Αλλαγή Ποσού κατά ποσοστό");
-        radioButton3.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        absChangeButton = new JRadioButton("Αλλαγή Ποσού (Απόλυτη)");
+        absChangeButton.setFont(rbFont);
 
-        radioButton4 = new JRadioButton("Μεταφορά Ποσού");
-        radioButton4.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        percChangeButton = new JRadioButton("Αλλαγή Ποσού (Ποσοστό)");
+        percChangeButton.setFont(rbFont);
 
-        radioButton5 = new JRadioButton("Αναίρεση (Undo)");
-        radioButton5.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        transferButton = new JRadioButton("Μεταφορά Ποσού");
+        transferButton.setFont(rbFont);
 
-        radioButton6 = new JRadioButton("Προβολή Ιστορικού");
-        radioButton6.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        undoButton = new JRadioButton("Αναίρεση (Undo)");
+        undoButton.setFont(rbFont);
 
-        radioButton7 = new JRadioButton("Αποθήκευση");
-        radioButton7.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        historyButton = new JRadioButton("Προβολή Ιστορικού");
+        historyButton.setFont(rbFont);
 
-        radioButton8 = new JRadioButton("Φόρτωση από αρχείο");
-        radioButton8.setFont(new Font(
-            "Arial", Font.PLAIN, RADIOBUTTON_FONT_SIZE));
+        saveButton = new JRadioButton("Αποθήκευση");
+        saveButton.setFont(rbFont);
 
-        buttonGroup.add(radioButton1);
-        buttonGroup.add(radioButton2);
-        buttonGroup.add(radioButton3);
-        buttonGroup.add(radioButton4);
-        buttonGroup.add(radioButton5);
-        buttonGroup.add(radioButton6);
-        buttonGroup.add(radioButton7);
-        buttonGroup.add(radioButton8);
+        loadButton = new JRadioButton("Φόρτωση από αρχείο");
+        loadButton.setFont(rbFont);
 
-        optionsPanel.add(radioButton1);
-        optionsPanel.add(radioButton2);
-        optionsPanel.add(radioButton3);
-        optionsPanel.add(radioButton4);
-        optionsPanel.add(radioButton5);
-        optionsPanel.add(radioButton6);
-        optionsPanel.add(radioButton7);
-        optionsPanel.add(radioButton8);
+        // Add to Group
+        buttonGroup.add(viewButton);
+        buttonGroup.add(absChangeButton);
+        buttonGroup.add(percChangeButton);
+        buttonGroup.add(transferButton);
+        buttonGroup.add(undoButton);
+        buttonGroup.add(historyButton);
+        buttonGroup.add(saveButton);
+        buttonGroup.add(loadButton);
+
+        // Add to Panel
+        optionsPanel.add(viewButton);
+        optionsPanel.add(absChangeButton);
+        optionsPanel.add(percChangeButton);
+        optionsPanel.add(transferButton);
+        optionsPanel.add(undoButton);
+        optionsPanel.add(historyButton);
+        optionsPanel.add(saveButton);
+        optionsPanel.add(loadButton);
 
         add(optionsPanel, BorderLayout.CENTER);
 
-        JPanel bottomPanel =
-        new JPanel(new GridLayout(BOTTOM_ROWS, TWO, TEN, TEN));
-        bottomPanel.setBorder(
-            BorderFactory.createEmptyBorder(TEN, TEN,
-                 TEN, TEN));
+        // 3. Bottom Buttons
+        final JPanel bottomPanel = new JPanel(new GridLayout(
+                BOTTOM_ROWS, TWO, TEN, TEN));
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(
+                TEN, TEN, TEN, TEN));
         bottomPanel.setPreferredSize(new Dimension(
-            BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
-        JButton backButton = new JButton("Επιστροφή");
-        JButton confirmButton = new JButton("Επιβεβαίωση");
+                BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
+
+        final JButton backButton = new JButton("Επιστροφή");
+        final JButton confirmButton = new JButton("Επιβεβαίωση");
+
         frame.confButtonColors(confirmButton);
         frame.backButtonColors(backButton);
 
@@ -167,99 +164,118 @@ public final class ChangeMenuPanel extends JPanel {
     }
 
     /**
-     * Handles the confirmation button action.
-     * The implementation will be added later.
+     * Handles the confirmation button action based on selection.
      */
     private void handleConfirmation() {
-        if (radioButton1.isSelected()) {
+        if (viewButton.isSelected()) {
             mainFrame.openViewEntriesPanel();
-        } else if (radioButton2.isSelected()) {
+
+        } else if (absChangeButton.isSelected()) {
             mainFrame.switchTo("absoluteChange");
-        } else if (radioButton3.isSelected()) {
-            // TODO: implement action for radioButton3
-        } else if (radioButton4.isSelected()) {
-            // TODO: implement action for radioButton4
-        } else if (radioButton5.isSelected()) {
+
+        } else if (percChangeButton.isSelected()) {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "Η λειτουργία ποσοστιαίας αλλαγής δεν είναι "
+                    + "διαθέσιμη ακόμα.");
+
+        } else if (transferButton.isSelected()) {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "Η λειτουργία μεταφοράς ποσού δεν είναι "
+                    + "διαθέσιμη ακόμα.");
+
+        } else if (undoButton.isSelected()) {
             try {
-                String msg = manager.undoLastAction();
+                final String msg = manager.undoLastAction();
                 JOptionPane.showMessageDialog(mainFrame, msg);
-            } catch (AppException ex) {
+            } catch (final AppException ex) {
                 AppException.showError(ex.getMessage());
             }
-        } else if (radioButton6.isSelected()) {
-            mainFrame.showAuditLogPanel();
-        } else if (radioButton7.isSelected()) {
-            String filename = JOptionPane.showInputDialog(
-                this,
-            "Δώστε όνομα αρχείου (ή αφήστε κενό για αυτόματο):",
-            "Αποθήκευση",
-            JOptionPane.QUESTION_MESSAGE
-            );
 
-            try {
-                // Αν πατηθεί Cancel → filename == null
-                if (filename != null) {
-                    String savedPath = manager.saveWork(filename);
-                    JOptionPane.showMessageDialog(
+        } else if (historyButton.isSelected()) {
+            mainFrame.showAuditLogPanel();
+
+        } else if (saveButton.isSelected()) {
+            handleSaveAction();
+
+        } else if (loadButton.isSelected()) {
+            handleLoadAction();
+        }
+    }
+
+    /**
+     * Helper method to handle the save operation.
+     */
+    private void handleSaveAction() {
+        final String filename = JOptionPane.showInputDialog(
+                this,
+                "Δώστε όνομα αρχείου (ή αφήστε κενό για αυτόματο):",
+                "Αποθήκευση",
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        try {
+            // Αν πατηθεί Cancel -> filename == null
+            if (filename != null) {
+                final String savedPath = manager.saveWork(filename);
+                JOptionPane.showMessageDialog(
                         this,
                         "Η αποθήκευση ολοκληρώθηκε επιτυχώς:\n" + savedPath,
-                    "Επιτυχία",
+                        "Επιτυχία",
                         JOptionPane.INFORMATION_MESSAGE
-                    );
-                }
-            } catch (AppException ex) {
-                AppException.showError(ex.getMessage());
+                );
             }
-        } else if (radioButton8.isSelected()) {
-            try {
-                // Παίρνουμε όλα τα διαθέσιμα αρχεία για τον τρέχοντα φορέα
-                List<String> files = manager.getAvailableSavedFiles();
+        } catch (final AppException ex) {
+            AppException.showError(ex.getMessage());
+        }
+    }
 
-                if (files.isEmpty()) {
-                    JOptionPane.showMessageDialog(
+    /**
+     * Helper method to handle the load operation.
+     */
+    private void handleLoadAction() {
+        try {
+            // Παίρνουμε όλα τα διαθέσιμα αρχεία για τον τρέχοντα φορέα
+            final List<String> files = manager.getAvailableSavedFiles();
+
+            if (files.isEmpty()) {
+                JOptionPane.showMessageDialog(
                         this,
-                        "Δεν υπάρχουν αποθηκευμένα σενάρια για τον τρέχοντα φορέα.",
+                        "Δεν υπάρχουν αποθηκευμένα σενάρια για "
+                        + "τον τρέχοντα φορέα.",
                         "Φόρτωση",
                         JOptionPane.INFORMATION_MESSAGE
-                    );
-                    return;
-                }
+                );
+                return;
+            }
 
-                // Δημιουργία dropdown για επιλογή αρχείου
-                String selectedFile = (String) JOptionPane.showInputDialog(
+            // Δημιουργία dropdown για επιλογή αρχείου
+            final String selectedFile = (String) JOptionPane.showInputDialog(
                     this,
                     "Επιλέξτε αρχείο σεναρίου για φόρτωση:",
                     "Φόρτωση Σεναρίου",
                     JOptionPane.QUESTION_MESSAGE,
                     null,
-                    files.toArray(new String[0]), // μετατροπή σε Array για dropdown
-                    files.get(0) // default επιλογή
-                );
+                    files.toArray(new String[0]),
+                    files.get(0)
+            );
 
-                if (selectedFile != null) {
-                    // Καλούμε την BudgetManager για να φορτώσει το επιλεγμένο αρχείο
-                    manager.loadSavedScenario(selectedFile);
-
-                    // Επιβεβαίωση
-                    JOptionPane.showMessageDialog(
+            if (selectedFile != null) {
+                manager.loadSavedScenario(selectedFile);
+                JOptionPane.showMessageDialog(
                         this,
                         "Το σενάριο φορτώθηκε επιτυχώς: " + selectedFile,
                         "Επιτυχία",
                         JOptionPane.INFORMATION_MESSAGE
-                    );
-
-                    // Σημείωση: την επόμενη φορά που θα ανοίξει το viewEntriesPanel,
-                    // η getEntriesList() θα επιστρέψει τα ενημερωμένα δεδομένα.
-                }
-
-            } catch (AppException ex) {
-                JOptionPane.showMessageDialog(
-                this,
-                ex.getMessage(),
-                "Σφάλμα Φόρτωσης",
-                JOptionPane.ERROR_MESSAGE
                 );
             }
+
+        } catch (final AppException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Σφάλμα Φόρτωσης",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
     }
 }

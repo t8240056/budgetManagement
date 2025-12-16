@@ -6,7 +6,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -15,7 +14,13 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+/**
+ * Panel representing the Expense options.
+ * Allows selection between Agency and Category view.
+ */
 public final class ExpensePanel extends JPanel {
+
+    private static final long serialVersionUID = 1L;
 
     private final JTextArea displayArea;
     private final JRadioButton byAgencyButton;
@@ -23,8 +28,12 @@ public final class ExpensePanel extends JPanel {
     private final JButton backButton;
     private final JButton confirmButton;
 
-//*Constructor with a MainFrame parameter */
-    public ExpensePanel(MainFrame frame) {
+    /**
+     * Constructor with a MainFrame parameter.
+     *
+     * @param frame the main application frame
+     */
+    public ExpensePanel(final MainFrame frame) {
 
         setLayout(new BorderLayout());
 
@@ -46,33 +55,39 @@ public final class ExpensePanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
+        // ============================
+        // 2) Center Panel (Text Area)
+        // ============================
         final JPanel centerPanel = new JPanel(new BorderLayout());
         displayArea = new JTextArea();
         displayArea.setEditable(false);
         displayArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        JScrollPane scrollPane = new JScrollPane(displayArea);
+        final JScrollPane scrollPane = new JScrollPane(displayArea);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);
+
         loadReports();
+
         // ============================
         // 3) Bottom Panel (Buttons)
         // ============================
         final JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new GridLayout(
-            1, 2, 10, 0));
+        bottomPanel.setLayout(new GridLayout(1, 2, 10, 0));
 
         backButton = new JButton("Επιστροφή");
         frame.backButtonColors(backButton);
         confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
-        //*BackButton's method */
+
+        // BackButton's method
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 frame.switchTo("budget"); // πίσω στο BudgetPanel
             }
         });
-        //*ConfirmButton's method */
+
+        // ConfirmButton's method
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -96,55 +111,62 @@ public final class ExpensePanel extends JPanel {
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
     }
-    //*This method loads all reports. */
+
+    /**
+     * This method loads all reports.
+     */
     private void loadReports() {
-    try {
-        final String categoriesFile = "expense_categories_2025.csv";
-        final String ministriesFile = "expense_ministries_2025.csv";
+        try {
+            final String categoriesFile = "expense_categories_2025.csv";
+            final String ministriesFile = "expense_ministries_2025.csv";
 
-        ExpenseDisplay display = new ExpenseDisplay(
-            categoriesFile, ministriesFile);
+            final ExpenseDisplay display = new ExpenseDisplay(
+                    categoriesFile, ministriesFile);
 
-        final String KRATIKOS = "ΚΡΑΤΙΚΟΣ";
-        final String TAKTIKOS = "ΤΑΚΤΙΚΟΣ";
-        final String EPENDYSEON = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
+            final String kratikos = "ΚΡΑΤΙΚΟΣ";
+            final String taktikos = "ΤΑΚΤΙΚΟΣ";
+            final String ependyseon = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
 
-        // 1. Αναφορές ανά δαπάνη
-        String reportCategoriesKratikos = display.getCategoriesReport(KRATIKOS);
-        String reportCategoriesTaktikos = display.getCategoriesReport(TAKTIKOS);
-        String reportCategoriesEpendyseon =
-        display.getCategoriesReport(EPENDYSEON);
+            // 1. Αναφορές ανά δαπάνη
+            final String reportCategoriesKratikos =
+                    display.getCategoriesReport(kratikos);
+            final String reportCategoriesTaktikos =
+                    display.getCategoriesReport(taktikos);
+            final String reportCategoriesEpendyseon =
+                    display.getCategoriesReport(ependyseon);
 
-        // 2. Αναφορές ανά φορέα
-        String reportMinistriesKratikos = display.getMinistriesReport(KRATIKOS);
-        String reportMinistriesTaktikos = display.getMinistriesReport(TAKTIKOS);
-        String reportMinistriesEpendyseon =
-        display.getMinistriesReport(EPENDYSEON);
+            // 2. Αναφορές ανά φορέα
+            final String reportMinistriesKratikos =
+                    display.getMinistriesReport(kratikos);
+            final String reportMinistriesTaktikos =
+                    display.getMinistriesReport(taktikos);
+            final String reportMinistriesEpendyseon =
+                    display.getMinistriesReport(ependyseon);
 
-        // 3. Εμφάνιση στο JTextArea
-        displayArea.setText("");
+            // 3. Εμφάνιση στο JTextArea
+            displayArea.setText("");
 
-        displayArea.append("=== Κατηγορίες - Κρατικός ===\n");
-        displayArea.append(reportCategoriesKratikos + "\n\n");
+            displayArea.append("=== Κατηγορίες - Κρατικός ===\n");
+            displayArea.append(reportCategoriesKratikos + "\n\n");
 
-        displayArea.append("=== Κατηγορίες - Τακτικός ===\n");
-        displayArea.append(reportCategoriesTaktikos + "\n\n");
+            displayArea.append("=== Κατηγορίες - Τακτικός ===\n");
+            displayArea.append(reportCategoriesTaktikos + "\n\n");
 
-        displayArea.append("=== Κατηγορίες - ΠΔΕ ===\n");
-        displayArea.append(reportCategoriesEpendyseon + "\n\n");
+            displayArea.append("=== Κατηγορίες - ΠΔΕ ===\n");
+            displayArea.append(reportCategoriesEpendyseon + "\n\n");
 
-        displayArea.append("=== Φορείς - Κρατικός ===\n");
-        displayArea.append(reportMinistriesKratikos + "\n\n");
+            displayArea.append("=== Φορείς - Κρατικός ===\n");
+            displayArea.append(reportMinistriesKratikos + "\n\n");
 
-        displayArea.append("=== Φορείς - Τακτικός ===\n");
-        displayArea.append(reportMinistriesTaktikos + "\n\n");
+            displayArea.append("=== Φορείς - Τακτικός ===\n");
+            displayArea.append(reportMinistriesTaktikos + "\n\n");
 
-        displayArea.append("=== Φορείς - ΠΔΕ ===\n");
-        displayArea.append(reportMinistriesEpendyseon + "\n\n");
+            displayArea.append("=== Φορείς - ΠΔΕ ===\n");
+            displayArea.append(reportMinistriesEpendyseon + "\n\n");
 
-    } catch (Exception e) {
-        displayArea.setText(
-            "Σφάλμα κατά την φόρτωση δεδομένων:\n" + e.getMessage());
+        } catch (final Exception e) {
+            displayArea.setText(
+                    "Σφάλμα κατά την φόρτωση δεδομένων:\n" + e.getMessage());
+        }
     }
-}
 }

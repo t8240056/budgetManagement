@@ -7,7 +7,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -22,7 +21,9 @@ import javax.swing.table.JTableHeader;
  */
 public final class Revenue2Panel extends JPanel {
 
-    /** Table displaying detailed revenue data (currently placeholder). */
+    private static final long serialVersionUID = 1L;
+
+    /** Table displaying detailed revenue data. */
     private JTable revenueTable;
 
     /** Text field for entering a three-digit revenue code. */
@@ -43,17 +44,20 @@ public final class Revenue2Panel extends JPanel {
     /** The two-digit code selected from the previous panel. */
     private final String parentCode;
 
-    private RevenueDataManager revdata;
+    /** Data manager for revenue codes. */
+    private final RevenueDataManager revdata;
 
     /**
      * Constructs the Revenue2Panel.
      *
      * @param mainFrame the application's main frame used for switching panels
-     * @param code the two-digit revenue code selected in the previous panel
+     * @param code      the two-digit revenue code selected in the previous panel
      */
     public Revenue2Panel(final MainFrame mainFrame, final String code) {
         this.frame = mainFrame;
         this.parentCode = code;
+        this.revdata = new RevenueDataManager();
+
         setLayout(new BorderLayout());
         initializeTable();
         initializeCenter();
@@ -62,25 +66,25 @@ public final class Revenue2Panel extends JPanel {
 
     /**
      * Initializes the revenue details table.
-     * Table content will be filled later by collaborators.
+     * Table content will be filled by RevenueDataManager.
      */
     private void initializeTable() {
-        JPanel centerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        revdata = new RevenueDataManager();
-        String[][] emptyData = revdata.get3DigitCodes(parentCode);
-        String[] columnNames = { "Κωδικός", "Κατηγορία","Ποσό" };
+        final JPanel centerPanel = new JPanel(new FlowLayout(
+                FlowLayout.CENTER));
+        final String[][] tableData = revdata.get3DigitCodes(parentCode);
+        final String[] columnNames = {"Κωδικός", "Κατηγορία", "Ποσό"};
 
-        revenueTable = new JTable(emptyData, columnNames);
+        revenueTable = new JTable(tableData, columnNames);
         // Μεγαλύτερη γραμματοσειρά για τα κελιά
         revenueTable.setFont(new Font("Arial", Font.PLAIN, 16));
         // Μεγαλύτερο ύψος γραμμής
         revenueTable.setRowHeight(24);
 
         // Μεγαλύτερη γραμματοσειρά για τις επικεφαλίδες
-        JTableHeader header = revenueTable.getTableHeader();
+        final JTableHeader header = revenueTable.getTableHeader();
         header.setFont(new Font("Arial", Font.BOLD, 18));
 
-        JScrollPane scrollPane = new JScrollPane(revenueTable);
+        final JScrollPane scrollPane = new JScrollPane(revenueTable);
         scrollPane.setPreferredSize(new Dimension(500, 300));
         centerPanel.add(scrollPane);
         add(centerPanel, BorderLayout.CENTER);
@@ -91,11 +95,12 @@ public final class Revenue2Panel extends JPanel {
      * Includes button for enabling input and hidden text field.
      */
     private void initializeCenter() {
-        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        final JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(
+                10, 10, 10, 10));
 
         openCodeInputButton = new JButton(
-            "Εισάγετε 3ψήφιο κωδικό προς ανάλυση");
+                "Εισάγετε 3ψήφιο κωδικό προς ανάλυση");
         codeField = new JTextField();
         codeField.setVisible(false);
 
@@ -118,10 +123,10 @@ public final class Revenue2Panel extends JPanel {
      * Initializes the bottom navigation and confirmation buttons.
      */
     private void initializeBottomButtons() {
-        JPanel bottomPanel = new JPanel(new GridLayout(
-            1, 2, 10, 10));
+        final JPanel bottomPanel = new JPanel(new GridLayout(
+                1, 2, 10, 10));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(
-            10, 10, 10, 10));
+                10, 10, 10, 10));
         bottomPanel.setPreferredSize(new Dimension(200, 70));
 
         confirmButton = new JButton("Επιβεβαίωση");
@@ -140,19 +145,17 @@ public final class Revenue2Panel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if (codeField.isVisible()
-                    && !codeField.getText().trim().isEmpty()) {
+                        && !codeField.getText().trim().isEmpty()) {
                     try {
-                        String code = getCode3();
+                        final String code = getCode3();
                         revdata.validateUserInput(parentCode, code, 3);
                         frame.showRevenue3(code);
-                    } catch (AppException  e) {
+                    } catch (final AppException e) {
                         AppException.showError(e.getMessage());
                     }
-
-
                 } else {
-                AppException.showError(
-                    "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
+                    AppException.showError(
+                            "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
                 }
             }
         });

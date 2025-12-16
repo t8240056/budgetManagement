@@ -6,34 +6,41 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-/**Class for the second appeared panel */
+/**
+ * Class for the second appeared panel.
+ * Allows selection between Revenue and Expense types.
+ */
 public final class BudgetPanel extends JPanel {
+
+    private static final long serialVersionUID = 1L;
 
     private final MainFrame frame;
     private final JRadioButton revenueButton;
     private final JRadioButton expenseButton;
     private final JButton confirmButton;
     private final JButton backButton;
-//*Constructor for the second appeared class */
+
+    /**
+     * Constructor for the budget selection panel.
+     *
+     * @param frame the main application frame
+     */
     public BudgetPanel(final MainFrame frame) {
         this.frame = frame;
 
         setLayout(new BorderLayout(10, 10));
 
-        // Τίτλος + RadioButtons:NORTH
-        final JPanel topPanel = new JPanel(
-        new GridLayout(3, 1, 5, 5));
-        final JLabel titleLabel = new JLabel(
-        "Επιλέξτε τύπο δεδομένων:", JLabel.CENTER);
-        titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD, 20));
+        // Τίτλος + RadioButtons: NORTH
+        final JPanel topPanel = new JPanel(new GridLayout(3, 1, 5, 5));
+        final JLabel titleLabel = new JLabel("Επιλέξτε τύπο δεδομένων:",
+                JLabel.CENTER);
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         topPanel.add(titleLabel);
 
         // RadioButtons για Έσοδα / Έξοδα
@@ -42,34 +49,32 @@ public final class BudgetPanel extends JPanel {
         revenueButton.setFont(new Font("Arial", Font.PLAIN, 20));
         expenseButton.setFont(new Font("Arial", Font.PLAIN, 20));
 
-
         final ButtonGroup group = new ButtonGroup();
         group.add(revenueButton);
         group.add(expenseButton);
 
         topPanel.add(revenueButton);
         topPanel.add(expenseButton);
-        topPanel.setPreferredSize(new java.awt.Dimension(
-        300, 400));
+        topPanel.setPreferredSize(new Dimension(300, 400));
         add(topPanel, BorderLayout.NORTH);
 
+        // Κάτω μέρος με κουμπιά
         final JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new GridLayout(
-        1, 2, 10, 0));
+        bottomPanel.setLayout(new GridLayout(1, 2, 10, 0));
         bottomPanel.setPreferredSize(new Dimension(0, 80));
-
 
         // Κουμπί Επιβεβαίωσης
         confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
         bottomPanel.add(confirmButton);
+
         // Κουμπί Επιστροφής στο Menu
         backButton = new JButton("Επιστροφή στο Menu");
         frame.backButtonColors(backButton);
         bottomPanel.add(backButton);
         add(bottomPanel, BorderLayout.SOUTH);
 
-        //*  Listener για το κουμπί επιβεβαίωσης*/
+        // Listener για το κουμπί επιβεβαίωσης
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -79,17 +84,17 @@ public final class BudgetPanel extends JPanel {
                     frame.switchTo("expensePanel");
                 } else {
                     AppException.showError(
-                        "Επιλέξτε τύπο δεδομένων ή πατήστε Επιστροφή");
+                            "Επιλέξτε τύπο δεδομένων ή πατήστε Επιστροφή");
                 }
             }
         });
-        //* Listener για το κουμπί επιστροφής*/
+
+        // Listener για το κουμπί επιστροφής
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 frame.switchTo("menu");
             }
         });
-
     }
 }

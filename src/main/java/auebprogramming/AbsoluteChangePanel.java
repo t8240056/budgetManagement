@@ -17,93 +17,89 @@ import javax.swing.SwingConstants;
 /**
  * Panel for applying an absolute amount change to a budget entry.
  */
-public class AbsoluteChangePanel extends JPanel {
+public final class AbsoluteChangePanel extends JPanel {
+
+    private static final long serialVersionUID = 1L;
 
     private final MainFrame mainFrame;
     private final BudgetManager manager;
 
-    // Πεδία Εισόδου (Input Fields)
+    // Input Fields
     private final JTextField codeField;
     private final JTextField amountField;
     private final JTextField justificationField;
 
-    // Σταθερές Layout
-    private static final int FIELD_COLS = 10; // <-- Μικρότερο πλάτος μπάρας
-    private static final int FONT_SIZE = 20; // <-- Μεγάλη αλλά ισορροπημένη γραμματοσειρά
-    private static final int BOTTOM_ROWS = 1;
-    private static final int TWO = 2;
-    private static final int TEN = 10;
-    private static final int BOTTOM_PANEL_HEIGHT = 70;
-
-
     /**
      * Constructor for AbsoluteChangePanel.
      *
-     * @param frame the main application frame
+     * @param frame   the main application frame
      * @param manager the BudgetManager instance
      */
-    public AbsoluteChangePanel(final MainFrame frame, final BudgetManager manager) {
+    public AbsoluteChangePanel(final MainFrame frame,
+                               final BudgetManager manager) {
         this.mainFrame = frame;
         this.manager = manager;
 
         setLayout(new BorderLayout(10, 10));
 
         // Δημιουργία Font για ετικέτες και πεδία
-        Font inputFont = new Font("SansSerif", Font.PLAIN, FONT_SIZE); 
-        
+        final Font inputFont = new Font("SansSerif", Font.PLAIN, 20);
+
         // ------------------------------------------------------------------
-        // ΚΕΝΤΡΙΚΟ PANEL ΕΙΣΟΔΩΝ (CENTER PANEL)
+        // ΚΕΝΤΡΙΚΟ PANEL ΕΙΣΟΔΩΝ
         // ------------------------------------------------------------------
-        
-        // 1. Εσωτερικό Panel: GridLayout για στοίχιση Ετικέτας/Πεδίου
-        // Αυξάνουμε το κενό μεταξύ των γραμμών για να χωράει η μεγάλη γραμματοσειρά
-        JPanel gridPanel = new JPanel(new GridLayout(3, 2, 10, 30)); 
-        gridPanel.setBorder(BorderFactory.createEmptyBorder(60, 20, 20, 20)); // ΠΕΡΙΘΩΡΙΑ
+
+        // Grid Panel για στοίχιση
+        final JPanel gridPanel = new JPanel(new GridLayout(3, 2, 10, 30));
+        gridPanel.setBorder(BorderFactory.createEmptyBorder(60, 20, 20, 20));
 
         // Κωδικός Φορέα
-        JLabel label1 = new JLabel("Πληκτρολογήστε κωδικό φορέα:", SwingConstants.RIGHT);
+        final JLabel label1 = new JLabel("Πληκτρολογήστε κωδικό φορέα:",
+                SwingConstants.RIGHT);
         label1.setFont(inputFont);
         gridPanel.add(label1);
-        codeField = new JTextField(FIELD_COLS);
+
+        codeField = new JTextField(10);
         codeField.setFont(inputFont);
         gridPanel.add(codeField);
 
         // Ποσό Αλλαγής
-        JLabel label2 = new JLabel("Πληκτρολογήστε ποσό αλλαγής:", SwingConstants.RIGHT);
+        final JLabel label2 = new JLabel("Πληκτρολογήστε ποσό αλλαγής:",
+                SwingConstants.RIGHT);
         label2.setFont(inputFont);
         gridPanel.add(label2);
-        amountField = new JTextField(FIELD_COLS);
+
+        amountField = new JTextField(10);
         amountField.setFont(inputFont);
         gridPanel.add(amountField);
 
         // Αιτιολογία
-        JLabel label3 = new JLabel("Αιτιολογία:", SwingConstants.RIGHT);
+        final JLabel label3 = new JLabel("Αιτιολογία:", SwingConstants.RIGHT);
         label3.setFont(inputFont);
         gridPanel.add(label3);
-        justificationField = new JTextField(FIELD_COLS);
+
+        justificationField = new JTextField(10);
         justificationField.setFont(inputFont);
         gridPanel.add(justificationField);
 
-        // 2. Εξωτερικό Wrapper: Χρησιμοποιούμε BorderLayout.WEST για Αριστερή Στοίχιση
-        JPanel alignWrapper = new JPanel(new BorderLayout()); 
-        alignWrapper.add(gridPanel, BorderLayout.WEST); // ΣΤΟΙΧΙΣΗ ΑΡΙΣΤΕΡΑ
-        
+        // Wrapper για στοίχιση αριστερά
+        final JPanel alignWrapper = new JPanel(new BorderLayout());
+        alignWrapper.add(gridPanel, BorderLayout.WEST);
+
         add(alignWrapper, BorderLayout.CENTER);
 
         // ------------------------------------------------------------------
-        // ΚΑΤΩ PANEL (BOTTOM PANEL - Κουμπιά Επιβεβαίωσης/Επιστροφής)
+        // ΚΑΤΩ PANEL (Κουμπιά)
         // ------------------------------------------------------------------
-        JPanel bottomPanel = new JPanel(new GridLayout(BOTTOM_ROWS, TWO, TEN, TEN));
-        
-        bottomPanel.setBorder(
-            BorderFactory.createEmptyBorder(TEN, TEN, TEN, TEN));
-        bottomPanel.setPreferredSize(new Dimension(10, BOTTOM_PANEL_HEIGHT)); 
+        final JPanel bottomPanel = new JPanel(new GridLayout(1, 2, 10, 10));
 
-        JButton confirmButton = new JButton("Επιβεβαίωση");
-        JButton backButton = new JButton("Επιστροφή");
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        bottomPanel.setPreferredSize(new Dimension(10, 70));
 
-        // Εφαρμογή του ίδιου μεγέθους γραμματοσειράς και στα κουμπιά 
-        Font buttonFont = new Font("SansSerif", Font.BOLD, FONT_SIZE);
+        final JButton confirmButton = new JButton("Επιβεβαίωση");
+        final JButton backButton = new JButton("Επιστροφή");
+
+        final Font buttonFont = new Font("SansSerif", Font.BOLD, 20);
         confirmButton.setFont(buttonFont);
         backButton.setFont(buttonFont);
 
@@ -135,9 +131,9 @@ public class AbsoluteChangePanel extends JPanel {
      * Handles the confirmation button action, calling the BudgetManager.
      */
     private void handleConfirmation() {
-        String code = codeField.getText().trim();
-        String amountStr = amountField.getText().trim();
-        String justification = justificationField.getText().trim();
+        final String code = codeField.getText().trim();
+        final String amountStr = amountField.getText().trim();
+        final String justification = justificationField.getText().trim();
 
         if (code.isEmpty() || amountStr.isEmpty() || justification.isEmpty()) {
             JOptionPane.showMessageDialog(this,
@@ -148,28 +144,26 @@ public class AbsoluteChangePanel extends JPanel {
         }
 
         try {
-            // Κλήση της κεντρικής λογικής
-            String result = manager.makeAbsoluteChange(code, amountStr, justification);
+            final String result = manager.makeAbsoluteChange(code,
+                    amountStr, justification);
 
-            // Μήνυμα Επιτυχίας
             JOptionPane.showMessageDialog(this,
                     result,
                     "Επιτυχής Αλλαγή",
                     JOptionPane.INFORMATION_MESSAGE);
-            
-            // Καθαρισμός των πεδίων
+
+            // Καθαρισμός πεδίων
             codeField.setText("");
             amountField.setText("");
             justificationField.setText("");
-            
-        } catch (AppException e) {
-            // Μήνυμα Αποτυχίας
+
+        } catch (final AppException e) {
             JOptionPane.showMessageDialog(this,
                     "Αποτυχία Αλλαγής Ποσού: " + e.getMessage(),
                     "Σφάλμα Λογικής Εφαρμογής",
                     JOptionPane.ERROR_MESSAGE);
-        } catch (Exception e) {
-             JOptionPane.showMessageDialog(this,
+        } catch (final Exception e) {
+            JOptionPane.showMessageDialog(this,
                     "Μη αναμενόμενο Σφάλμα: " + e.getMessage(),
                     "Γενικό Σφάλμα",
                     JOptionPane.ERROR_MESSAGE);

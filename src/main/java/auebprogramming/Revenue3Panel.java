@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -17,12 +16,14 @@ import javax.swing.JTextField;
  * Panel responsible for displaying third-level revenue analysis
  * based on a previously selected three-digit revenue code.
  */
-public final  class Revenue3Panel extends JPanel {
+public final class Revenue3Panel extends JPanel {
 
-    /** Table displaying detailed revenue data (currently placeholder). */
+    private static final long serialVersionUID = 1L;
+
+    /** Table displaying detailed revenue data. */
     private JTable revenueTable;
 
-    /** Text field for entering a four-digit revenue code. */
+    /** Text field for entering a five-digit revenue code. */
     private JTextField codeField;
 
     /** Button that reveals code input field. */
@@ -40,17 +41,20 @@ public final  class Revenue3Panel extends JPanel {
     /** The three-digit code selected from the previous panel. */
     private final String parentCode;
 
-    RevenueDataManager revdata;
+    /** Data manager for revenue data. */
+    private final RevenueDataManager revdata;
 
     /**
      * Constructs the Revenue3Panel.
      *
      * @param mainFrame the application's main frame used for switching panels
-     * @param code the three-digit revenue code selected in the previous panel
+     * @param code      the three-digit revenue code selected in previous panel
      */
     public Revenue3Panel(final MainFrame mainFrame, final String code) {
         this.frame = mainFrame;
         this.parentCode = code;
+        this.revdata = new RevenueDataManager();
+
         setLayout(new BorderLayout());
         initializeTablePanel();
         initializeCenterPanel();
@@ -61,13 +65,12 @@ public final  class Revenue3Panel extends JPanel {
      * Initializes the table panel containing the revenue analysis table.
      */
     private void initializeTablePanel() {
-        JPanel topPanel = new JPanel(new BorderLayout());
-        revdata = new RevenueDataManager();
-        String[][] emptyData = revdata.get5DigitCodes(parentCode);
-        String[] columnNames = { "Κωδικός", "Κατηγορία", "Ποσό" };
+        final JPanel topPanel = new JPanel(new BorderLayout());
+        final String[][] tableData = revdata.get5DigitCodes(parentCode);
+        final String[] columnNames = {"Κωδικός", "Κατηγορία", "Ποσό"};
 
-        revenueTable = new JTable(emptyData, columnNames);
-        JScrollPane scrollPane = new JScrollPane(revenueTable);
+        revenueTable = new JTable(tableData, columnNames);
+        final JScrollPane scrollPane = new JScrollPane(revenueTable);
         topPanel.add(scrollPane, BorderLayout.CENTER);
 
         add(topPanel, BorderLayout.CENTER);
@@ -77,11 +80,12 @@ public final  class Revenue3Panel extends JPanel {
      * Initializes the center panel containing the input controls.
      */
     private void initializeCenterPanel() {
-        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        topPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        final JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        topPanel.setBorder(BorderFactory.createEmptyBorder(
+                10, 10, 10, 10));
 
         openCodeInputButton = new JButton(
-            "Εισάγετε 5ψήφιο κωδικό προς ανάλυση");
+                "Εισάγετε 5ψήφιο κωδικό προς ανάλυση");
         codeField = new JTextField();
         codeField.setVisible(false);
 
@@ -104,10 +108,10 @@ public final  class Revenue3Panel extends JPanel {
      * Initializes the bottom panel with navigation and confirmation buttons.
      */
     private void initializeBottomPanel() {
-        JPanel bottomPanel = new JPanel(new GridLayout(
-            1, 2, 10, 10));
+        final JPanel bottomPanel = new JPanel(new GridLayout(
+                1, 2, 10, 10));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(
-            10, 10, 10, 10));
+                10, 10, 10, 10));
         bottomPanel.setPreferredSize(new Dimension(200, 70));
 
         confirmButton = new JButton("Επιβεβαίωση");
@@ -125,19 +129,18 @@ public final  class Revenue3Panel extends JPanel {
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                if
-                (codeField.isVisible()
-                 && !codeField.getText().trim().isEmpty()) {
+                if (codeField.isVisible()
+                        && !codeField.getText().trim().isEmpty()) {
                     try {
                         revdata.validateUserInput(
-                            parentCode, getCode(), 5);
+                                parentCode, getCode(), 5);
                         frame.showRevenue4(getCode());
-                    } catch (AppException e) {
+                    } catch (final AppException e) {
                         AppException.showError(e.getMessage());
                     }
                 } else {
                     AppException.showError(
-                        "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
+                            "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
                 }
             }
         });
@@ -149,7 +152,7 @@ public final  class Revenue3Panel extends JPanel {
     }
 
     /**
-     * Returns the trimmed value of the entered four-digit code.
+     * Returns the trimmed value of the entered five-digit code.
      *
      * @return the entered code
      */
