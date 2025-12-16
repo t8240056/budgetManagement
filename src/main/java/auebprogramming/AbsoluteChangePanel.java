@@ -3,8 +3,8 @@ package auebprogramming;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
@@ -30,9 +30,9 @@ public final class AbsoluteChangePanel extends JPanel {
     private final BudgetManager manager;
 
     // Input Fields
-    private final JTextField codeField;
-    private final JTextField amountField;
-    private final JTextField justificationField;
+    private JTextField codeField;
+    private JTextField amountField;
+    private JTextField justificationField;
 
     /**
      * Constructor for AbsoluteChangePanel.
@@ -121,12 +121,14 @@ public final class AbsoluteChangePanel extends JPanel {
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
         final JButton backButton = new JButton("Επιστροφή");
+        mainFrame.confButtonColors(confirmButton);
+        mainFrame.backButtonColors(backButton);
 
         final Font buttonFont = new Font("SansSerif", Font.BOLD, 20);
         confirmButton.setFont(buttonFont);
         backButton.setFont(buttonFont);
         setLayout(new BorderLayout());
-        
+
         // -------- ΚΕΝΤΡΙΚΗ ΦΟΡΜΑ --------
         JPanel formPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -213,18 +215,6 @@ public final class AbsoluteChangePanel extends JPanel {
         add(paddingContainer, BorderLayout.CENTER);
 
         // -------- ΚΟΥΜΠΙΑ (ΙΔΙΑ ΑΚΡΙΒΩΣ) --------
-        JPanel bottomPanel =
-                new JPanel(new GridLayout(BOTTOM_ROWS, TWO, TEN, TEN));
-        bottomPanel.setBorder(
-                BorderFactory.createEmptyBorder(TEN, TEN, TEN, TEN));
-        bottomPanel.setPreferredSize(
-                new Dimension(BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
-
-        JButton confirmButton = new JButton("ΕΠΙΒΕΒΑΙΩΣΗ");
-        JButton backButton = new JButton("ΕΠΙΣΤΡΟΦΗ");
-
-        mainFrame.confButtonColors(confirmButton);
-        mainFrame.backButtonColors(backButton);
 
         confirmButton.addActionListener(new ActionListener() {
             @Override
@@ -261,9 +251,6 @@ public final class AbsoluteChangePanel extends JPanel {
         try {
             final String result = manager.makeAbsoluteChange(code,
                     amountStr, justification);
-            String result =
-                    manager.makeAbsoluteChange(
-                            code, amountStr, justification);
 
             JOptionPane.showMessageDialog(this,
                     result,
@@ -275,8 +262,11 @@ public final class AbsoluteChangePanel extends JPanel {
             amountField.setText("");
             justificationField.setText("");
 
-        } catch (final AppException e) {
-        } catch (final Exception e) {
+        } catch (AppException e) {
+            JOptionPane.showMessageDialog(this,
+                    "Αποτυχία Αλλαγής Ποσού: " + e.getMessage(),
+                    "Σφάλμα Λογικής Εφαρμογής",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
