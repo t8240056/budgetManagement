@@ -52,12 +52,6 @@ public final class AbsoluteChangePanel extends JPanel {
     private static final int TOP_ROW_2 = 120;
     private static final int TOP_ROW_3 = 220;
 
-    private static final int BOTTOM_ROWS = 1;
-    private static final int TWO = 2;
-    private static final int TEN = 10;
-    private static final int BOTTOM_PANEL_WIDTH = 200;
-    private static final int BOTTOM_PANEL_HEIGHT = 70;
-
     public AbsoluteChangePanel(final MainFrame frame,
                                final BudgetManager manager) {
         this.mainFrame = frame;
@@ -235,7 +229,7 @@ public final class AbsoluteChangePanel extends JPanel {
     /**
      * Handles the confirmation button action, calling the BudgetManager.
      */
-    private void handleConfirmation() throws AppException, Exception {
+    private void handleConfirmation() {
         final String code = codeField.getText().trim();
         final String amountStr = amountField.getText().trim();
         final String justification = justificationField.getText().trim();
@@ -267,6 +261,7 @@ public final class AbsoluteChangePanel extends JPanel {
                     "Αποτυχία Αλλαγής Ποσού: " + e.getMessage(),
                     "Σφάλμα Λογικής Εφαρμογής",
                     JOptionPane.ERROR_MESSAGE);
+
         }
     }
 }
