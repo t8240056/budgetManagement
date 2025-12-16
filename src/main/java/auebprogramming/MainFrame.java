@@ -21,6 +21,7 @@ public final class MainFrame extends JFrame {
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
     private  ExpenseByCategory2Panel expenseByCategory2Panel;
     private InsertChangePanel insertChangePanel;
+    private AbsoluteChangePanel absoluteChangePanel;
     private final BudgetManager budgetManager;
 
     public MainFrame() {
@@ -54,7 +55,9 @@ public final class MainFrame extends JFrame {
         budgetManager = new BudgetManager();
         this.insertChangePanel = new InsertChangePanel(this, budgetManager);
         cardPanel.add(this.insertChangePanel, "insert");
-        cardPanel.add(new ChangeMenuPanel(this), "changesMenu");
+        cardPanel.add(new ChangeMenuPanel(this, budgetManager), "changesMenu");
+        this.absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
+        cardPanel.add(this.absoluteChangePanel, "absoluteChange");
 
 
         add(cardPanel);
