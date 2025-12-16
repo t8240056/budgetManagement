@@ -179,9 +179,7 @@ public final class ChangeMenuPanel extends JPanel {
         
 
         } else if (transferButton.isSelected()) {
-            JOptionPane.showMessageDialog(mainFrame,
-                    "Η λειτουργία μεταφοράς ποσού δεν είναι "
-                    + "διαθέσιμη ακόμα.");
+            mainFrame.switchTo("transferChange");
 
         } else if (undoButton.isSelected()) {
             try {

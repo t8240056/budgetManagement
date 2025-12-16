@@ -25,6 +25,7 @@ public final class MainFrame extends JFrame {
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
     private final InsertChangePanel insertChangePanel;
     private AbsoluteChangePanel absoluteChangePanel;
+    private TransferChangePanel transferChangePanel;
 
     // Logic Controllers
     private final BudgetAnalyzer budgetAnalyzer;
@@ -61,6 +62,7 @@ public final class MainFrame extends JFrame {
         expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
         insertChangePanel = new InsertChangePanel(this, budgetManager);
         absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
+        transferChangePanel = new TransferChangePanel(this, budgetManager);
 
         // Add panels to CardLayout
         cardPanel.add(new MenuPanel(this), "menu");
@@ -77,6 +79,7 @@ public final class MainFrame extends JFrame {
         cardPanel.add(absoluteChangePanel, "absoluteChange");
         this.absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
         cardPanel.add(this.absoluteChangePanel, "absoluteChange");
+        cardPanel.add(transferChangePanel, "transferChange");
         this.percentageChangePanel = new PercentageChangePanel(this, budgetManager);
         cardPanel.add(this.percentageChangePanel, "percentageChange");
 
