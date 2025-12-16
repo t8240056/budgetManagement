@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -188,9 +189,77 @@ public final class ChangeMenuPanel extends JPanel {
         } else if (radioButton6.isSelected()) {
             mainFrame.showAuditLogPanel();
         } else if (radioButton7.isSelected()) {
-            // TODO: implement action for radioButton7
+            String filename = JOptionPane.showInputDialog(
+                this,
+            "Δώστε όνομα αρχείου (ή αφήστε κενό για αυτόματο):",
+            "Αποθήκευση",
+            JOptionPane.QUESTION_MESSAGE
+            );
+
+            try {
+                // Αν πατηθεί Cancel → filename == null
+                if (filename != null) {
+                    String savedPath = manager.saveWork(filename);
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Η αποθήκευση ολοκληρώθηκε επιτυχώς:\n" + savedPath,
+                    "Επιτυχία",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                }
+            } catch (AppException ex) {
+                AppException.showError(ex.getMessage());
+            }
         } else if (radioButton8.isSelected()) {
-            // TODO: implement action for radioButton8
+            try {
+                // Παίρνουμε όλα τα διαθέσιμα αρχεία για τον τρέχοντα φορέα
+                List<String> files = manager.getAvailableSavedFiles();
+
+                if (files.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Δεν υπάρχουν αποθηκευμένα σενάρια για τον τρέχοντα φορέα.",
+                        "Φόρτωση",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+                    return;
+                }
+
+                // Δημιουργία dropdown για επιλογή αρχείου
+                String selectedFile = (String) JOptionPane.showInputDialog(
+                    this,
+                    "Επιλέξτε αρχείο σεναρίου για φόρτωση:",
+                    "Φόρτωση Σεναρίου",
+                    JOptionPane.QUESTION_MESSAGE,
+                    null,
+                    files.toArray(new String[0]), // μετατροπή σε Array για dropdown
+                    files.get(0) // default επιλογή
+                );
+
+                if (selectedFile != null) {
+                    // Καλούμε την BudgetManager για να φορτώσει το επιλεγμένο αρχείο
+                    manager.loadSavedScenario(selectedFile);
+
+                    // Επιβεβαίωση
+                    JOptionPane.showMessageDialog(
+                        this,
+                        "Το σενάριο φορτώθηκε επιτυχώς: " + selectedFile,
+                        "Επιτυχία",
+                        JOptionPane.INFORMATION_MESSAGE
+                    );
+
+                    // Σημείωση: την επόμενη φορά που θα ανοίξει το viewEntriesPanel,
+                    // η getEntriesList() θα επιστρέψει τα ενημερωμένα δεδομένα.
+                }
+
+            } catch (AppException ex) {
+                JOptionPane.showMessageDialog(
+                this,
+                ex.getMessage(),
+                "Σφάλμα Φόρτωσης",
+                JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
     }
 }
