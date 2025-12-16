@@ -11,6 +11,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
@@ -178,9 +179,14 @@ public final class ChangeMenuPanel extends JPanel {
         } else if (radioButton4.isSelected()) {
             // TODO: implement action for radioButton4
         } else if (radioButton5.isSelected()) {
-            // TODO: implement action for radioButton5
+            try {
+                String msg = manager.undoLastAction();
+                JOptionPane.showMessageDialog(mainFrame, msg);
+            } catch (AppException ex) {
+                AppException.showError(ex.getMessage());
+            }
         } else if (radioButton6.isSelected()) {
-            // TODO: implement action for radioButton6
+            mainFrame.showAuditLogPanel();
         } else if (radioButton7.isSelected()) {
             // TODO: implement action for radioButton7
         } else if (radioButton8.isSelected()) {
