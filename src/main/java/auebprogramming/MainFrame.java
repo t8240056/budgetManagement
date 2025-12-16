@@ -2,6 +2,7 @@ package auebprogramming;
 
 import java.awt.CardLayout;
 import java.awt.Color;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -23,14 +24,11 @@ public final class MainFrame extends JFrame {
     private final AgencyDetailsPanel agencyDetailsPanel;
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
     private final InsertChangePanel insertChangePanel;
-    private final AbsoluteChangePanel absoluteChangePanel;
+    private AbsoluteChangePanel absoluteChangePanel;
 
     // Logic Controllers
     private final BudgetAnalyzer budgetAnalyzer;
-    private  ExpenseByCategory2Panel expenseByCategory2Panel;
-    private InsertChangePanel insertChangePanel;
-    private AbsoluteChangePanel absoluteChangePanel;
-    private PercentageChangePanel percentageChangePanel;
+    private final PercentageChangePanel percentageChangePanel;
     private final BudgetManager budgetManager;
 
     // Dynamic Panels (re-created on navigation)
