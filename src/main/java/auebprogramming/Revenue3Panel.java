@@ -40,6 +40,8 @@ public final  class Revenue3Panel extends JPanel {
     /** The three-digit code selected from the previous panel. */
     private String parentCode;
 
+    RevenueDataManager revdata;
+
     /**
      * Constructs the Revenue3Panel.
      *
@@ -60,7 +62,7 @@ public final  class Revenue3Panel extends JPanel {
      */
     private void initializeTablePanel() {
         JPanel topPanel = new JPanel(new BorderLayout());
-        RevenueDataManager revdata = new RevenueDataManager();
+        revdata = new RevenueDataManager();
         String[][] emptyData = revdata.get5DigitCodes(parentCode);
         String[] columnNames = { "Κωδικός", "Κατηγορία", "Ποσό" };
 
@@ -124,8 +126,15 @@ public final  class Revenue3Panel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if
-                (codeField.isVisible() && !codeField.getText().trim().isEmpty()) {
-                    frame.showRevenue4(getCode());
+                (codeField.isVisible()
+                 && !codeField.getText().trim().isEmpty()) {
+                    try {
+                        revdata.validateUserInput(
+                            parentCode, getCode(), 5);
+                        frame.showRevenue4(getCode());
+                    } catch (AppException e) {
+                        AppException.showError(e.getMessage());
+                    }
                 } else {
                     AppException.showError(
                         "Πληκτρολογήστε κωδικό ή πατήστε Επιστροφή.");
