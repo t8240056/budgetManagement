@@ -3,9 +3,13 @@ package auebprogramming;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
+import java.awt.GridBagConstraints;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -13,6 +17,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Panel for applying an absolute amount change to a budget entry.
@@ -35,6 +40,24 @@ public final class AbsoluteChangePanel extends JPanel {
      * @param frame   the main application frame
      * @param manager the BudgetManager instance
      */
+    // === ΟΠΤΙΚΕΣ ΣΤΑΘΕΡΕΣ (ΙΔΙΕΣ ΜΕ PercentageChangePanel) ===
+    private static final int INPUT_FONT_SIZE = 22;
+    private static final Font INPUT_FONT =
+            new Font("SansSerif", Font.PLAIN, INPUT_FONT_SIZE);
+
+    private static final int LEFT_EDGE_PADDING = 10;
+    private static final int IN_BETWEEN_GAP = 5;
+
+    private static final int TOP_ROW_1 = 20;
+    private static final int TOP_ROW_2 = 120;
+    private static final int TOP_ROW_3 = 220;
+
+    private static final int BOTTOM_ROWS = 1;
+    private static final int TWO = 2;
+    private static final int TEN = 10;
+    private static final int BOTTOM_PANEL_WIDTH = 200;
+    private static final int BOTTOM_PANEL_HEIGHT = 70;
+
     public AbsoluteChangePanel(final MainFrame frame,
                                final BudgetManager manager) {
         this.mainFrame = frame;
@@ -102,11 +125,107 @@ public final class AbsoluteChangePanel extends JPanel {
         final Font buttonFont = new Font("SansSerif", Font.BOLD, 20);
         confirmButton.setFont(buttonFont);
         backButton.setFont(buttonFont);
+        setLayout(new BorderLayout());
+        
+        // -------- ΚΕΝΤΡΙΚΗ ΦΟΡΜΑ --------
+        JPanel formPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.weighty = 0.0;
+
+        // ===== 1. ΚΩΔΙΚΟΣ ΦΟΡΕΑ =====
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.insets = new Insets(TOP_ROW_1, LEFT_EDGE_PADDING, 0, IN_BETWEEN_GAP);
+
+        JLabel codeLabel =
+                new JLabel("Πληκτρολογήστε κωδικό φορέα:",
+                           SwingConstants.LEFT);
+        codeLabel.setFont(INPUT_FONT);
+        formPanel.add(codeLabel, gbc);
+
+        codeField = new JTextField();
+        codeField.setFont(INPUT_FONT);
+        codeField.setPreferredSize(
+                new Dimension(250, INPUT_FONT_SIZE + 10));
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(TOP_ROW_1, IN_BETWEEN_GAP, 0, LEFT_EDGE_PADDING);
+        formPanel.add(codeField, gbc);
+
+        // ===== 2. ΠΟΣΟ ΑΛΛΑΓΗΣ =====
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.insets = new Insets(TOP_ROW_2, LEFT_EDGE_PADDING, 0, IN_BETWEEN_GAP);
+
+        JLabel amountLabel =
+                new JLabel("Πληκτρολογήστε ποσό αλλαγής:",
+                           SwingConstants.LEFT);
+        amountLabel.setFont(INPUT_FONT);
+        formPanel.add(amountLabel, gbc);
+
+        amountField = new JTextField();
+        amountField.setFont(INPUT_FONT);
+        amountField.setPreferredSize(
+                new Dimension(250, INPUT_FONT_SIZE + 10));
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(TOP_ROW_2, IN_BETWEEN_GAP, 0, LEFT_EDGE_PADDING);
+        formPanel.add(amountField, gbc);
+
+        // ===== 3. ΑΙΤΙΟΛΟΓΗΣΗ =====
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        gbc.weightx = 0.0;
+        gbc.insets = new Insets(TOP_ROW_3, LEFT_EDGE_PADDING, 0, IN_BETWEEN_GAP);
+
+        JLabel justificationLabel =
+                new JLabel("Αιτιολογία:",
+                           SwingConstants.LEFT);
+        justificationLabel.setFont(INPUT_FONT);
+        formPanel.add(justificationLabel, gbc);
+
+        justificationField = new JTextField();
+        justificationField.setFont(INPUT_FONT);
+        justificationField.setPreferredSize(
+                new Dimension(250, INPUT_FONT_SIZE + 10));
+
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.weightx = 1.0;
+        gbc.insets = new Insets(TOP_ROW_3, IN_BETWEEN_GAP, 0, LEFT_EDGE_PADDING);
+        formPanel.add(justificationField, gbc);
+
+        JPanel paddingContainer = new JPanel(new BorderLayout());
+        paddingContainer.add(formPanel, BorderLayout.NORTH);
+        paddingContainer.setBorder(new EmptyBorder(0, 0, 0, 0));
+
+        add(paddingContainer, BorderLayout.CENTER);
+
+        // -------- ΚΟΥΜΠΙΑ (ΙΔΙΑ ΑΚΡΙΒΩΣ) --------
+        JPanel bottomPanel =
+                new JPanel(new GridLayout(BOTTOM_ROWS, TWO, TEN, TEN));
+        bottomPanel.setBorder(
+                BorderFactory.createEmptyBorder(TEN, TEN, TEN, TEN));
+        bottomPanel.setPreferredSize(
+                new Dimension(BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
+
+        JButton confirmButton = new JButton("ΕΠΙΒΕΒΑΙΩΣΗ");
+        JButton backButton = new JButton("ΕΠΙΣΤΡΟΦΗ");
 
         mainFrame.confButtonColors(confirmButton);
         mainFrame.backButtonColors(backButton);
 
-        // Προσθήκη Listeners
         confirmButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
@@ -114,12 +233,8 @@ public final class AbsoluteChangePanel extends JPanel {
             }
         });
 
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent event) {
-                mainFrame.switchTo("changesMenu");
-            }
-        });
+        backButton.addActionListener(e ->
+                mainFrame.switchTo("changesMenu"));
 
         bottomPanel.add(confirmButton);
         bottomPanel.add(backButton);
@@ -146,6 +261,9 @@ public final class AbsoluteChangePanel extends JPanel {
         try {
             final String result = manager.makeAbsoluteChange(code,
                     amountStr, justification);
+            String result =
+                    manager.makeAbsoluteChange(
+                            code, amountStr, justification);
 
             JOptionPane.showMessageDialog(this,
                     result,
@@ -158,11 +276,13 @@ public final class AbsoluteChangePanel extends JPanel {
             justificationField.setText("");
 
         } catch (final AppException e) {
+        } catch (AppException e) {
             JOptionPane.showMessageDialog(this,
                     "Αποτυχία Αλλαγής Ποσού: " + e.getMessage(),
                     "Σφάλμα Λογικής Εφαρμογής",
                     JOptionPane.ERROR_MESSAGE);
         } catch (final Exception e) {
+        } catch (Exception e) {
             JOptionPane.showMessageDialog(this,
                     "Μη αναμενόμενο Σφάλμα: " + e.getMessage(),
                     "Γενικό Σφάλμα",

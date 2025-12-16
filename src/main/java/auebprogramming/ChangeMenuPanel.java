@@ -184,6 +184,11 @@ public final class ChangeMenuPanel extends JPanel {
                     + "διαθέσιμη ακόμα.");
 
         } else if (undoButton.isSelected()) {
+        } else if (radioButton3.isSelected()) {
+            mainFrame.switchTo("percentageChange");
+        } else if (radioButton4.isSelected()) {
+            // TODO: implement action for radioButton4
+        } else if (radioButton5.isSelected()) {
             try {
                 final String msg = manager.undoLastAction();
                 JOptionPane.showMessageDialog(mainFrame, msg);

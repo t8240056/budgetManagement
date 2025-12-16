@@ -27,6 +27,10 @@ public final class MainFrame extends JFrame {
 
     // Logic Controllers
     private final BudgetAnalyzer budgetAnalyzer;
+    private  ExpenseByCategory2Panel expenseByCategory2Panel;
+    private InsertChangePanel insertChangePanel;
+    private AbsoluteChangePanel absoluteChangePanel;
+    private PercentageChangePanel percentageChangePanel;
     private final BudgetManager budgetManager;
 
     // Dynamic Panels (re-created on navigation)
@@ -73,6 +77,11 @@ public final class MainFrame extends JFrame {
         cardPanel.add(insertChangePanel, "insert");
         cardPanel.add(new ChangeMenuPanel(this, budgetManager), "changesMenu");
         cardPanel.add(absoluteChangePanel, "absoluteChange");
+        this.absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
+        cardPanel.add(this.absoluteChangePanel, "absoluteChange");
+        this.percentageChangePanel = new PercentageChangePanel(this, budgetManager);
+        cardPanel.add(this.percentageChangePanel, "percentageChange");
+
 
         add(cardPanel);
         setLocationRelativeTo(null);
