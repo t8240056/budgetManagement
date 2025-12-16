@@ -175,9 +175,8 @@ public final class ChangeMenuPanel extends JPanel {
             mainFrame.switchTo("absoluteChange");
 
         } else if (percChangeButton.isSelected()) {
-            JOptionPane.showMessageDialog(mainFrame,
-                    "Η λειτουργία ποσοστιαίας αλλαγής δεν είναι "
-                    + "διαθέσιμη ακόμα.");
+            mainFrame.switchTo("percentageChange");
+        
 
         } else if (transferButton.isSelected()) {
             JOptionPane.showMessageDialog(mainFrame,
@@ -280,3 +279,4 @@ public final class ChangeMenuPanel extends JPanel {
         }
     }
 }
+
