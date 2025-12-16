@@ -38,7 +38,7 @@ public final  class Revenue3Panel extends JPanel {
     private final MainFrame frame;
 
     /** The three-digit code selected from the previous panel. */
-    private String parentCode;
+    private final String parentCode;
 
     RevenueDataManager revdata;
 
