@@ -52,12 +52,6 @@ public final class AbsoluteChangePanel extends JPanel {
     private static final int TOP_ROW_2 = 120;
     private static final int TOP_ROW_3 = 220;
 
-    private static final int BOTTOM_ROWS = 1;
-    private static final int TWO = 2;
-    private static final int TEN = 10;
-    private static final int BOTTOM_PANEL_WIDTH = 200;
-    private static final int BOTTOM_PANEL_HEIGHT = 70;
-
     public AbsoluteChangePanel(final MainFrame frame,
                                final BudgetManager manager) {
         this.mainFrame = frame;
