@@ -245,7 +245,7 @@ public final class AbsoluteChangePanel extends JPanel {
     /**
      * Handles the confirmation button action, calling the BudgetManager.
      */
-    private void handleConfirmation() {
+    private void handleConfirmation() throws AppException, Exception {
         final String code = codeField.getText().trim();
         final String amountStr = amountField.getText().trim();
         final String justification = justificationField.getText().trim();
@@ -276,17 +276,7 @@ public final class AbsoluteChangePanel extends JPanel {
             justificationField.setText("");
 
         } catch (final AppException e) {
-        } catch (AppException e) {
-            JOptionPane.showMessageDialog(this,
-                    "Αποτυχία Αλλαγής Ποσού: " + e.getMessage(),
-                    "Σφάλμα Λογικής Εφαρμογής",
-                    JOptionPane.ERROR_MESSAGE);
         } catch (final Exception e) {
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this,
-                    "Μη αναμενόμενο Σφάλμα: " + e.getMessage(),
-                    "Γενικό Σφάλμα",
-                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
