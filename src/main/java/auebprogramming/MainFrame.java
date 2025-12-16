@@ -170,6 +170,19 @@ public final class MainFrame extends JFrame {
     // Switch to the expenseCategory2 panel
     switchTo("expenseCategory2");
 }
+ /**Shows the panel of ViewEntries */
+    public void openViewEntriesPanel() {
+        ViewEntriesPanel panel =
+            new ViewEntriesPanel(this, budgetManager);
+
+        cardPanel.add(panel, "viewEntries");
+        cardLayout.show(cardPanel, "viewEntries");
+        if (budgetManager.getEntriesList().isEmpty()) {
+            AppException.showError("Δεν έχουν φορτωθεί δεδομένα.");
+        }
+
+}
+
 /**
  * Applies custom styling to a JButton.
  *
