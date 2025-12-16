@@ -18,7 +18,7 @@ public final class ViewEntriesPanel extends JPanel {
 
     /** Table column names. */
     private static final String[] COLUMN_NAMES = {
-        "Code", "Description", "Amount (€)"
+        "Κωδικός", "Περιγραφή", "Ποσό (€)"
     };
 
     /** Layout constants. */
