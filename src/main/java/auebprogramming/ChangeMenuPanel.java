@@ -22,6 +22,7 @@ public final class ChangeMenuPanel extends JPanel {
 
     /** Reference to the main application frame. */
     private final MainFrame mainFrame;
+    private final BudgetManager manager;
 
     /** Group for radio buttons. */
     private final ButtonGroup buttonGroup;
@@ -53,8 +54,9 @@ public final class ChangeMenuPanel extends JPanel {
      *
      * @param frame the main application frame
      */
-    public ChangeMenuPanel(final MainFrame frame) {
+    public ChangeMenuPanel(final MainFrame frame, final BudgetManager manager) {
         this.mainFrame = frame;
+        this.manager = manager;
         this.buttonGroup = new ButtonGroup();
 
         setLayout(new BorderLayout());
@@ -170,7 +172,7 @@ public final class ChangeMenuPanel extends JPanel {
         if (radioButton1.isSelected()) {
             // TODO: implement action for radioButton1
         } else if (radioButton2.isSelected()) {
-            // TODO: implement action for radioButton2
+            mainFrame.switchTo("absoluteChange");
         } else if (radioButton3.isSelected()) {
             // TODO: implement action for radioButton3
         } else if (radioButton4.isSelected()) {
