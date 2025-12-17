@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
@@ -223,8 +224,7 @@ public final class InsertChangePanel extends JPanel {
                         frame.switchTo("changesMenu");
                     } else if (expButton.isSelected()) {
                         budgetManager.setBudgetType(1);
-                        AppException.showError(
-                                "Επιλέχθηκε: Έξοδα - Επόμενο βήμα...");
+                        frame.showMinistriesSelectionPanel();
                     } else {
                         AppException.showError(
                                 "Παρακαλώ επιλέξτε Έσοδα ή Έξοδα.");
