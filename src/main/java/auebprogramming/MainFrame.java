@@ -212,6 +212,15 @@ public final class MainFrame extends JFrame {
         cardLayout.show(cardPanel, "auditLog");
     }
 
+    public void showMinistriesSelectionPanel() {
+        final MinistriesSelectionPanel panel =
+            new MinistriesSelectionPanel(this, budgetManager);
+
+        cardPanel.add(panel, "ministriesSelection");
+        cardLayout.show(cardPanel, "ministriesSelection");
+    }
+
+
     /**
      * Applies custom styling to a Confirm JButton (Green).
      *
