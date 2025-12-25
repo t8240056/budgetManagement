@@ -11,3 +11,24 @@
 •	Command Pattern: Κάθε αλλαγή (BudgetChange) αντιμετωπίζεται ως αυτόνομο αντικείμενο, επιτρέποντας λειτουργίες Undo/Redo.
 •	Facade Pattern: Η κλάση ChangeManager απλοποιεί την επικοινωνία μεταξύ του GUI και των σύνθετων οικονομικών πράξεων.
 •	Hierarchy Pattern: Διαχείριση εσόδων σε 4 επίπεδα (2-ψήφιοι έως 7-ψήφιοι κωδικοί) με αυστηρή επικύρωση πατρικών-θυγατρικών σχέσεων.
+
+Τεκμηρίωση Κλάσεων 
+
+1. Core & Model
+
+•	BudgetChangesEntry.java: Η βασική οντότητα. Αντιπροσωπεύει μια γραμμή του προϋπολογισμού με Κωδικό, Περιγραφή και Ποσό (BigDecimal).
+•	ChangeType.java: Enumeration που ορίζει τους τύπους αλλαγών (ABSOLUTE, PERCENTAGE, TRANSFER, κ.α.).
+
+2. Διαχείριση Αλλαγών / Change Management (Command Implementation)
+
+•	BudgetChange.java (Abstract): Η βάση για όλες τις εντολές αλλαγής. Κρατάει μεταδεδομένα (User ID, Timestamp, Justification).
+•	AbsoluteAmountChange.java: Υλοποιεί προσθήκη ή αφαίρεση σταθερού ποσού.
+•	PercentageChange.java: Υλοποιεί αναλογικές αυξομειώσεις βάσει ποσοστού.
+•	TransferChange.java: Διαχειρίζεται τη μεταφορά ποσών μεταξύ δύο κωδικών (Source & Target), διασφαλίζοντας το ισοζύγιο.
+
+3. Διαχείριση Δεδομένων / Data & Repository
+
+•	BudgetRepository.java: Το "in-memory" αποθετήριο που χρησιμοποιεί HashMap για ταχύτατη αναζήτηση εγγραφών.
+•	ChangeManager.java: Ο κεντρικός διαχειριστής που συντονίζει τις αλλαγές και διατηρεί το Audit Log.
+•	ChangeValidator.java: Διασφαλίζει ότι καμία αλλαγή δεν οδηγεί σε αρνητικό υπόλοιπο ή παραβίαση επιχειρηματικών κανόνων.
+
