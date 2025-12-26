@@ -25,20 +25,21 @@ public final class CsvToArray {
      *
      * @param filename The name of the CSV file (e.g., "data.csv").
      * @return A String[][] array containing the CSV data, or an empty array on
-     *         error.
+     * error.
      */
     public static String[][] loadCsvToArray(final String filename) {
         final List<String[]> dataList = new ArrayList<>();
 
-        // Use getResourceAsStream to read from the Classpath (e.g., src/main/resources)
+        // Use getResourceAsStream to read from the Classpath
         try (InputStream input = CsvToArray.class.getClassLoader()
                 .getResourceAsStream(filename)) {
             if (input == null) {
-                System.err.println("Error: File not found in classpath (" + filename + ")");
+                System.err.println("Error: File not found in classpath ("
+                        + filename + ")");
                 return new String[0][0];
             }
 
-            // Use StandardCharsets.UTF_8 for correct reading of Greek characters
+            // Use StandardCharsets.UTF_8 for correct reading of Greek chars
             final BufferedReader br = new BufferedReader(
                     new InputStreamReader(input, StandardCharsets.UTF_8));
             String line;
@@ -50,7 +51,8 @@ public final class CsvToArray {
 
                 // Trimming each element from surrounding whitespace.
                 for (int i = 0; i < rawParts.length; i++) {
-                    trimmedParts[i] = rawParts[i].trim().replaceAll("^\"|\"$", "");
+                    trimmedParts[i] = rawParts[i].trim()
+                            .replaceAll("^\"|\"$", "");
                 }
 
                 dataList.add(trimmedParts);
@@ -59,7 +61,7 @@ public final class CsvToArray {
             // Convert the list to a two-dimensional String[][] array
             return dataList.toArray(new String[0][]);
 
-        } catch (IOException e) {
+        } catch (final IOException e) {
             System.err.println("Error loading file: " + e.getMessage());
             return new String[0][0];
         }

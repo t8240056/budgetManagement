@@ -7,20 +7,40 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * The main application window (Frame).
+ * Manages the CardLayout and navigation between different panels.
+ */
 public final class MainFrame extends JFrame {
 
-    private final  CardLayout cardLayout;
+    private static final long serialVersionUID = 1L;
+
+    private final CardLayout cardLayout;
     private final JPanel cardPanel;
+
+    // Fixed Panels
     private final RevenuePanel revenuePanel;
-    private Revenue2Panel revenue2Panel;
-    private Revenue3Panel revenue3Panel;
-    private Revenue4Panel revenue4Panel;
-    private BudgetAnalyzer budgetAnalyzer;
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
     private final ExpenseByCategoryPanel expenseByCategoryPanel;
-    private  ExpenseByCategory2Panel expenseByCategory2Panel;
+    private final InsertChangePanel insertChangePanel;
+    private AbsoluteChangePanel absoluteChangePanel;
+    private TransferChangePanel transferChangePanel;
 
+    // Logic Controllers
+    private final BudgetAnalyzer budgetAnalyzer;
+    private final PercentageChangePanel percentageChangePanel;
+    private final BudgetManager budgetManager;
+
+    // Dynamic Panels (re-created on navigation)
+    private Revenue2Panel revenue2Panel;
+    private Revenue3Panel revenue3Panel;
+    private Revenue4Panel revenue4Panel;
+    private ExpenseByCategory2Panel expenseByCategory2Panel;
+
+    /**
+     * Constructs the MainFrame and initializes all sub-panels.
+     */
     public MainFrame() {
         setTitle("Διαχείριση Κρατικού Προϋπολογισμού");
         setSize(600, 400);
@@ -30,157 +50,196 @@ public final class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         cardPanel = new JPanel(cardLayout);
 
+        // Logic Initialization
         this.budgetAnalyzer = new BudgetAnalyzer();
-        agencySummaryPanel = new ExpenseByAgencySummaryPanel(this, budgetAnalyzer);
-        agencyDetailsPanel = new AgencyDetailsPanel(this, budgetAnalyzer);
+        this.budgetManager = new BudgetManager();
 
-        // Προσθήκη panels
+        // Panel Initialization
+        agencySummaryPanel = new ExpenseByAgencySummaryPanel(this,
+                budgetAnalyzer);
+        agencyDetailsPanel = new AgencyDetailsPanel(this, budgetAnalyzer);
+        revenuePanel = new RevenuePanel(this);
+        expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
+        insertChangePanel = new InsertChangePanel(this, budgetManager);
+        absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
+        transferChangePanel = new TransferChangePanel(this, budgetManager);
+
+        // Add panels to CardLayout
         cardPanel.add(new MenuPanel(this), "menu");
         cardPanel.add(new ExpensePanel(this), "expensePanel");
         cardPanel.add(agencySummaryPanel, "expenseByAgency");
         cardPanel.add(agencyDetailsPanel, "agencyDetails");
-        revenuePanel = new RevenuePanel(this);
         cardPanel.add(revenuePanel, "revenuePanel");
-        expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
-        cardPanel.add(expenseByCategoryPanel,
-         "expenseByCategory");
-        String expcodes = expenseByCategoryPanel.getCodes();
+        cardPanel.add(expenseByCategoryPanel, "expenseByCategory");
 
-
-        // Εδώ αργότερα θα προσθέσεις κι άλλες οθόνες, πχ:
+        // Future/Placeholder panels
         cardPanel.add(new BudgetPanel(this), "budget");
-        // cardPanel.add(new ChangesPanel(this), "changes");
+        cardPanel.add(insertChangePanel, "insert");
+        cardPanel.add(new ChangeMenuPanel(this, budgetManager), "changesMenu");
+        cardPanel.add(absoluteChangePanel, "absoluteChange");
+        this.absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
+        cardPanel.add(this.absoluteChangePanel, "absoluteChange");
+        cardPanel.add(transferChangePanel, "transferChange");
+        this.percentageChangePanel = new PercentageChangePanel(this, budgetManager);
+        cardPanel.add(this.percentageChangePanel, "percentageChange");
+
 
         add(cardPanel);
         setLocationRelativeTo(null);
     }
 
-    // Μέθοδος για εναλλαγή panels
-    public void switchTo(String panelName) {
+    /**
+     * Switches the visible panel in the CardLayout.
+     *
+     * @param panelName the name of the panel to switch to
+     */
+    public void switchTo(final String panelName) {
         cardLayout.show(cardPanel, panelName);
     }
+
     /**
-     * Μεταβαίνει στο Panel ανάλυσης και φορτώνει τα στοιχεία του φορέα.
-     * @param code ο κωδικός του φορέα.
+     * Switches to the Agency Details panel and loads data.
+     *
+     * @param code the agency code
      */
     public void showAgencyDetails(final int code) {
         agencyDetailsPanel.loadDetails(code);
         switchTo("agencyDetails");
     }
-    /**
-     * Μεταβαίνει στο Panel revenue2 και φορτώνει τα στοιχεία του φορέα.
-     * @param code ο κωδικός του φορέα
-     */
-    public void showRevenue2(String code) {
 
-    // Αν υπάρχει παλιό panel, το αφαιρούμε
-    if (revenue2Panel != null) {
-        cardPanel.remove(revenue2Panel);
+    /**
+     * Switches to the Revenue2 panel and loads data for the code.
+     *
+     * @param code the revenue code
+     */
+    public void showRevenue2(final String code) {
+        // Remove old panel if exists
+        if (revenue2Panel != null) {
+            cardPanel.remove(revenue2Panel);
+        }
+
+        // Create new panel
+        revenue2Panel = new Revenue2Panel(this, code);
+
+        cardPanel.add(revenue2Panel, "revenue2panel");
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
+        switchTo("revenue2panel");
     }
 
-    // Δημιουργούμε νέο panel με τον πραγματικό κωδικό
-    revenue2Panel = new Revenue2Panel(this, code);
-
-    cardPanel.add(revenue2Panel, "revenue2panel");
-    cardPanel.revalidate();
-    cardPanel.repaint();
-
-    switchTo("revenue2panel");
-}
     /**
-     * Μεταβαίνει στο Panel revenue3 και φορτώνει τα στοιχεία του φορέα.
-     * @param code ο κωδικός του φορέα
+     * Switches to the Revenue3 panel and loads data for the code.
+     *
+     * @param code the revenue code
      */
-    public void showRevenue3(String code) {
+    public void showRevenue3(final String code) {
+        if (revenue3Panel != null) {
+            cardPanel.remove(revenue3Panel);
+        }
 
-    // Αν υπάρχει παλιό panel, το αφαιρούμε
-    if (revenue3Panel != null) {
-        cardPanel.remove(revenue3Panel);
+        revenue3Panel = new Revenue3Panel(this, code);
+
+        cardPanel.add(revenue3Panel, "revenue3panel");
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
+        switchTo("revenue3panel");
     }
 
-    // Δημιουργούμε νέο panel με τον πραγματικό κωδικό
-    revenue3Panel = new Revenue3Panel(this, code);
-
-    // Προσθήκη στο CardLayout με το σωστό όνομα
-    cardPanel.add(revenue3Panel, "revenue3panel");
-
-    // Ανανεώσεις
-    cardPanel.revalidate();
-    cardPanel.repaint();
-
-    // Εμφάνιση panel
-    switchTo("revenue3panel");
-}
- /**
- * Displays the fourth-level revenue analysis panel.
- *
- * @param code the four-digit revenue code to analyze
- */
+    /**
+     * Displays the fourth-level revenue analysis panel.
+     *
+     * @param code the four-digit revenue code to analyze
+     */
     public void showRevenue4(final String code) {
+        if (revenue4Panel != null) {
+            cardPanel.remove(revenue4Panel);
+        }
 
-    // Remove previous instance if it exists
-    if (revenue4Panel != null) {
-        cardPanel.remove(revenue4Panel);
+        revenue4Panel = new Revenue4Panel(this, code);
+
+        cardPanel.add(revenue4Panel, "revenue4panel");
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
+        switchTo("revenue4panel");
     }
 
-    // Create a new panel using the provided code
-    revenue4Panel = new Revenue4Panel(this, code);
-
-    // Add the panel to the card layout with a consistent name
-    cardPanel.add(revenue4Panel, "revenue4panel");
-
-    // Refresh layout
-    cardPanel.revalidate();
-    cardPanel.repaint();
-
-    // Switch to the revenue4panel screen
-    switchTo("revenue4panel");
-}
- /**
- * Shows the panel with detailed expense reports for the selected categories.
- *
- * @param codesString the codes entered by the user, separated by commas or spaces
- */
+    /**
+     * Shows the panel with detailed expense reports.
+     *
+     * @param codesString the codes entered by the user
+     */
     public void showExpenseCategory2(final String codesString) {
+        if (expenseByCategory2Panel != null) {
+            cardPanel.remove(expenseByCategory2Panel);
+        }
 
-    // Remove previous instance if it exists
-    if (expenseByCategory2Panel != null) {
-        cardPanel.remove(expenseByCategory2Panel);
+        expenseByCategory2Panel = new ExpenseByCategory2Panel(this,
+                codesString);
+
+        cardPanel.add(expenseByCategory2Panel, "expenseCategory2");
+        cardPanel.revalidate();
+        cardPanel.repaint();
+
+        switchTo("expenseCategory2");
     }
 
-    // Create a new panel using the provided codes
-    expenseByCategory2Panel = new ExpenseByCategory2Panel(this, codesString);
+    /**
+     * Shows the panel of ViewEntries.
+     */
+    public void openViewEntriesPanel() {
+        final ViewEntriesPanel panel = new ViewEntriesPanel(this,
+                budgetManager);
 
-    // Add the panel to the CardLayout with a consistent name
-    cardPanel.add(expenseByCategory2Panel, "expenseCategory2");
+        cardPanel.add(panel, "viewEntries");
+        cardLayout.show(cardPanel, "viewEntries");
 
-    // Refresh the layout
-    cardPanel.revalidate();
-    cardPanel.repaint();
+        if (budgetManager.getEntriesList().isEmpty()) {
+            AppException.showError("Δεν έχουν φορτωθεί δεδομένα.");
+        }
+    }
 
-    // Switch to the expenseCategory2 panel
-    switchTo("expenseCategory2");
-}
-/**
- * Applies custom styling to a JButton.
- *
- * @param button the button to style
- */
-    public void confButtonColors(JButton confirmButton) {
+    /**
+     * Shows the Audit Log panel.
+     */
+    public void showAuditLogPanel() {
+        final ViewAuditLogPanel panel = new ViewAuditLogPanel(this,
+                budgetManager);
+
+        cardPanel.add(panel, "auditLog");
+        cardLayout.show(cardPanel, "auditLog");
+    }
+
+    public void showMinistriesSelectionPanel() {
+        final MinistriesSelectionPanel panel =
+            new MinistriesSelectionPanel(this, budgetManager);
+
+        cardPanel.add(panel, "ministriesSelection");
+        cardLayout.show(cardPanel, "ministriesSelection");
+    }
+
+
+    /**
+     * Applies custom styling to a Confirm JButton (Green).
+     *
+     * @param confirmButton the button to style
+     */
+    public void confButtonColors(final JButton confirmButton) {
         confirmButton.setBackground(Color.GREEN);
         confirmButton.setForeground(Color.BLACK);
         confirmButton.setOpaque(true);
     }
-/**
- * Applies custom styling to a JButton.
- *
- * @param button the button to style
- */
-    public void backButtonColors(JButton backButton) {
+
+    /**
+     * Applies custom styling to a Back JButton (Yellow).
+     *
+     * @param backButton the button to style
+     */
+    public void backButtonColors(final JButton backButton) {
         backButton.setBackground(Color.YELLOW);
         backButton.setForeground(Color.BLACK);
         backButton.setOpaque(true);
     }
-
-
 }
