@@ -181,7 +181,7 @@ public class BudgetChartJFree extends JPanel {
             }
             
             // Μετατροπή σε δισεκατομμύρια για καλύτερη εμφάνιση
-            double valueInBillions = poso / 1_000_000_000;
+            double valueInBillions = poso;
             
             // Συντομευμένο όνομα για καλύτερη εμφάνιση στον άξονα
             String displayName = kodikos + " - " + getShortName(kathgoria, 35);
