@@ -36,7 +36,7 @@ public final class MenuPanel extends JPanel {
             "2. Εισαγωγή αλλαγής");
         insertChangeButton.setFont(new Font("Arial", Font.PLAIN, 20));
         final JRadioButton viewChangesButton = new JRadioButton(
-            "3. Εμφάνιση αλλαγών");
+            "3. Προβολή Γραφημάτων");
         viewChangesButton.setFont(new Font("Arial", Font.PLAIN, 20));
         final JRadioButton exitButton = new JRadioButton(
             "4. Έξοδος");
@@ -65,7 +65,7 @@ public final class MenuPanel extends JPanel {
                 } else if (insertChangeButton.isSelected()) {
                     frame.switchTo("insert");
                 } else if (viewChangesButton.isSelected()) {
-                    frame.switchTo("changes");
+                    frame.switchTo("chartsMenu");
                 } else if (exitButton.isSelected()) {
                     System.exit(0);
                 } else {
