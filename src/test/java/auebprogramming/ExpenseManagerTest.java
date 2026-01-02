@@ -1,92 +1,148 @@
 package auebprogramming;
 
-/**
- * Test class for ExpenseManager.
- * Simulates GUI calls to verify report generation and validation logic.
- * <p>
- * This class demonstrates how the front-end should interact with the
- * ExpenseManager to retrieve formatted strings and handle exceptions.
- * </p>
- *
- * @version 1.0
- */
-public final class ExpenseManagerTest {
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 
-    /** The filename for the expense categories CSV. */
-    private static final String CATEGORIES_FILE = "expense_categories_2025.csv";
+/**
+ * JUnit tests for the ExpenseManager class.
+ * Verifies code validation, report generation, and data querying capabilities.
+ */
+public class ExpenseManagerTest {
+
+    private File tempCsvFile;
+    private ExpenseManager manager;
 
     /**
-     * Private constructor to prevent instantiation of this utility class.
+     * Sets up the test environment.
+     * Creates a temporary CSV file with dummy data for testing.
+     *
+     * @throws IOException if file creation fails.
      */
-    private ExpenseManagerTest() {
-        // Empty constructor
+    @Before
+    public void setUp() throws IOException {
+        // Create temporary CSV file
+        tempCsvFile = File.createTempFile("test_expenses", ".csv");
+        
+        try (FileWriter writer = new FileWriter(tempCsvFile)) {
+            // Write Header
+            writer.write("Skip,Code,Description,Amount\n");
+            
+            // Write Data Rows
+            // Normal row: Code 21, Salary, 1000
+            writer.write("X,21,Salary,1000\n");
+            
+            // Special row: Code 29 (should trigger special logic)
+            writer.write("X,29,Appropriations,0\n");
+            
+            // Another normal row
+            writer.write("X,24,Travel,500\n");
+        }
+
+        // Initialize ExpenseManager with the temp file path
+        manager = new ExpenseManager(tempCsvFile.getAbsolutePath());
     }
 
     /**
-     * Main method to execute tests.
-     *
-     * @param args Command line arguments (not used).
+     * Cleans up the test environment by deleting the temp file.
      */
-    public static void main(final String[] args) {
-        
-        System.out.println(">>> INITIALIZING ExpenseManager...");
-        
-        // Ensure the file exists in src/main/resources
-        final ExpenseManager manager = new ExpenseManager(CATEGORIES_FILE);
-        
-        System.out.println(">>> Initialization Complete.\n");
-
-        // ---------------------------------------------------------
-        // TEST 1: Validation Logic (AppException)
-        // ---------------------------------------------------------
-        System.out.println("========== TEST 1: VALIDATION ==========");
-        
-        // Case A: Valid Code
-        try {
-            System.out.print("Checking valid code '21'... ");
-            manager.validateExpenseCode("21");
-            System.out.println("OK (Valid).");
-        } catch (final AppException e) {
-            System.err.println("FAILED: Should not have thrown exception for code 21.");
+    @After
+    public void tearDown() {
+        if (tempCsvFile != null && tempCsvFile.exists()) {
+            tempCsvFile.delete();
         }
+    }
 
-        // Case B: Invalid Code
-        try {
-            System.out.print("Checking invalid code '999'... ");
-            manager.validateExpenseCode("999");
-            System.out.println("FAILED: Should have thrown exception.");
-        } catch (final AppException e) {
-            System.out.println("OK (Caught expected exception): " + e.getMessage());
-        }
-        System.out.println();
+    /**
+     * Tests validation of a valid expense code.
+     * Should not throw any exception.
+     *
+     * @throws AppException if validation fails unexpectedly.
+     */
+    @Test
+    public void testValidateExpenseCodeValid() throws AppException {
+        manager.validateExpenseCode("21");
+    }
 
-        // ---------------------------------------------------------
-        // TEST 2: Category List Report (Drop-down menu source)
-        // ---------------------------------------------------------
-        System.out.println("========== TEST 2: CATEGORY LIST REPORT ==========");
-        final String listReport = manager.getCategoryListReport();
-        System.out.println(listReport);
+    /**
+     * Tests validation of an invalid expense code.
+     * Should throw AppException.
+     *
+     * @throws AppException expected exception.
+     */
+    @Test(expected = AppException.class)
+    public void testValidateExpenseCodeInvalid() throws AppException {
+        manager.validateExpenseCode("999");
+    }
 
-        // ---------------------------------------------------------
-        // TEST 3: Full Expenses Report (State Budget Table)
-        // ---------------------------------------------------------
-        System.out.println("========== TEST 3: FULL EXPENSES REPORT ==========");
-        final String fullReport = manager.getFullExpensesReport();
-        System.out.println(fullReport);
-
-        // ---------------------------------------------------------
-        // TEST 4: Expense Details Report (Specific Queries)
-        // ---------------------------------------------------------
-        System.out.println("========== TEST 4: EXPENSE DETAILS REPORT ==========");
+    /**
+     * Tests generation of the category list report.
+     */
+    @Test
+    public void testGetCategoryListReport() {
+        final String report = manager.getCategoryListReport();
         
-        // Testing a mix of:
-        // - "21" (Regular expense)
-        // - "29" (Special expense with hardcoded logic)
-        // - "XYZ" (Invalid code to verify error handling in report)
-        final String[] queries = {"21", "29", "XYZ"};
-        System.out.println("Querying codes: 21, 29, XYZ");
+        Assert.assertNotNull("Report should not be null", report);
+        Assert.assertTrue("Should contain header", report.contains("ΚΩΔΙΚΟΣ"));
+        Assert.assertTrue("Should contain code 21", report.contains("21"));
+        Assert.assertTrue("Should contain Salary", report.contains("Salary"));
+    }
+
+    /**
+     * Tests generation of the expense details report for a valid code.
+     */
+    @Test
+    public void testGetExpenseDetailsReportValid() {
+        final String report = manager.getExpenseDetailsReport("21");
         
-        final String detailsReport = manager.getExpenseDetailsReport(queries);
-        System.out.println(detailsReport);
+        Assert.assertNotNull("Report should not be null", report);
+        Assert.assertTrue("Should contain Code 21", report.contains("21"));
+        Assert.assertTrue("Should contain Amount 1.000", report.contains("1.000"));
+    }
+
+    /**
+     * Tests generation of the expense details report for the special code 29.
+     * Verifies that hardcoded values are returned (e.g. 17.283.053.000).
+     */
+    @Test
+    public void testGetExpenseDetailsReportSpecialCode29() {
+        final String report = manager.getExpenseDetailsReport("29");
+        
+        Assert.assertTrue("Should contain Code 29", report.contains("29"));
+        // Check for the hardcoded State Budget amount for code 29
+        Assert.assertTrue("Should contain special amount 17.283.053.000", 
+                report.contains("17.283.053.000"));
+    }
+
+    /**
+     * Tests generation of the expense details report for an invalid code.
+     * Should return an error message in the string, not throw exception.
+     */
+    @Test
+    public void testGetExpenseDetailsReportInvalid() {
+        final String report = manager.getExpenseDetailsReport("999");
+        
+        Assert.assertTrue("Should contain error message", 
+                report.contains("Μη έγκυρος κωδικός"));
+    }
+
+    /**
+     * Tests the full expenses report generation.
+     */
+    @Test
+    public void testGetFullExpensesReport() {
+        final String report = manager.getFullExpensesReport();
+        
+        Assert.assertNotNull("Report should not be null", report);
+        Assert.assertTrue("Should contain Total", report.contains("Σύνολο"));
+        
+        // It should contain the sum of 1000 (Salary) + 500 (Travel) + 17283053000 (Cat 29)
+        // We just check that it contains one of the entries to ensure it processed rows
+        Assert.assertTrue("Should contain Travel entry", report.contains("Travel"));
+        Assert.assertTrue("Should contain Salary entry", report.contains("Salary"));
     }
 }
