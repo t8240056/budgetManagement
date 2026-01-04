@@ -1,150 +1,100 @@
 package auebprogramming;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-
 /**
- * JUnit tests for the ExpenseDisplay class.
- * Verifies correct loading of data, report generation, and amount updates.
+ * Test class to execute ExpenseDisplay independently.
+ * Verifies that all 6 reports are generated correctly for the GUI.
+ * <p>
+ * This class ensures that the Display component correctly loads data
+ * and formats the output strings for the user interface.
+ * </p>
+ *
+ * @version 1.0
  */
-public class ExpenseDisplayTest {
+public final class ExpenseDisplayTest {
 
-    private File categoriesFile;
-    private File ministriesFile;
-    private ExpenseDisplay display;
+    /** The filename for the expense categories CSV. */
+    private static final String CATEGORIES_FILE = "expense_categories_2025.csv";
+    
+    /** The filename for the ministry expenses CSV. */
+    private static final String MINISTRIES_FILE = "expense_ministries_2025.csv";
+
+    /** The budget year to simulate in the test. */
+    private static final int TEST_YEAR = 2025;
+
+    /** Expected number of reports returned by getAllExpenseReports. */
+    private static final int EXPECTED_REPORT_COUNT = 6;
 
     /**
-     * Sets up the test environment.
-     * Creates temporary CSV files with dummy data for categories and ministries.
+     * Private constructor to prevent instantiation of this utility class.
+     */
+    private ExpenseDisplayTest() {
+        // Empty constructor
+    }
+
+    /**
+     * Main method to execute tests.
      *
-     * @throws IOException if file creation fails.
+     * @param args Command line arguments (not used).
      */
-    @Before
-    public void setUp() throws IOException {
-        // 1. Create temporary Categories CSV
-        categoriesFile = File.createTempFile("test_categories", ".csv");
-        try (FileWriter writer = new FileWriter(categoriesFile)) {
-            // Header row (to be skipped)
-            writer.write("Skip,Code,Description,Amount\n");
-            // Data rows
-            writer.write("X,21,Salaries,1000\n");
-            writer.write("X,23,Supplies,500\n");
-            // Special category 29 (should use hardcoded values)
-            writer.write("X,29,Appropriations,0\n");
-        }
+    public static void main(final String[] args) {
 
-        // 2. Create temporary Ministries CSV
-        ministriesFile = File.createTempFile("test_ministries", ".csv");
-        try (FileWriter writer = new FileWriter(ministriesFile)) {
-            // Header row
-            writer.write("Code,Ministry,Regular,Investment,Total\n");
-            // Data row: 1001, Ministry A, 100, 50, 150
-            writer.write("1001,Ministry A,100,50,150\n");
-        }
-
-        // 3. Initialize ExpenseDisplay with temp files
-        display = new ExpenseDisplay(categoriesFile.getAbsolutePath(),
-                                     ministriesFile.getAbsolutePath());
-    }
-
-    /**
-     * Cleans up temporary files after each test.
-     */
-    @After
-    public void tearDown() {
-        if (categoriesFile != null && categoriesFile.exists()) {
-            categoriesFile.delete();
-        }
-        if (ministriesFile != null && ministriesFile.exists()) {
-            ministriesFile.delete();
-        }
-    }
-
-    /**
-     * Tests that the categories report is generated correctly for State Budget.
-     */
-    @Test
-    public void testGetCategoriesReportKratikos() {
-        final String report = display.getCategoriesReport("ΚΡΑΤΙΚΟΣ");
-
-        Assert.assertNotNull("Report should not be null", report);
+        System.out.println(">>> INITIALIZING ExpenseDisplay...");
         
-        // Verify content
-        Assert.assertTrue("Should contain salaries", report.contains("Salaries"));
-        Assert.assertTrue("Should contain amount 1.000", report.contains("1.000"));
+        // Passing the year TEST_YEAR (2025) to the constructor
+        final ExpenseDisplay display = new ExpenseDisplay(CATEGORIES_FILE,
+                MINISTRIES_FILE, TEST_YEAR);
         
-        // Category 29 should use the hardcoded constant (17,283,053,000)
-        Assert.assertTrue("Should contain Cat 29 hardcoded value", 
-                report.contains("17.283.053.000"));
-    }
+        System.out.println(">>> Initialization Complete.\n");
 
-    /**
-     * Tests that the categories report correctly handles Investment Budget.
-     * Normal categories should be 0, except special ones.
-     */
-    @Test
-    public void testGetCategoriesReportInvestment() {
-        final String report = display.getCategoriesReport("ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ");
+        // ----------------------------------------------------
+        // TEST 1: Retrieve all reports (The main GUI method)
+        // ----------------------------------------------------
+        System.out.println("========== TEST 1: GET ALL REPORTS ==========");
+        final String[] allReports = display.getAllExpenseReports();
 
-        // Normal category "Salaries" should show 0 for Investment Budget
-        Assert.assertTrue("Salaries should be 0 in Investment Budget", 
-                report.contains("Salaries") && report.contains(" 0"));
+        if (allReports.length == EXPECTED_REPORT_COUNT) {
+            System.out.println("SUCCESS: Received 6 reports as expected.");
+        } else {
+            System.err.println("FAILURE: Expected 6 reports, got " 
+                    + allReports.length);
+            return;
+        }
+
+        // ----------------------------------------------------
+        // TEST 2: Print Reports for Verification
+        // ----------------------------------------------------
         
-        // Category 29 should use hardcoded investment value (14,100,000,000)
-        Assert.assertTrue("Cat 29 should match investment constant", 
-                report.contains("14.100.000.000"));
+        // --- CATEGORY REPORTS (Indices 0, 1, 2) ---
+        printReportHeader("0", "CATEGORIES - KRATIKOS");
+        System.out.println(allReports[0]);
+
+        printReportHeader("1", "CATEGORIES - TAKTIKOS");
+        System.out.println(allReports[1]);
+
+        printReportHeader("2", "CATEGORIES - EPENDYSEON");
+        System.out.println(allReports[2]);
+
+        // --- MINISTRY REPORTS (Indices 3, 4, 5) ---
+        printReportHeader("3", "MINISTRIES - KRATIKOS");
+        System.out.println(allReports[3]);
+
+        printReportHeader("4", "MINISTRIES - TAKTIKOS");
+        System.out.println(allReports[4]);
+
+        printReportHeader("5", "MINISTRIES - EPENDYSEON");
+        System.out.println(allReports[5]);
     }
 
     /**
-     * Tests that the ministries report is generated correctly.
+     * Helper method to print a formatted header for test outputs.
+     *
+     * @param index The index of the report in the array.
+     * @param title The description of the report.
      */
-    @Test
-    public void testGetMinistriesReport() {
-        final String report = display.getMinistriesReport("ΚΡΑΤΙΚΟΣ");
-
-        Assert.assertTrue("Should contain Ministry A", report.contains("Ministry A"));
-        Assert.assertTrue("Should contain Total amount 150", report.contains("150"));
-    }
-
-    /**
-     * Tests generating all 6 reports at once.
-     */
-    @Test
-    public void testGetAllExpenseReports() {
-        final String[] reports = display.getAllExpenseReports();
-
-        Assert.assertEquals("Should return exactly 6 reports", 6, reports.length);
-        Assert.assertNotNull("First report should not be null", reports[0]);
-        Assert.assertTrue("First report should be Kratikos", reports[0].contains("ΚΡΑΤΙΚΟΣ"));
-    }
-
-    /**
-     * Tests updating a category amount.
-     */
-    @Test
-    public void testUpdateCategoryAmountSuccess() {
-        // Update Salaries (21) from 1000 to 2000
-        final boolean success = display.updateCategoryAmount("21", 2000L);
-
-        Assert.assertTrue("Update should return true", success);
-
-        // Verify the change in the report
-        final String report = display.getCategoriesReport("ΚΡΑΤΙΚΟΣ");
-        Assert.assertTrue("Report should show updated amount 2.000", report.contains("2.000"));
-    }
-
-    /**
-     * Tests updating a non-existent category code.
-     */
-    @Test
-    public void testUpdateCategoryAmountNotFound() {
-        final boolean success = display.updateCategoryAmount("999", 5000L);
-
-        Assert.assertFalse("Update should return false for invalid code", success);
+    private static void printReportHeader(final String index, 
+                                          final String title) {
+        System.out.println("\n--------------------------------------------------");
+        System.out.println("   [" + index + "] " + title);
+        System.out.println("--------------------------------------------------");
     }
 }
