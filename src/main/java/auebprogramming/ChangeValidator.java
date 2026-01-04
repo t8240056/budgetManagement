@@ -75,7 +75,8 @@ public final class ChangeValidator {
         }
 
         // Validate percentage range
-        if (Math.abs(percentage) > 100) {
+        // ΔΙΟΡΘΩΣΗ: Αφαιρούμε το Math.abs() και ελέγχουμε μόνο αν είναι > 100
+        if (percentage > 100) { 
             errors.add("Percentage cannot exceed 100%: " + percentage + "%");
         }
 
