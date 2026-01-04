@@ -5,6 +5,10 @@ import java.util.Locale;
 /**
  * ExpenseDisplay manages, stores, and displays state budget expense data
  * using native String arrays.
+ * <p>
+ * This class handles data loading and report formatting for specific
+ * budget years.
+ * </p>
  */
 public final class ExpenseDisplay {
 
@@ -29,13 +33,13 @@ public final class ExpenseDisplay {
     // Constant for better formatting (increased width)
     private static final int DISPLAY_COLUMN_WIDTH = 70;
 
-    /** The year of the budget data. */
-    private static final int BUDGET_YEAR = 2025;
-
-    // Specific amounts for category 29
+    // Specific amounts for category 29 (Hardcoded logic remains unchanged)
     private static final long AMOUNT_29_KRATIKOS = 17283053000L;
     private static final long AMOUNT_29_TAKTIKOS = 3183053000L;
     private static final long AMOUNT_29_EPENDYSEON = 14100000000L;
+
+    /** The year of the budget data (dynamic instance variable). */
+    private final int budgetYear;
 
     /** Internal storage for expense categories data (String[][]). */
     private final String[][] categoriesData;
@@ -48,15 +52,18 @@ public final class ExpenseDisplay {
 
     /**
      * Constructor for ExpenseDisplay. Loads data from the specified CSV files
-     * using the CsvToArray utility and stores it in String arrays.
+     * and sets the budget year.
      *
      * @param categoriesFile The name of the categories CSV file.
      * @param ministriesFile The name of the ministries CSV file.
+     * @param year           The budget year (e.g., 2025, 2026).
      */
     public ExpenseDisplay(final String categoriesFile,
-                          final String ministriesFile) {
+                          final String ministriesFile,
+                          final int year) {
         this.categoriesData = CsvToArray.loadCsvToArray(categoriesFile);
         this.ministriesData = CsvToArray.loadCsvToArray(ministriesFile);
+        this.budgetYear = year;
     }
 
     // ---------------------------
@@ -92,7 +99,7 @@ public final class ExpenseDisplay {
     }
 
     // ---------------------------
-    // GUI REPORT METHODS (Replacing System.out)
+    // GUI REPORT METHODS
     // ---------------------------
 
     /**
@@ -112,7 +119,7 @@ public final class ExpenseDisplay {
         sb.append(">> ").append(budgetType).append(" ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ")
                 .append(System.lineSeparator());
         sb.append(">> ΠΙΣΤΩΣΕΙΣ ΚΑΤΑ ΜΕΙΖΟΝΑ ΚΑΤΗΓΟΡΙΑ ΔΑΠΑΝΗΣ - ΕΤΟΥΣ ")
-                .append(BUDGET_YEAR).append(System.lineSeparator());
+                .append(this.budgetYear).append(System.lineSeparator());
         sb.append("==================================================")
                 .append(System.lineSeparator());
         sb.append(String.format("%-10s %-" + DISPLAY_COLUMN_WIDTH + "s %s%n",
@@ -192,7 +199,7 @@ public final class ExpenseDisplay {
         sb.append(">> ").append(budgetType).append(" ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ")
                 .append(System.lineSeparator());
         sb.append(">> ΣΥΝΟΠΤΙΚΟΣ ΠΙΝΑΚΑΣ ΠΙΣΤΩΣΕΩΝ ΣΥΝΟΛΙΚΑ ΚΑΤΑ ΦΟΡΕΑ "
-                + "- ΕΤΟΥΣ ").append(BUDGET_YEAR)
+                + "- ΕΤΟΥΣ ").append(this.budgetYear)
                 .append(System.lineSeparator());
         sb.append("==================================================")
                 .append(System.lineSeparator());
