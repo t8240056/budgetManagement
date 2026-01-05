@@ -17,14 +17,16 @@ public final class RevenueDataManager {
      * Creates a manager and loads all CSV files.
      */
     public RevenueDataManager() {
+
+        int year = Year.SELECTED_YEAR; // στατική μεταβλητή
         this.codes2 = CsvToArray.loadCsvToArray(
-                "revenue_categories2_2025.csv");
+                "revenue_categories2_" + year + ".csv");
         this.codes3 = CsvToArray.loadCsvToArray(
-                "revenue_categories3_2025.csv");
+                "revenue_categories3_" + year + ".csv");
         this.codes5 = CsvToArray.loadCsvToArray(
-                "revenue_categories5_2025.csv");
+                "revenue_categories5_" + year + ".csv");
         this.codes7 = CsvToArray.loadCsvToArray(
-                "revenue_categories7_2025.csv");
+                "revenue_categories7_" + year + ".csv");
     }
 
     /**
