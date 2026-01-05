@@ -131,7 +131,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-                frame.switchTo("expensePanel");
+                frame.showExpensePanel();
             }
         });
 
