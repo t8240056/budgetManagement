@@ -80,7 +80,7 @@ public final class BudgetPanel extends JPanel {
             @Override
             public void actionPerformed(final ActionEvent event) {
                 if (revenueButton.isSelected()) {
-                    frame.switchTo("revenuePanel");
+                    frame.showRevenuePanel();
                 } else if (expenseButton.isSelected()) {
                     frame.showExpensePanel();
                 } else {
