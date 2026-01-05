@@ -6,6 +6,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -81,7 +82,7 @@ public final class BudgetPanel extends JPanel {
                 if (revenueButton.isSelected()) {
                     frame.switchTo("revenuePanel");
                 } else if (expenseButton.isSelected()) {
-                    frame.switchTo("expensePanel");
+                    frame.showExpensePanel();
                 } else {
                     AppException.showError(
                             "Επιλέξτε τύπο δεδομένων ή πατήστε Επιστροφή");
