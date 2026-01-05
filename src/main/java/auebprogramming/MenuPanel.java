@@ -1,5 +1,6 @@
 package auebprogramming;
 
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -52,10 +53,14 @@ public final class MenuPanel extends JPanel {
         add(insertChangeButton);
         add(viewChangesButton);
         add(exitButton);
+        final JPanel bottomPanel = new JPanel();
+        bottomPanel.setLayout(new GridLayout(1, 2, 10, 0));
+        bottomPanel.setPreferredSize(new Dimension(0, 80)); // ύψος panel
+        add(bottomPanel);
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
-        add(confirmButton);
+        bottomPanel.add(confirmButton);
 
         confirmButton.addActionListener(new ActionListener() {
             @Override
@@ -71,6 +76,16 @@ public final class MenuPanel extends JPanel {
                 } else {
                     AppException.showError("Επιλέξτε μια λειτουργία");
                 }
+            }
+        });
+        final JButton backButton = new JButton("Επιστροφή Επιλογής Έτους");
+        frame.backButtonColors(backButton);
+        bottomPanel.add(backButton);
+
+        backButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                frame.switchTo("yearSelection");
             }
         });
     }
