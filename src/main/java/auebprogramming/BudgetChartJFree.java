@@ -181,12 +181,12 @@ public class BudgetChartJFree extends JPanel {
             }
             
             // Μετατροπή σε δισεκατομμύρια για καλύτερη εμφάνιση
-            double valueInBillions = Math.max(poso, 1_000_000);
+            double chartValue = Math.max(poso, 1_000_000);
             
             // Συντομευμένο όνομα για καλύτερη εμφάνιση στον άξονα
             String displayName = kodikos + " - " + getShortName(kathgoria, 35);
             
-            dataset.addValue(valueInBillions, "Προϋπολογισμός", displayName);
+            dataset.addValue(chartValue, "Προϋπολογισμός", displayName);
             
             // Αποθήκευση αντιστοιχίας για γρήγορη αναζήτηση
             categoryToIndexMap.put(displayName, i);
@@ -207,7 +207,7 @@ public class BudgetChartJFree extends JPanel {
         JFreeChart chart = ChartFactory.createBarChart(
             null,  // Χωρίς τίτλο (θα βάλουμε custom)
             null,  // Χωρίς label για τον κάθετο άξονα
-            "Ποσό (δισεκατομμύρια €)",  // Label για οριζόντιο άξονα
+            "Ποσό (€ – λογαριθμική κλίμακα)",  // Label για οριζόντιο άξονα
             dataset,
             PlotOrientation.HORIZONTAL,
             false, // No legend
@@ -311,9 +311,21 @@ public class BudgetChartJFree extends JPanel {
                     
                     String fullKathgoria = findFullCategoryName(kodikos);
                     
-                    double valueInBillions = dataset.getValue(row, column).doubleValue();
-                    double originalValue = valueInBillions * 1_000_000_000;
-                    
+                    Object[] itemData = findItemData(kodikos);
+
+                    double originalValue = 0.0;
+                    if (itemData != null) {
+                        if (itemData[2] instanceof Number) {
+                            originalValue = ((Number) itemData[2]).doubleValue();
+                        } else {
+                            try {
+                                originalValue = Double.parseDouble(itemData[2].toString());
+                            } catch (NumberFormatException ignored) {}
+                        }
+                    }
+
+                    double valueInBillions = originalValue / 1_000_000_000.0;
+
                     String formattedBillions = String.format("%,.2f", valueInBillions);
                     String formattedOriginal = String.format("%,.0f", originalValue);
                     
