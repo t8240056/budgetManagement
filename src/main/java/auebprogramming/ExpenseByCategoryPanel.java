@@ -169,8 +169,21 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * @param text the text to display
      */
     public void setDisplayText() {
+        String categoriesFile ="";
+        final int selectedYear = Year.SELECTED_YEAR;
+        switch (selectedYear) {
+                case 2025 -> {
+                    categoriesFile = "expense_categories_2025.csv";
+                }
+                case 2026 -> {
+                    categoriesFile = "expense_categories_2026.csv";
+                }
+                default -> AppException.showError(
+                        "Λάθος στην φόρτωση δεδομένων του επιλεγμένου έτους");
+            }
+
         ExpenseManager expenseManager = new ExpenseManager(
-            "expense_categories_2025.csv");
+            categoriesFile);
 
         displayArea.setText(expenseManager.getFullExpensesReport());// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
         //getCategoryListReports() εδώ

@@ -81,8 +81,20 @@ public final class ExpenseByCategory2Panel extends JPanel {
         String[] codes = codesString.split("[, ]+");
 
         // Get formatted report
+        String categoriesFile ="";
+        final int selectedYear = Year.SELECTED_YEAR;
+        switch (selectedYear) {
+                case 2025 -> {
+                    categoriesFile = "expense_categories_2025.csv";
+                }
+                case 2026 -> {
+                    categoriesFile = "expense_categories_2026.csv";
+                }
+                default -> AppException.showError(
+                        "Λάθος στην φόρτωση δεδομένων του επιλεγμένου έτους");
+            }
         ExpenseManager manager =
-            new ExpenseManager("expense_categories_2025.csv");
+            new ExpenseManager(categoriesFile);
 
         String report = manager.getExpenseDetailsReport(codes);
 

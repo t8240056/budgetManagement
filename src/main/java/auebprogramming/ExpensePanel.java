@@ -95,7 +95,7 @@ public final class ExpensePanel extends JPanel {
                 if (byAgencyButton.isSelected()) {
                     frame.switchTo("expenseByAgency");
                 } else if (byCategoryButton.isSelected()) {
-                    frame.switchTo("expenseByCategory");
+                    frame.showExpenseByCategoryPanel();
                 } else {
                     // GUI-friendly μήνυμα
                     JOptionPane.showMessageDialog(

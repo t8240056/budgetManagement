@@ -22,7 +22,6 @@ public final class MainFrame extends JFrame {
     private final RevenuePanel revenuePanel;
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
-    private final ExpenseByCategoryPanel expenseByCategoryPanel;
     private final InsertChangePanel insertChangePanel;
     private AbsoluteChangePanel absoluteChangePanel;
     private TransferChangePanel transferChangePanel;
@@ -62,7 +61,6 @@ public final class MainFrame extends JFrame {
                 budgetAnalyzer);
         agencyDetailsPanel = new AgencyDetailsPanel(this, budgetAnalyzer);
         revenuePanel = new RevenuePanel(this);
-        expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
         insertChangePanel = new InsertChangePanel(this, budgetManager);
         absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
         transferChangePanel = new TransferChangePanel(this, budgetManager);
@@ -76,7 +74,6 @@ public final class MainFrame extends JFrame {
         cardPanel.add(agencySummaryPanel, "expenseByAgency");
         cardPanel.add(agencyDetailsPanel, "agencyDetails");
         cardPanel.add(revenuePanel, "revenuePanel");
-        cardPanel.add(expenseByCategoryPanel, "expenseByCategory");
 
         // Future/Placeholder panels
         cardPanel.add(new BudgetPanel(this), "budget");
@@ -112,6 +109,17 @@ public final class MainFrame extends JFrame {
         cardPanel.add(expensePanel, "expense");
         switchTo("expense");
     }
+    /**
+     * Switches to the ExpenseByCategory panel, creating a new one each time
+    */
+    public void showExpenseByCategoryPanel() {
+        ExpenseByCategoryPanel panel = new ExpenseByCategoryPanel(this);
+        cardPanel.add(panel, "expenseByCategory");
+        switchTo("expenseByCategory");
+    }
+    
+
+
 
 
     /**
