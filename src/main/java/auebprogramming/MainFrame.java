@@ -26,6 +26,9 @@ public final class MainFrame extends JFrame {
     private final InsertChangePanel insertChangePanel;
     private AbsoluteChangePanel absoluteChangePanel;
     private TransferChangePanel transferChangePanel;
+    private ChartsMenuPanel chartsMenuPanel;
+    private RevenueChartPanel revenueChartPanel;
+    private ExpenseChartPanel expenseChartPanel;
 
     // Logic Controllers
     private final BudgetAnalyzer budgetAnalyzer;
@@ -63,6 +66,9 @@ public final class MainFrame extends JFrame {
         insertChangePanel = new InsertChangePanel(this, budgetManager);
         absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
         transferChangePanel = new TransferChangePanel(this, budgetManager);
+        chartsMenuPanel = new ChartsMenuPanel(this, budgetManager);
+        revenueChartPanel = new RevenueChartPanel(this);
+        expenseChartPanel = new ExpenseChartPanel(this, budgetAnalyzer);
 
         // Add panels to CardLayout
         cardPanel.add(new MenuPanel(this), "menu");
@@ -82,7 +88,9 @@ public final class MainFrame extends JFrame {
         cardPanel.add(transferChangePanel, "transferChange");
         this.percentageChangePanel = new PercentageChangePanel(this, budgetManager);
         cardPanel.add(this.percentageChangePanel, "percentageChange");
-
+        cardPanel.add(chartsMenuPanel, "chartsMenu");
+        cardPanel.add(revenueChartPanel, "revenueChart");
+        cardPanel.add(expenseChartPanel, "expenseChart");
 
         add(cardPanel);
         setLocationRelativeTo(null);

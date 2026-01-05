@@ -18,6 +18,9 @@ public final class ExpenseDisplayTest {
     /** The filename for the ministry expenses CSV. */
     private static final String MINISTRIES_FILE = "expense_ministries_2025.csv";
 
+    /** The budget year to simulate in the test. */
+    private static final int TEST_YEAR = 2025;
+
     /** Expected number of reports returned by getAllExpenseReports. */
     private static final int EXPECTED_REPORT_COUNT = 6;
 
@@ -37,7 +40,9 @@ public final class ExpenseDisplayTest {
 
         System.out.println(">>> INITIALIZING ExpenseDisplay...");
         
-        final ExpenseDisplay display = new ExpenseDisplay(CATEGORIES_FILE, MINISTRIES_FILE);
+        // Passing the year TEST_YEAR (2025) to the constructor
+        final ExpenseDisplay display = new ExpenseDisplay(CATEGORIES_FILE,
+                MINISTRIES_FILE, TEST_YEAR);
         
         System.out.println(">>> Initialization Complete.\n");
 
@@ -50,7 +55,8 @@ public final class ExpenseDisplayTest {
         if (allReports.length == EXPECTED_REPORT_COUNT) {
             System.out.println("SUCCESS: Received 6 reports as expected.");
         } else {
-            System.err.println("FAILURE: Expected 6 reports, got " + allReports.length);
+            System.err.println("FAILURE: Expected 6 reports, got " 
+                    + allReports.length);
             return;
         }
 
@@ -85,7 +91,8 @@ public final class ExpenseDisplayTest {
      * @param index The index of the report in the array.
      * @param title The description of the report.
      */
-    private static void printReportHeader(final String index, final String title) {
+    private static void printReportHeader(final String index, 
+                                          final String title) {
         System.out.println("\n--------------------------------------------------");
         System.out.println("   [" + index + "] " + title);
         System.out.println("--------------------------------------------------");

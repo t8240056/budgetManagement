@@ -21,6 +21,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+            <scope>test</scope>
+        </dependency>
+        
+        <dependency>
             <artifactId>jfreechart</artifactId>
             <groupId>org.jfree</groupId>
             <version>1.5.3</version>
