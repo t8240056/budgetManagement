@@ -117,11 +117,27 @@ public final class ExpensePanel extends JPanel {
      */
     private void loadReports() {
         try {
-            final String categoriesFile = "expense_categories_2025.csv";
-            final String ministriesFile = "expense_ministries_2025.csv";
+           final int selectedYear = Year.SELECTED_YEAR;
+
+        String categoriesFile = "";
+        String ministriesFile = "";
+
+            switch (selectedYear) {
+                case 2025 -> {
+                    categoriesFile = "expense_categories_2025.csv";
+                    ministriesFile = "expense_ministries_2025.csv";
+                }
+                case 2026 -> {
+                    categoriesFile = "expense_categories_2026.csv";
+                    ministriesFile = "expense_ministries_2026.csv";
+                }
+                default -> AppException.showError(
+                        "Λάθος στην φόρτωση δεδομένων του επιλεγμένου έτους");
+            }
+
 
             final ExpenseDisplay display = new ExpenseDisplay(
-                    categoriesFile, ministriesFile);
+                    categoriesFile, ministriesFile,selectedYear);
 
             final String kratikos = "ΚΡΑΤΙΚΟΣ";
             final String taktikos = "ΤΑΚΤΙΚΟΣ";

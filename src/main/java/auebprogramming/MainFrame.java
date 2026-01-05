@@ -71,6 +71,7 @@ public final class MainFrame extends JFrame {
         expenseChartPanel = new ExpenseChartPanel(this, budgetAnalyzer);
 
         // Add panels to CardLayout
+        cardPanel.add(new YearSelectionPanel(this), "yearSelection");
         cardPanel.add(new MenuPanel(this), "menu");
         cardPanel.add(new ExpensePanel(this), "expensePanel");
         cardPanel.add(agencySummaryPanel, "expenseByAgency");
@@ -83,8 +84,6 @@ public final class MainFrame extends JFrame {
         cardPanel.add(insertChangePanel, "insert");
         cardPanel.add(new ChangeMenuPanel(this, budgetManager), "changesMenu");
         cardPanel.add(absoluteChangePanel, "absoluteChange");
-        this.absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
-        cardPanel.add(this.absoluteChangePanel, "absoluteChange");
         cardPanel.add(transferChangePanel, "transferChange");
         this.percentageChangePanel = new PercentageChangePanel(this, budgetManager);
         cardPanel.add(this.percentageChangePanel, "percentageChange");
@@ -94,6 +93,7 @@ public final class MainFrame extends JFrame {
 
         add(cardPanel);
         setLocationRelativeTo(null);
+        cardLayout.show(cardPanel,"yearSelection");
     }
 
     /**
