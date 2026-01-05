@@ -73,7 +73,6 @@ public final class MainFrame extends JFrame {
         // Add panels to CardLayout
         cardPanel.add(new YearSelectionPanel(this), "yearSelection");
         cardPanel.add(new MenuPanel(this), "menu");
-        cardPanel.add(new ExpensePanel(this), "expensePanel");
         cardPanel.add(agencySummaryPanel, "expenseByAgency");
         cardPanel.add(agencyDetailsPanel, "agencyDetails");
         cardPanel.add(revenuePanel, "revenuePanel");
@@ -104,6 +103,16 @@ public final class MainFrame extends JFrame {
     public void switchTo(final String panelName) {
         cardLayout.show(cardPanel, panelName);
     }
+
+    /**
+     *Switchtes to ExpensePanel
+    */
+    public void showExpensePanel() {
+        ExpensePanel expensePanel = new ExpensePanel(this);
+        cardPanel.add(expensePanel, "expense");
+        switchTo("expense");
+    }
+
 
     /**
      * Switches to the Agency Details panel and loads data.
