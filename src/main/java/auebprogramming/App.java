@@ -13,6 +13,7 @@ private App() {
     public static void main(final String[] args) {
         MainFrame mainFrame = new MainFrame();
         mainFrame.setVisible(true);
+        
 
     }
 }
