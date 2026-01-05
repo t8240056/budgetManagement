@@ -83,10 +83,10 @@ public final class BudgetManager {
      * @throws AppException if file not found or load fails
      */
     public void loadRevenueData(final File overrideFile) throws AppException {
-        this.currentEntityPrefix = "revenue_categories2_2025";
+        this.currentEntityPrefix = "revenue_categories2_" +y();
         final File fileToLoad = (overrideFile != null)
                 ? overrideFile
-                : new File(RESOURCES_PATH + "revenue_categories2_2025.csv");
+                : new File(RESOURCES_PATH + "revenue_categories2_" + y() + ".csv");
 
         try (Scanner fileScanner = new Scanner(fileToLoad)) {
             repository.clear(); // Clear previous data
@@ -132,7 +132,7 @@ public final class BudgetManager {
     public List<String> getMinistriesList() throws AppException {
         final List<String> ministries = new ArrayList<>();
         final File file = new File(RESOURCES_PATH
-                + "expense_ministries_2025.csv");
+                + "expense_ministries_" + y() + ".csv");
 
         try (Scanner csvScanner = new Scanner(file)) {
             while (csvScanner.hasNextLine()) {
@@ -166,7 +166,7 @@ public final class BudgetManager {
         this.currentEntityPrefix = orgCode;
         final File fileToLoad = (overrideFile != null)
                 ? overrideFile
-                : new File(RESOURCES_PATH + orgCode + ".csv");
+                : new File(RESOURCES_PATH + buildOrganizationExpenseFilename(orgCode));
 
         try (Scanner fileScanner = new Scanner(fileToLoad)) {
             repository.clear(); // Clear previous data
@@ -658,4 +658,26 @@ public final class BudgetManager {
         auditLog.add(String.format("[%s] USER: %s | %s",
                 DTF.format(LocalDateTime.now()), CURRENT_USER, detail));
     }
+
+    private static int y() {
+        return Year.SELECTED_YEAR;
+    }
+
+    /**
+ * Builds the expense filename for an organization and year.
+ *
+ * @param orgCode the organization code (e.g. "1001")
+ * @return the corresponding CSV filename
+ */
+    private String buildOrganizationExpenseFilename(final String orgCode) {
+        final int year = Year.SELECTED_YEAR;
+
+        if (year == 2025) {
+            return orgCode + ".csv";
+        } else {
+            return orgCode + "_" + year + ".csv";
+        }
+    }
+
+
 }
