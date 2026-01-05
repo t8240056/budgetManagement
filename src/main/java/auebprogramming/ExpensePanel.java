@@ -179,6 +179,7 @@ public final class ExpensePanel extends JPanel {
 
             displayArea.append("=== Φορείς - ΠΔΕ ===\n");
             displayArea.append(reportMinistriesEpendyseon + "\n\n");
+            displayArea.setCaretPosition(0);
 
         } catch (final Exception e) {
             displayArea.setText(
