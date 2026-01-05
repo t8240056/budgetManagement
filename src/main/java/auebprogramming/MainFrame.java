@@ -19,7 +19,6 @@ public final class MainFrame extends JFrame {
     private final JPanel cardPanel;
 
     // Fixed Panels
-    private final RevenuePanel revenuePanel;
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
     private final InsertChangePanel insertChangePanel;
@@ -60,7 +59,6 @@ public final class MainFrame extends JFrame {
         agencySummaryPanel = new ExpenseByAgencySummaryPanel(this,
                 budgetAnalyzer);
         agencyDetailsPanel = new AgencyDetailsPanel(this, budgetAnalyzer);
-        revenuePanel = new RevenuePanel(this);
         insertChangePanel = new InsertChangePanel(this, budgetManager);
         absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
         transferChangePanel = new TransferChangePanel(this, budgetManager);
@@ -73,7 +71,6 @@ public final class MainFrame extends JFrame {
         cardPanel.add(new MenuPanel(this), "menu");
         cardPanel.add(agencySummaryPanel, "expenseByAgency");
         cardPanel.add(agencyDetailsPanel, "agencyDetails");
-        cardPanel.add(revenuePanel, "revenuePanel");
 
         // Future/Placeholder panels
         cardPanel.add(new BudgetPanel(this), "budget");
@@ -137,6 +134,17 @@ public final class MainFrame extends JFrame {
      *
      * @param code the revenue code
      */
+
+    /**
+    * Switches to the RevenuePanel.
+    * Creates a new panel each time 
+    */
+    public void showRevenuePanel() {
+        RevenuePanel revenuePanel = new RevenuePanel(this);
+        cardPanel.add(revenuePanel, "revenue");
+        switchTo("revenue");
+    }
+
     public void showRevenue2(final String code) {
         // Remove old panel if exists
         if (revenue2Panel != null) {
