@@ -181,7 +181,7 @@ public class BudgetChartJFree extends JPanel {
             }
             
             // Μετατροπή σε δισεκατομμύρια για καλύτερη εμφάνιση
-            double valueInBillions = poso;
+            double valueInBillions = Math.max(poso, 1_000_000);
             
             // Συντομευμένο όνομα για καλύτερη εμφάνιση στον άξονα
             String displayName = kodikos + " - " + getShortName(kathgoria, 35);
@@ -259,11 +259,14 @@ public class BudgetChartJFree extends JPanel {
         domainAxis.setTickLabelInsets(new RectangleInsets(2, 2, 2, 2));
         
         // Προσαρμογή άξονα τιμών (οριζόντιος)
-        NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
-        rangeAxis.setNumberFormatOverride(df);
+        LogAxis rangeAxis = new LogAxis("Ποσό (€ - λογαριθμική κλίμακα)");
+        rangeAxis.setBase(10);
+        rangeAxis.setSmallestValue(1_000_000); // 1 εκ. ελάχιστο
+        rangeAxis.setNumberFormatOverride(new DecimalFormat("###,###"));
         rangeAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 12));
         rangeAxis.setTickLabelPaint(new Color(70, 70, 70));
-        rangeAxis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
+
+        plot.setRangeAxis(rangeAxis);
         
         // Προσαρμογή background
         plot.setBackgroundPaint(new Color(250, 250, 250));
