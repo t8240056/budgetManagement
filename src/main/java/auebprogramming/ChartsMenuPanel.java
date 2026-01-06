@@ -83,7 +83,8 @@ public final class ChartsMenuPanel extends JPanel {
         add(optionsPanel, BorderLayout.CENTER);
 
         // 3. Navigation Buttons Section
-        final JPanel bottomPanel = new JPanel(new GridLayout(1, 2, PADDING, PADDING));
+        final JPanel bottomPanel = new JPanel(
+                new GridLayout(1, 2, PADDING, PADDING));
         bottomPanel.setBorder(BorderFactory.createEmptyBorder(
                 PADDING, PADDING, PADDING, PADDING));
         bottomPanel.setPreferredSize(new Dimension(
