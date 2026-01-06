@@ -51,7 +51,8 @@ public final class Revenue2Panel extends JPanel {
      * Constructs the Revenue2Panel.
      *
      * @param mainFrame the application's main frame used for switching panels
-     * @param code      the two-digit revenue code selected in the previous panel
+     * @param code      the two-digit revenue
+     *                  code selected in the previous panel
      */
     public Revenue2Panel(final MainFrame mainFrame, final String code) {
         this.frame = mainFrame;

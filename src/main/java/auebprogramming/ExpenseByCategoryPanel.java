@@ -65,7 +65,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
         displayArea = new JTextArea();
         codeField = new JTextField();
         openInputButton = new JButton(
-        "Εισάγετε έναν η περισσότερους κωδικούς δαπανών για ανάλυση");
+                "Εισάγετε έναν η περισσότερους κωδικούς δαπανών για ανάλυση");
         confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
         backButton = new JButton("Επιστροφή");
@@ -80,11 +80,11 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * Initializes the top panel containing the input button and text field.
      */
     private void initializeTopPanel() {
-        final JPanel topPanel =
-            new JPanel(new GridLayout(2, 1, GRID_GAP, GRID_GAP));
+        final JPanel topPanel = new JPanel(
+                new GridLayout(2, 1, GRID_GAP, GRID_GAP));
         topPanel.setBorder(
-            BorderFactory.createEmptyBorder(
-                PADDING, PADDING, PADDING, PADDING));
+                BorderFactory.createEmptyBorder(
+                        PADDING, PADDING, PADDING, PADDING));
 
         codeField.setVisible(false);
 
@@ -109,7 +109,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
     private void initializeCenterPanel() {
         displayArea.setEditable(false);
         displayArea.setFont(
-            new Font("Monospaced", Font.PLAIN, FONT_SIZE));
+                new Font("Monospaced", Font.PLAIN, FONT_SIZE));
 
         setDisplayText();
         final JScrollPane scrollPane = new JScrollPane(displayArea);
@@ -120,13 +120,13 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * Initializes the bottom panel containing Back and Confirm buttons.
      */
     private void initializeBottomPanel() {
-        final JPanel bottomPanel =
-            new JPanel(new GridLayout(GRID_ROWS, GRID_COLS,
-                                      GRID_GAP, GRID_GAP));
+        final JPanel bottomPanel = new JPanel(
+                new GridLayout(GRID_ROWS, GRID_COLS, GRID_GAP,
+                        GRID_GAP));
 
         bottomPanel.setBorder(
-            BorderFactory.createEmptyBorder(
-                PADDING, PADDING, PADDING, PADDING));
+                BorderFactory.createEmptyBorder(
+                        PADDING, PADDING, PADDING, PADDING));
 
         backButton.addActionListener(new ActionListener() {
             @Override
@@ -141,10 +141,10 @@ public final class ExpenseByCategoryPanel extends JPanel {
                 final String text = codeField.getText().trim();
                 if (!text.isEmpty()) {
                     frame.showExpenseCategory2(text);
-                }
-                else {
+                } else {
                     AppException.showError(
-                    "Πατήστε το κουμπί επιστροφής ή πληκτρολογήστε κωδικό");
+                            "Πατήστε το κουμπί επιστροφής ή "
+                            + "πληκτρολογήστε κωδικό");
                 }
             }
         });
@@ -170,10 +170,8 @@ public final class ExpenseByCategoryPanel extends JPanel {
      */
     public void setDisplayText() {
         ExpenseManager expenseManager = new ExpenseManager(
-            "expense_categories_2025.csv");
+                "expense_categories_2025.csv");
 
-        displayArea.setText(expenseManager.getFullExpensesReport());// εδώ θα μπει το String που έχει τα δεδομένα.Κάλεσε την μέσα στο centerPanel
-        //getCategoryListReports() εδώ
-        //getExpenseDetailsReport(final String... codes) μέθοδος που εμφανίζει στοιχεία επιλεγμένων, άρα στο επόμενο panel,όρισμα πίνακα
+        displayArea.setText(expenseManager.getFullExpensesReport());
     }
 }

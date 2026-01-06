@@ -32,14 +32,14 @@ public final class ViewAuditLogPanel extends JPanel {
     /**
      * Constructs the ViewAuditLogPanel.
      *
-     * @param frame         the main application frame
-     * @param budgetManager the budget manager
+     * @param frameArg         the main application frame
+     * @param budgetManagerArg the budget manager
      */
-    public ViewAuditLogPanel(final MainFrame frame,
-                             final BudgetManager budgetManager) {
+    public ViewAuditLogPanel(final MainFrame frameArg,
+                             final BudgetManager budgetManagerArg) {
 
-        this.frame = frame;
-        this.budgetManager = budgetManager;
+        this.frame = frameArg;
+        this.budgetManager = budgetManagerArg;
 
         setLayout(new BorderLayout());
 

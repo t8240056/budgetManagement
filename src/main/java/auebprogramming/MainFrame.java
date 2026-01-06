@@ -86,7 +86,8 @@ public final class MainFrame extends JFrame {
         this.absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
         cardPanel.add(this.absoluteChangePanel, "absoluteChange");
         cardPanel.add(transferChangePanel, "transferChange");
-        this.percentageChangePanel = new PercentageChangePanel(this, budgetManager);
+        this.percentageChangePanel = new PercentageChangePanel(this,
+                budgetManager);
         cardPanel.add(this.percentageChangePanel, "percentageChange");
         cardPanel.add(chartsMenuPanel, "chartsMenu");
         cardPanel.add(revenueChartPanel, "revenueChart");

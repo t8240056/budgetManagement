@@ -52,7 +52,7 @@ public final class BudgetManager {
     }
 
     // =========================================================================
-    //                            INITIALIZATION & LOADING
+    // INITIALIZATION & LOADING
     // =========================================================================
 
     /**
@@ -161,7 +161,7 @@ public final class BudgetManager {
      * @throws AppException if loading fails
      */
     public void loadOrganizationExpenses(final String orgCode,
-                                         final File overrideFile)
+            final File overrideFile)
             throws AppException {
         this.currentEntityPrefix = orgCode;
         final File fileToLoad = (overrideFile != null)
@@ -207,7 +207,7 @@ public final class BudgetManager {
     }
 
     // =========================================================================
-    //                            VIEW METHODS
+    // VIEW METHODS
     // =========================================================================
 
     /**
@@ -269,7 +269,7 @@ public final class BudgetManager {
     }
 
     // =========================================================================
-    //                            MODIFICATION HANDLERS
+    // MODIFICATION HANDLERS
     // =========================================================================
 
     /**
@@ -282,8 +282,8 @@ public final class BudgetManager {
      * @throws AppException if validation fails
      */
     public String makeAbsoluteChange(final String code,
-                                     final String amountStr,
-                                     final String justification)
+            final String amountStr,
+            final String justification)
             throws AppException {
         final Optional<BudgetChangesEntry> entryOpt = repository
                 .findByCode(code);
@@ -328,8 +328,8 @@ public final class BudgetManager {
      * @throws AppException if validation fails
      */
     public String makePercentageChange(final String code,
-                                       final String percentStr,
-                                       final String justification)
+            final String percentStr,
+            final String justification)
             throws AppException {
         final Optional<BudgetChangesEntry> entryOpt = repository
                 .findByCode(code);
@@ -378,9 +378,9 @@ public final class BudgetManager {
      * @throws AppException if validation fails
      */
     public String makeTransfer(final String sourceCode,
-                               final String targetCode,
-                               final String amountStr,
-                               final String justification)
+            final String targetCode,
+            final String amountStr,
+            final String justification)
             throws AppException {
         final Optional<BudgetChangesEntry> sourceOpt = repository
                 .findByCode(sourceCode);
@@ -452,7 +452,7 @@ public final class BudgetManager {
     }
 
     // =========================================================================
-    //                            FILE MANAGEMENT (SAVE / LOAD)
+    // FILE MANAGEMENT (SAVE / LOAD)
     // =========================================================================
 
     /**
@@ -471,8 +471,8 @@ public final class BudgetManager {
             return new ArrayList<>(); // Return empty list
         }
 
-        final File[] files = savedDir.listFiles((dir, name) ->
-                name.startsWith(currentEntityPrefix));
+        final File[] files = savedDir.listFiles(
+                (dir, name) -> name.startsWith(currentEntityPrefix));
 
         if (files == null) {
             return new ArrayList<>();
@@ -566,6 +566,7 @@ public final class BudgetManager {
 
     /**
      * Internal helper to save revenue data.
+     *
      * @param path The path to save to.
      * @return true if successful.
      */
@@ -593,6 +594,7 @@ public final class BudgetManager {
 
     /**
      * Internal helper to save expense data.
+     *
      * @param path The path to save to.
      * @return true if successful.
      */
@@ -637,7 +639,7 @@ public final class BudgetManager {
     }
 
     // =========================================================================
-    //                            LOGGING & UTILS
+    // LOGGING & UTILS
     // =========================================================================
 
     /**

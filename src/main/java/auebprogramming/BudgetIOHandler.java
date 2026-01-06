@@ -30,7 +30,7 @@ public final class BudgetIOHandler {
      * @param repository Το repository για αποθήκευση των αντικειμένων.
      */
     public static void loadDataFromFile(final String filename,
-                                        final BudgetRepository repository) {
+            final BudgetRepository repository) {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             boolean isFirstLine = true; // Για να πηδήξουμε την επικεφαλίδα
@@ -68,7 +68,7 @@ public final class BudgetIOHandler {
      * @param repository Το repository που περιέχει τα δεδομένα.
      */
     public static void saveDataToFile(final String filename,
-                                      final BudgetRepository repository) {
+            final BudgetRepository repository) {
         final List<BudgetChangesEntry> entries = repository.findAll();
 
         // Μετατροπή της λίστας (Ομάδα Α) σε πίνακα (Ομάδα Β) για εγγραφή

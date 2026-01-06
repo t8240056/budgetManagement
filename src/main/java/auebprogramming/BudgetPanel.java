@@ -29,10 +29,10 @@ public final class BudgetPanel extends JPanel {
     /**
      * Constructor for the budget selection panel.
      *
-     * @param frame the main application frame
+     * @param mainFrame the main application frame
      */
-    public BudgetPanel(final MainFrame frame) {
-        this.frame = frame;
+    public BudgetPanel(final MainFrame mainFrame) {
+        this.frame = mainFrame;
 
         setLayout(new BorderLayout(10, 10));
 
