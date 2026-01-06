@@ -38,12 +38,12 @@ public final class ViewEntriesPanel extends JPanel {
      * Constructs the panel that displays budget entries.
      *
      * @param frame the main application frame
-     * @param manager the budget manager backend instance
+     * @param budgetManager the budget manager backend instance
      */
     public ViewEntriesPanel(final MainFrame frame,
-                            final BudgetManager manager) {
+                            final BudgetManager budgetManager) {
         this.mainFrame = frame;
-        this.manager = manager;
+        this.manager = budgetManager;
 
         setLayout(new BorderLayout());
         setBorder(BorderFactory.createEmptyBorder(
