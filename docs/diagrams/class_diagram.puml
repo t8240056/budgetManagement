@@ -1,155 +1,112 @@
 @startuml
-!theme plain
+' Ρυθμίσεις για να μην κρασάρει και να είναι καθαρό
+hide members
+hide circle
+skinparam packageStyle rectangle
 
-title Budget Management System - Complete Class Diagram
-
-package "Data Acquisition Layer" {
-  class DownloadingOutputFiles {
-    + run(): void
-  }
-  
-  class Links {
-    + linksForBudget(year: int): String
-  }
-  
-  class GetPdf {
-    + fileDownloader(url: String, year: int): void
-  }
-  
-  class ReadPDF {
-    + getInFile(year: int): void
-  }
+' --- 1. DATA MODEL ---
+package "Data Model" {
+    class BudgetChangesEntry
+    class Year
+    
+    abstract class BudgetChange
+    class AbsoluteAmountChange
+    class PercentageChange
+    class TransferChange
+    
+    BudgetChange <|-- AbsoluteAmountChange
+    BudgetChange <|-- PercentageChange
+    BudgetChange <|-- TransferChange
+    BudgetChange ..> BudgetChangesEntry
 }
 
-package "Data Processing Layer" {
-  class Article_1 {
-    + getArticle1(year: int): void
-    + parseBudgetData(filePath: String): BudgetData
-  }
-  
-  class BudgetRevenueReader {
-    + main(args: String[]): void
-    + extractRevenueData(lines: List<String>): List<RevenueRecord>
-  }
-  
-  class RevenueExtractor {
-    + extractRevenues(filePath: String): void
-  }
-  
-  class CVSmanagement {
-    + loadCsvToArray(filename: String): String[][]
-  }
+' --- 2. CORE LOGIC & HELPERS ---
+package "Core Logic" {
+    class BudgetManager
+    class ChangeManager
+    class ChangeValidator
+    class BudgetAnalyzer
+    class RevenueDataManager
+    class ExpenseManager
+    class ExpenseDisplay
+    class ValidationResult
+    class AppException
 }
 
-package "Business Logic Layer" {
-  class BudgetAnalyzer {
-    + displaySynola(kodikosForea: String): boolean
-    + findTaktikosSynolo(kodikosForea: String): Double
-  }
-  
-  class ExpenseManager {
-    + showCategories(): void
-    + showExpenseDetails(codes: String...): void
-  }
-  
-  class RevenueManager {
-    + showCategories(): void
-    + showRevenueDetails(codes: String...): void
-  }
+' --- 3. DATA ACCESS ---
+package "Data Access" {
+    class BudgetRepository
+    class BudgetIOHandler
+    class CsvToArray
+    class BudgetFileResolver
 }
 
-package "Presentation Layer" {
-  class BudgetDisplay {
-    + main(args: String[]): void
-  }
-  
-  class ExpenseDisplay {
-    + main(args: String[]): void
-  }
-  
-  class Printbudget {
-    + printbudget(): void
-  }
-  
-  class MyBudget {
-    + main(args: String[]): void
-  }
+' --- 4. VISUALIZATION ---
+package "Charts System" {
+    class BudgetChartJFree
 }
 
-package "Data Models" {
-  class BudgetData {
-    - totalRevenue: double
-    - totalExpenses: double
-    - deficit: double
-  }
-  
-  class RevenueRecord {
-    - code: String
-    - description: String
-    - amount: long
-  }
-  
-  class ExpenseCategory {
-    - code: String
-    - name: String
-    - amount: long
-  }
-  
-  class Ministry {
-    - name: String
-    - total: long
-    - categories: List<ExpenseCategory>
-  }
-  
-  class TaktikosProupologismos {
-    - kodikosForea: String
-    - onomaForea: String
-    - synolo: double
-  }
-  
-  class DimosiesEpendiseis {
-    - kodikosForea: String
-    - onomaForea: String
-    - synolo: double
-  }
+' --- 5. USER INTERFACE ---
+package "UI Views (Frontend)" {
+    class MainFrame
+    class MenuPanel
+    class App
+    class BudgetMainTest
+    
+    package "Input/Action Panels" {
+        class InsertChangePanel
+        class AbsoluteChangePanel
+        class PercentageChangePanel
+        class TransferChangePanel
+        class ConfirmButtonListener
+    }
+    
+    package "Selection/Menu Panels" {
+        class ChangeMenuPanel
+        class YearSelectionPanel
+        class MinistriesSelectionPanel
+        class ChartsMenuPanel
+        class BudgetPanel
+    }
+
+    package "Data View Panels" {
+        class RevenuePanel
+        class Revenue2Panel
+        class Revenue3Panel
+        class Revenue4Panel
+        class ExpensePanel
+        class ExpenseByCategoryPanel
+        class ExpenseByCategory2Panel
+        class AgencyDetailsPanel
+        class ExpenseByAgencySummaryPanel
+        class ViewEntriesPanel
+        class ViewAuditLogPanel
+    }
+    
+    package "Chart Panels" {
+        class RevenueChartPanel
+        class ExpenseChartPanel
+    }
 }
 
-' ========== ΚΥΡΙΕΣ ΣΧΕΣΕΙΣ ==========
-DownloadingOutputFiles --> Links : uses
-DownloadingOutputFiles --> GetPdf : uses
-DownloadingOutputFiles --> ReadPDF : creates
+' --- ΒΑΣΙΚΕΣ ΣΥΝΔΕΣΕΙΣ ---
 
-ReadPDF ..> Article_1 : provides data
-ReadPDF ..> BudgetRevenueReader : provides data
-ReadPDF ..> RevenueExtractor : provides data
+' Το MainFrame συνδέει τα πάντα
+MainFrame o-- MenuPanel
+MainFrame o-- InsertChangePanel
+MainFrame o-- RevenuePanel
+MainFrame o-- ExpensePanel
+MainFrame o-- ChangeMenuPanel
 
-Article_1 --> BudgetData : creates
-BudgetRevenueReader --> RevenueRecord : creates
+' Σύνδεση Logic
+BudgetManager *-- BudgetRepository
+ChangeManager *-- BudgetRepository
+ChangeValidator ..> BudgetRepository
+BudgetManager o-- ChangeManager
 
-BudgetAnalyzer *-- "many" TaktikosProupologismos
-BudgetAnalyzer *-- "many" DimosiesEpendiseis
-
-BudgetDisplay ..> Ministry : uses
-BudgetDisplay ..> ExpenseCategory : creates
-Ministry *-- "many" ExpenseCategory : contains
-
-ExpenseManager --> ExpenseCategory : manages
-RevenueManager --> RevenueRecord : manages
-
-Printbudget --> CVSmanagement : uses
-MyBudget --> CVSmanagement : uses
-
-' ========== DEPENDENCIES ==========
-Article_1 ..> BudgetAnalyzer : feeds
-BudgetRevenueReader ..> RevenueManager : feeds
-RevenueExtractor ..> RevenueManager : feeds
-
-note right of DownloadingOutputFiles
-  Orchestrator - Controls entire workflow from URL to text extraction
-end note
-
-note left of BudgetAnalyzer
-  Core analyzer with hardcoded Greek ministry budget data
-end note
+' Σύνδεση UI -> Logic
+InsertChangePanel ..> BudgetManager
+ViewEntriesPanel ..> BudgetManager
+RevenueChartPanel ..> BudgetChartJFree
 
 @enduml
