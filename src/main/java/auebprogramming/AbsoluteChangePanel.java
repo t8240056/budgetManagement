@@ -42,9 +42,11 @@ public final class AbsoluteChangePanel extends JPanel {
     // === Visual Constants ===
     private static final int INPUT_FONT_SIZE = 22;
     private static final Font INPUT_FONT = new Font("SansSerif", Font.PLAIN, INPUT_FONT_SIZE);
-    
+
     private static final int BUTTON_FONT_SIZE = 20;
-    /** Font for buttons - Set to BOLD and size 20 to match PercentageChangePanel. */
+    /**
+     * Font for buttons - Set to BOLD and size 20 to match PercentageChangePanel.
+     */
     private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, BUTTON_FONT_SIZE);
 
     private static final int LEFT_EDGE_PADDING = 10;
@@ -53,7 +55,7 @@ public final class AbsoluteChangePanel extends JPanel {
     private static final int TOP_ROW_1 = 20;
     private static final int TOP_ROW_2 = 120;
     private static final int TOP_ROW_3 = 220;
-    
+
     private static final int FIELD_WIDTH = 250;
     private static final int FIELD_HEIGHT_OFFSET = 10;
     private static final int BOTTOM_PANEL_HEIGHT = 70;
@@ -64,9 +66,9 @@ public final class AbsoluteChangePanel extends JPanel {
      * @param frame   the main application frame
      * @param manager the BudgetManager instance
      */
-    public AbsoluteChangePanel(final MainFrame frame, final BudgetManager manager) {
+    public AbsoluteChangePanel(final MainFrame frame, final BudgetManager bmanager) {
         this.mainFrame = frame;
-        this.manager = manager;
+        this.manager = bmanager;
 
         setLayout(new BorderLayout(LEFT_EDGE_PADDING, LEFT_EDGE_PADDING));
 
@@ -166,13 +168,13 @@ public final class AbsoluteChangePanel extends JPanel {
      */
     private JPanel createBottomPanel() {
         final JPanel bottomPanel = new JPanel(new GridLayout(1, 2, LEFT_EDGE_PADDING, LEFT_EDGE_PADDING));
-        bottomPanel.setBorder(BorderFactory.createEmptyBorder(LEFT_EDGE_PADDING, LEFT_EDGE_PADDING, 
+        bottomPanel.setBorder(BorderFactory.createEmptyBorder(LEFT_EDGE_PADDING, LEFT_EDGE_PADDING,
                 LEFT_EDGE_PADDING, LEFT_EDGE_PADDING));
         bottomPanel.setPreferredSize(new Dimension(LEFT_EDGE_PADDING, BOTTOM_PANEL_HEIGHT));
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
         final JButton backButton = new JButton("Επιστροφή");
-        
+
         mainFrame.confButtonColors(confirmButton);
         mainFrame.backButtonColors(backButton);
 
