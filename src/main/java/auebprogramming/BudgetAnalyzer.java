@@ -1,84 +1,94 @@
 package auebprogramming;
 
 /**
- * Διαχειρίζεται τη φόρτωση, αναζήτηση και επιστροφή δεδομένων του κρατικού
- * προϋπολογισμού για χρήση σε Γραφικό Περιβάλλον (GUI).
+ * Manages loading, searching, and returning state budget data
+ * for use in a Graphical User Interface (GUI).
  */
 public final class BudgetAnalyzer {
 
-    /** Τα δεδομένα του Άρθρου 2. */
+    /** Minimum number of rows required for a detailed budget file. */
+    private static final int MIN_DETAILED_ROWS = 5;
+
+    /** Minimum number of rows for Article 2 data. */
+    private static final int MIN_ARTICLE2_ROWS = 2;
+
+    /** Data for Article 2. */
     private final String[][] article2Data;
 
-    /** Ο επιλεγμένος κωδικός φορέα. */
+    /** The selected entity code. */
     private int selectedEntityCode;
 
     /**
-     * Constructor. Φορτώνει αυτόματα τα συνοπτικά δεδομένα του Άρθρου 2.
+     * Constructor. Automatically loads summary data for Article 2.
      */
     public BudgetAnalyzer() {
         this.article2Data = CsvToArray.loadCsvToArray("budget_ministries.csv");
     }
 
     /**
-     * Επιστρέφει τα συνοπτικά δεδομένα του Άρθρου 2 (μαζί με την κεφαλίδα)
-     * για εμφάνιση σε JTable.
+     * Returns summary data for Article 2 (including header) for JTable display.
      *
-     * @return Δισδιάστατο πίνακα String[][] με τα στοιχεία του Άρθρου 2.
+     * @return A 2D String array with Article 2 data.
      */
     public String[][] getArticle2Data() {
-        if (article2Data.length < 2) {
+        if (article2Data.length < MIN_ARTICLE2_ROWS) {
             return new String[0][0];
         }
         return article2Data;
     }
 
     /**
-     * Ελέγχει την εγκυρότητα του κωδικού και επιστρέφει τα αναλυτικά δεδομένα
-     * του Τακτικού Προϋπολογισμού για GUI.
+     * Validates the entity code and returns detailed budget data for the GUI.
      *
-     * @param code Ο τετραψήφιος κωδικός του φορέα που δίνει το GUI.
-     * @return Δισδιάστατο πίνακα String[][] με τα αναλυτικά δεδομένα.
-     * @throws IllegalArgumentException Αν ο κωδικός δεν βρεθεί ή
-     * το αρχείο είναι άδειο.
+     * @param code The four-digit entity code provided by the GUI.
+     * @return A 2D String array with detailed budget data.
+     * @throws IllegalArgumentException If the code is not found or file is empty.
      */
     public String[][] getDetailedBudget(final int code)
             throws IllegalArgumentException {
         this.selectedEntityCode = code;
 
-        // 1. Ελέγχουμε αν ο κωδικός είναι έγκυρος
+        // 1. Check if the code is valid
         if (isCodeValid(code)) {
 
-            // 2. Λογική Αντιστοίχισης: Ο κωδικός γίνεται όνομα αρχείου
+            // 2. Matching Logic: Code becomes the filename
             final String filename = code + ".csv";
 
             final String[][] detailedData = CsvToArray
                     .loadCsvToArray(filename);
 
-            // 3. Ελέγχουμε αν το αρχείο βρέθηκε (όχι κενό)
-            if (detailedData == null || detailedData.length < 5) {
-                // Αν βρεθεί ο κωδικός αλλά όχι το αρχείο, πετάμε εξαίρεση
+            // 3. Check if the file was found and is not empty
+            if (detailedData == null || detailedData.length < MIN_DETAILED_ROWS) {
                 throw new IllegalArgumentException(
-                        "Το αναλυτικό αρχείο για τον κωδικό "
-                        + code + " δεν βρέθηκε ή είναι άδειο.");
+                        "Detailed file for code "
+                        + code + " was not found or is empty.");
             }
 
             return detailedData;
         } else {
-            // 4. Αν ο κωδικός δεν βρεθεί στο Άρθρο 2, πετάμε εξαίρεση
-            throw new IllegalArgumentException("Ο κωδικός φορέα " + code
-                    + " δεν αντιστοιχεί σε κανέναν φορέα του Άρθρου 2.");
+            // 4. If code is not found in Article 2, throw exception
+            throw new IllegalArgumentException("Entity code " + code
+                    + " does not correspond to any Article 2 entity.");
         }
     }
 
     /**
-     * Ελέγχει αν ο δοθείς κωδικός φορέα υπάρχει στον πίνακα του Άρθρου 2.
+     * Getter for the selected entity code.
+     * @return the selected code.
+     */
+    public int getSelectedEntityCode() {
+        return this.selectedEntityCode;
+    }
+
+    /**
+     * Checks if the given entity code exists in the Article 2 table.
      *
-     * @param code Ο κωδικός φορέα προς έλεγχο.
-     * @return true αν βρεθεί ο κωδικός, false διαφορετικά.
+     * @param code The entity code to check.
+     * @return true if the code is found, false otherwise.
      */
     private boolean isCodeValid(final int code) {
         final String codeString = String.valueOf(code);
-        // Ψάχνουμε από τη γραμμή 1 (μετά την κεφαλίδα)
+        // Search starting from row 1 (after header)
         for (int i = 1; i < article2Data.length; i++) {
             final String[] row = article2Data[i];
             if (row.length > 0 && row[0].trim().equals(codeString)) {
