@@ -32,7 +32,7 @@ public final class AbsoluteChangePanel extends JPanel {
     private final BudgetManager manager;
 
     // Input Fields
-    /** Field for entering the entity code. */
+    /** Field for entering the source code. */
     private JTextField codeField;
     /** Field for entering the amount. */
     private JTextField amountField;
@@ -44,7 +44,8 @@ public final class AbsoluteChangePanel extends JPanel {
     private static final Font INPUT_FONT = new Font("SansSerif", Font.PLAIN, INPUT_FONT_SIZE);
     
     private static final int BUTTON_FONT_SIZE = 20;
-    private static final Font BUTTON_FONT = new Font("SansSerif", Font.PLAIN, BUTTON_FONT_SIZE);
+    /** Font for buttons - Set to BOLD and size 20 to match PercentageChangePanel. */
+    private static final Font BUTTON_FONT = new Font("SansSerif", Font.BOLD, BUTTON_FONT_SIZE);
 
     private static final int LEFT_EDGE_PADDING = 10;
     private static final int IN_BETWEEN_GAP = 5;
