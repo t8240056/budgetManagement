@@ -173,10 +173,10 @@ public final class PercentageChangePanel extends JPanel {
         bottomPanel.setPreferredSize(
                 new Dimension(BOTTOM_PANEL_WIDTH, BOTTOM_PANEL_HEIGHT));
 
-        JButton confirmButton = new JButton("ΕΠΙΒΕΒΑΙΩΣΗ");
+        JButton confirmButton = new JButton("Επιβεβαίωση");
         mainFrame.confButtonColors(confirmButton);
 
-        JButton backButton = new JButton("ΕΠΙΣΤΡΟΦΗ");
+        JButton backButton = new JButton("Επιστροφή");
         mainFrame.backButtonColors(backButton);
 
         bottomPanel.add(confirmButton);
