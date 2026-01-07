@@ -83,12 +83,10 @@ public final class BudgetManager {
      * @throws AppException if file not found or load fails
      */
     public void loadRevenueData(final File overrideFile) throws AppException {
-        this.currentEntityPrefix = "revenue_categories2_2025";
-        final File fileToLoad = (overrideFile != null)
-                ? overrideFile
-                : new File(RESOURCES_PATH + "revenue_categories2_2025.csv");
+        try (Scanner fileScanner = (overrideFile != null)
+                ? new Scanner(overrideFile)
+                : openResourceScanner("revenue_categories2_2025.csv")) {
 
-        try (Scanner fileScanner = new Scanner(fileToLoad)) {
             repository.clear(); // Clear previous data
 
             while (fileScanner.hasNextLine()) {
@@ -115,10 +113,13 @@ public final class BudgetManager {
                     }
                 }
             }
-            this.currentLoadedFilePath = fileToLoad.getPath();
+            this.currentLoadedFilePath = (overrideFile != null)
+                    ? overrideFile.getPath()
+                    : "revenue_categories2_2025.csv";
+
         } catch (final FileNotFoundException e) {
             throw new AppException("Revenue file not found: "
-                    + fileToLoad.getPath());
+                    + e.getMessage());
         }
     }
 
@@ -131,10 +132,8 @@ public final class BudgetManager {
      */
     public List<String> getMinistriesList() throws AppException {
         final List<String> ministries = new ArrayList<>();
-        final File file = new File(RESOURCES_PATH
-                + "expense_ministries_2025.csv");
+        try (Scanner csvScanner = openResourceScanner("expense_ministries_2025.csv")) {
 
-        try (Scanner csvScanner = new Scanner(file)) {
             while (csvScanner.hasNextLine()) {
                 final String line = csvScanner.nextLine();
                 if (line.trim().isEmpty() || line.startsWith("Κωδικός")) {
@@ -147,8 +146,6 @@ public final class BudgetManager {
                     ministries.add(parts[0].trim() + " - " + parts[1].trim());
                 }
             }
-        } catch (final FileNotFoundException e) {
-            throw new AppException("Ministries file not found.");
         }
         return ministries;
     }
@@ -164,11 +161,10 @@ public final class BudgetManager {
             final File overrideFile)
             throws AppException {
         this.currentEntityPrefix = orgCode;
-        final File fileToLoad = (overrideFile != null)
-                ? overrideFile
-                : new File(RESOURCES_PATH + orgCode + ".csv");
+        try (Scanner fileScanner = (overrideFile != null)
+                ? new Scanner(overrideFile)
+                : openResourceScanner(orgCode + ".csv")) {
 
-        try (Scanner fileScanner = new Scanner(fileToLoad)) {
             repository.clear(); // Clear previous data
 
             while (fileScanner.hasNextLine()) {
@@ -197,7 +193,10 @@ public final class BudgetManager {
                     }
                 }
             }
-            this.currentLoadedFilePath = fileToLoad.getPath();
+            this.currentLoadedFilePath = (overrideFile != null)
+                    ? overrideFile.getPath()
+                    : orgCode + ".csv";
+
             logAction("Loaded expenses for organization: " + orgCode);
 
         } catch (final FileNotFoundException e) {
@@ -660,4 +659,18 @@ public final class BudgetManager {
         auditLog.add(String.format("[%s] USER: %s | %s",
                 DTF.format(LocalDateTime.now()), CURRENT_USER, detail));
     }
+
+    private Scanner openResourceScanner(final String resourceName)
+            throws AppException {
+
+        var stream = BudgetManager.class
+                .getClassLoader()
+                .getResourceAsStream(resourceName);
+
+        if (stream == null) {
+            throw new AppException("Resource not found: " + resourceName);
+        }
+        return new Scanner(stream);
+    }
+
 }
