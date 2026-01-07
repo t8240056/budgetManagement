@@ -32,13 +32,13 @@ public final class MinistriesSelectionPanel extends JPanel {
     /**
      * Constructs the MinistriesSelectionPanel.
      *
-     * @param mainFrame   the main application frame
-     * @param manager the budget manager
+     * @param mainFrame the main application frame
+     * @param manager   the budget manager
      */
     public MinistriesSelectionPanel(final MainFrame mainFrame,
-                                    final BudgetManager manager) {
+            final BudgetManager bmanager) {
         this.frame = mainFrame;
-        this.manager = manager;
+        this.manager = bmanager;
         setLayout(new BorderLayout());
 
         // Title
@@ -118,8 +118,7 @@ public final class MinistriesSelectionPanel extends JPanel {
         frame.backButtonColors(backButton);
 
         confirmButton.addActionListener(event -> onConfirm());
-        backButton.addActionListener(event ->
-                frame.switchTo("menu"));
+        backButton.addActionListener(event -> frame.switchTo("menu"));
 
         panel.add(confirmButton);
         panel.add(backButton);

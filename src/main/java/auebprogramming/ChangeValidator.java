@@ -65,7 +65,7 @@ public final class ChangeValidator {
      * @return ValidationResult containing any errors found
      */
     public ValidationResult validatePercentageChange(final String code,
-                                                     final double percentage) {
+            final double percentage) {
         final List<String> errors = new ArrayList<>();
 
         // Check if entry exists
@@ -76,7 +76,7 @@ public final class ChangeValidator {
 
         // Validate percentage range
         // ΔΙΟΡΘΩΣΗ: Αφαιρούμε το Math.abs() και ελέγχουμε μόνο αν είναι > 100
-        if (percentage > 100) { 
+        if (percentage > 100) {
             errors.add("Percentage cannot exceed 100%: " + percentage + "%");
         }
 
@@ -97,8 +97,8 @@ public final class ChangeValidator {
      * @return ValidationResult containing any errors found
      */
     public ValidationResult validateTransfer(final String sourceCode,
-                                             final String targetCode,
-                                             final BigDecimal amount) {
+            final String targetCode,
+            final BigDecimal amount) {
         final List<String> errors = new ArrayList<>();
 
         // Check if both entries exist
