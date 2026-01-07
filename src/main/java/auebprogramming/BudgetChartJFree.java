@@ -44,9 +44,9 @@ public class BudgetChartJFree extends JPanel {
     private Object[][] budgetData;
 
     // Constructor που δέχεται τον πίνακα με τα δεδομένα
-    public BudgetChartJFree(final Object[][] data) {  // Αλλαγή: budgetData -> data
+    public BudgetChartJFree(final Object[][] data) { // Αλλαγή: budgetData -> data
         super(new BorderLayout());
-        this.budgetData = data;  // Εδώ δεν υπάρχει hiding, γιατί χρησιμοποιούμε this.
+        this.budgetData = data; // Εδώ δεν υπάρχει hiding, γιατί χρησιμοποιούμε this.
 
         if (data == null || data.length == 0) {
             throw new IllegalArgumentException("Ο πίνακας δεδομένων δεν μπορεί να είναι κενός!");
@@ -160,7 +160,7 @@ public class BudgetChartJFree extends JPanel {
     }
 
     private CategoryDataset createDataset() {
-        DefaultCategoryDataset newDataset = new DefaultCategoryDataset();  // Αλλαγή: dataset -> newDataset
+        DefaultCategoryDataset newDataset = new DefaultCategoryDataset(); // Αλλαγή: dataset -> newDataset
 
         // Καθαρισμός του map
         categoryToIndexMap.clear();
@@ -213,9 +213,9 @@ public class BudgetChartJFree extends JPanel {
         return fullName.substring(0, maxLength - 3) + "...";
     }
 
-    private JFreeChart createChart(final CategoryDataset dataSet) {  // Αλλαγή: dataset -> dataSet
+    private JFreeChart createChart(final CategoryDataset dataSet) { // Αλλαγή: dataset -> dataSet
         // Δημιουργία οριζόντιου bar chart
-        JFreeChart newChart = ChartFactory.createBarChart(  // Αλλαγή: chart -> newChart
+        JFreeChart newChart = ChartFactory.createBarChart(// Αλλαγή: chart -> newChart
                 null, // Χωρίς τίτλο (θα βάλουμε custom)
                 null, // Χωρίς label για τον κάθετο άξονα
                 "Ποσό (€ – λογαριθμική κλίμακα)", // Label για οριζόντιο άξονα
@@ -309,12 +309,13 @@ public class BudgetChartJFree extends JPanel {
         return colors;
     }
 
-    private void addCustomTooltips(final ChartPanel panel, final CategoryDataset dataSet) {  // Αλλαγή: chartPanel -> panel, dataset -> dataSet
+    private void addCustomTooltips(final ChartPanel panel, final CategoryDataset dataSet) { // Αλλαγή: chartPanel ->
+                                                                                            // panel, dataset -> dataSet
         // Custom tooltip generator
         StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator() {
             @Override
-            public String generateToolTip(final CategoryDataset dataset, final int row, final int column) {
-                String category = (String) dataset.getColumnKey(column);
+            public String generateToolTip(final CategoryDataset dataSet, final int row, final int column) {
+                String category = (String) dataSet.getColumnKey(column);
                 String[] parts = category.split(" - ", 2);
                 String kodikos = parts.length > 0 ? parts[0].trim() : "";
                 String kathgoria = parts.length > 1 ? parts[1].trim() : "";
@@ -401,7 +402,7 @@ public class BudgetChartJFree extends JPanel {
         });
     }
 
-    private int findColumnIndex(final CategoryDataset dataSet, final String category) {  // Αλλαγή: dataset -> dataSet
+    private int findColumnIndex(final CategoryDataset dataSet, final String category) { // Αλλαγή: dataset -> dataSet
         int columnCount = dataSet.getColumnCount();
         for (int i = 0; i < columnCount; i++) {
             Comparable<?> key = dataSet.getColumnKey(i);
