@@ -508,11 +508,12 @@ public final class BudgetManager {
     }
 
     /**
-     * Saves the current state to a file.
+     * Saves the current state of the budget to a CSV file.
+     * Enforces naming consistency by adding organization prefixes if applicable.
      *
-     * @param userFilename Desired filename (can be empty for default)
-     * @return The full path where it was saved
-     * @throws AppException if save fails
+     * @param userFilename The desired name of the file (can be null or empty).
+     * @return The absolute path to the saved file.
+     * @throws AppException if no data is loaded or if the save operation fails.
      */
     public String saveWork(final String userFilename) throws AppException {
         if (currentLoadedFilePath == null) {
@@ -536,10 +537,14 @@ public final class BudgetManager {
             if (!tempName.endsWith(".csv")) {
                 tempName += ".csv";
             }
-            // Enforce prefix consistency
-            if (!tempName.startsWith(currentEntityPrefix)) {
+            
+            /* * FIX: Check if currentEntityPrefix is null before calling startsWith.
+             * This prevents NullPointerException during Revenue data saves.
+             */
+            if (currentEntityPrefix != null && !tempName.startsWith(currentEntityPrefix)) {
                 tempName = currentEntityPrefix + "_" + tempName;
             }
+            
             filename = tempName;
         }
 
