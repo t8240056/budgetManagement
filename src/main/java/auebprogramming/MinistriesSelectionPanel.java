@@ -32,12 +32,12 @@ public final class MinistriesSelectionPanel extends JPanel {
     /**
      * Constructs the MinistriesSelectionPanel.
      *
-     * @param frame   the main application frame
+     * @param mainFrame   the main application frame
      * @param manager the budget manager
      */
-    public MinistriesSelectionPanel(final MainFrame frame,
+    public MinistriesSelectionPanel(final MainFrame mainFrame,
                                     final BudgetManager manager) {
-        this.frame = frame;
+        this.frame = mainFrame;
         this.manager = manager;
         setLayout(new BorderLayout());
 

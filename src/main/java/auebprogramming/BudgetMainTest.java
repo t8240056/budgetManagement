@@ -25,8 +25,8 @@ public final class BudgetMainTest {
      * @param startRow Η γραμμή από την οποία ξεκινά η εκτύπωση.
      */
     private static void printTable(final String[][] data,
-                                   final String title,
-                                   final int startRow) {
+            final String title,
+            final int startRow) {
         if (data == null || data.length <= startRow) {
             System.out.println("\n--- " + title
                     + " (ΔΕΝ ΒΡΕΘΗΚΑΝ ΔΕΔΟΜΕΝΑ) ---");

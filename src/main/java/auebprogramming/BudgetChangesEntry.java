@@ -22,14 +22,14 @@ public final class BudgetChangesEntry {
      * @param entryAmount      The initial amount.
      */
     public BudgetChangesEntry(final String entryCode,
-                              final String entryDescription,
-                              final BigDecimal entryAmount) {
+            final String entryDescription,
+            final BigDecimal entryAmount) {
         this.code = Objects.requireNonNull(entryCode, "Code cannot be null");
-        
+
         // Σπάσιμο γραμμής για να μην υπερβαίνει τους 80 χαρακτήρες
         this.description = Objects.requireNonNull(entryDescription,
                 "Description cannot be null");
-        
+
         // Αυτή η γραμμή χωράει στους 80 χαρακτήρες, οπότε την κρατάμε ενιαία
         this.amount = Objects.requireNonNull(entryAmount,
                 "Amount cannot be null");

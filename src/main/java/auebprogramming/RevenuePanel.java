@@ -47,10 +47,10 @@ public final class RevenuePanel extends JPanel {
     /**
      * Constructs the RevenuePanel.
      *
-     * @param frame the application's main frame used for switching panels
+     * @param mainFrame the application's main frame used for switching panels
      */
-    public RevenuePanel(final MainFrame frame) {
-        this.frame = frame;
+    public RevenuePanel(final MainFrame mainFrame) {
+        this.frame = mainFrame;
         this.revenueDataManager = new RevenueDataManager();
 
         setLayout(new BorderLayout());

@@ -17,8 +17,8 @@ public final class MenuPanel extends JPanel {
 
     private final MainFrame frame;
 
-    public MenuPanel(final MainFrame frame) {
-        this.frame = frame;
+    public MenuPanel(final MainFrame mainFrame) {
+        this.frame = mainFrame;
 
         setLayout(new GridLayout(6, 1, 10, 10));
 

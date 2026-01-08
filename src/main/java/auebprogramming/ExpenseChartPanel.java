@@ -18,12 +18,16 @@ public final class ExpenseChartPanel extends JPanel {
     private final BudgetAnalyzer analyzer;
     private final BudgetChartJFree currentChart;
 
-    public ExpenseChartPanel(final MainFrame frame, final BudgetAnalyzer analyzer) {
+    public ExpenseChartPanel(final MainFrame frame,
+            final BudgetAnalyzer budgetAnalyzer) {
         this.mainFrame = frame;
-        this.analyzer = analyzer;
+        this.analyzer = budgetAnalyzer;
         setLayout(new BorderLayout());
 
-        final JLabel titleLabel = new JLabel("Γραφική Απεικόνιση Εξόδων ανά Φορέα", SwingConstants.CENTER);
+        final String titleText = "Γραφική Απεικόνιση Εξόδων ανά Φορέα";
+        final JLabel titleLabel = new JLabel(
+                titleText,
+                SwingConstants.CENTER);
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         titleLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         add(titleLabel, BorderLayout.NORTH);
@@ -50,14 +54,17 @@ public final class ExpenseChartPanel extends JPanel {
     }
 
     private Object[][] convertData(final String[][] data) {
-        if (data == null || data.length <= 1) { return new Object[0][0]; }
+        if (data == null || data.length <= 1) {
+            return new Object[0][0];
+        }
         final Object[][] converted = new Object[data.length - 1][3];
         for (int i = 1; i < data.length; i++) {
             converted[i - 1][0] = data[i][0];
             converted[i - 1][1] = data[i][1];
             try {
                 // Αφαιρούμε τελείες (χιλιάδες) και αλλάζουμε κόμμα σε τελεία
-                String clean = data[i][2].trim().replace(".", "").replace(",", ".");
+                String clean = data[i][2].trim().replace(".", "")
+                        .replace(",", ".");
                 converted[i - 1][2] = Double.parseDouble(clean);
             } catch (Exception e) {
                 converted[i - 1][2] = 0.0;

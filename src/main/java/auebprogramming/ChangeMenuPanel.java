@@ -57,11 +57,12 @@ public final class ChangeMenuPanel extends JPanel {
      * Constructs the change menu panel.
      *
      * @param frame   the main application frame
-     * @param manager the budget manager instance
+     * @param budgetManager the budget manager instance
      */
-    public ChangeMenuPanel(final MainFrame frame, final BudgetManager manager) {
+    public ChangeMenuPanel(final MainFrame frame,
+            final BudgetManager budgetManager) {
         this.mainFrame = frame;
-        this.manager = manager;
+        this.manager = budgetManager;
         this.buttonGroup = new ButtonGroup();
 
         setLayout(new BorderLayout());
@@ -176,7 +177,6 @@ public final class ChangeMenuPanel extends JPanel {
 
         } else if (percChangeButton.isSelected()) {
             mainFrame.switchTo("percentageChange");
-        
 
         } else if (transferButton.isSelected()) {
             mainFrame.switchTo("transferChange");

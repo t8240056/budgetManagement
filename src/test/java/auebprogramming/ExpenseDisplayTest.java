@@ -18,9 +18,6 @@ public final class ExpenseDisplayTest {
     /** The filename for the ministry expenses CSV. */
     private static final String MINISTRIES_FILE = "expense_ministries_2025.csv";
 
-    /** The budget year to simulate in the test. */
-    private static final int TEST_YEAR = 2025;
-
     /** Expected number of reports returned by getAllExpenseReports. */
     private static final int EXPECTED_REPORT_COUNT = 6;
 
@@ -40,9 +37,9 @@ public final class ExpenseDisplayTest {
 
         System.out.println(">>> INITIALIZING ExpenseDisplay...");
         
-        // Passing the year TEST_YEAR (2025) to the constructor
+        // REVERTED: Constructor now takes only 2 arguments (Files only)
         final ExpenseDisplay display = new ExpenseDisplay(CATEGORIES_FILE,
-                MINISTRIES_FILE, TEST_YEAR);
+                MINISTRIES_FILE);
         
         System.out.println(">>> Initialization Complete.\n");
 

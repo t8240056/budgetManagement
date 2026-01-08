@@ -1,38 +1,62 @@
 package auebprogramming;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Unit tests for BudgetAnalyzer class
+ * Test class for BudgetAnalyzer.
+ * Validates data loading and searching functionality.
  */
 public class BudgetAnalyzerTest {
 
-    @Test
-    public void testFindTaktikosSynolo_ValidCode() {
-        BudgetAnalyzer analyzer = new BudgetAnalyzer();
-        Double result = analyzer.findTaktikosSynolo("1007");
-        assertEquals(3449276000.0, result);
+    /** The instance of BudgetAnalyzer under test. */
+    private BudgetAnalyzer analyzer;
+
+    /**
+     * Set up the test environment before each test case.
+     */
+    @BeforeEach
+    public void setUp() {
+        analyzer = new BudgetAnalyzer();
     }
 
-    @Test 
-    public void testFindTaktikosSynolo_InvalidCode() {
-        BudgetAnalyzer analyzer = new BudgetAnalyzer();
-        Double result = analyzer.findTaktikosSynolo("9999");
-        assertNull(result);
+    /**
+     * Tests if Article 2 data is loaded correctly.
+     */
+    @Test
+    public void testLoadArticle2Data() {
+        final String[][] data = analyzer.getArticle2Data();
+        assertNotNull(data, "Article 2 data should not be null");
+        assertTrue(data.length > 0, "Data table should have content");
     }
 
+    /**
+     * Tests if the detailed budget is returned for a valid entity code.
+     */
     @Test
-    public void testFindOnomaForea_ValidCode() {
-        BudgetAnalyzer analyzer = new BudgetAnalyzer();
-        String result = analyzer.findOnomaForea("1011");
-        assertEquals("YPOURGEIO ETHNIKIS AMYNAS", result);
+    public void testGetDetailedBudgetValidCode() {
+        final int validCode = 1001;
+        try {
+            final String[][] detailed = analyzer.getDetailedBudget(validCode);
+            assertNotNull(detailed, "Detailed data should not be null");
+            assertTrue(detailed.length > 0, "Detailed file should contain data");
+        } catch (IllegalArgumentException e) {
+            fail("Should not throw exception for valid code 1001: " + e.getMessage());
+        }
     }
 
+    /**
+     * Tests if the correct exception is thrown for an invalid entity code.
+     */
     @Test
-    public void testIsValidKodikos() {
-        BudgetAnalyzer analyzer = new BudgetAnalyzer();
-        assertTrue(analyzer.isValidKodikos("1020"));
-        assertFalse(analyzer.isValidKodikos("0000"));
+    public void testGetDetailedBudgetInvalidCode() {
+        final int invalidCode = 9999;
+        assertThrows(IllegalArgumentException.class, () -> {
+            analyzer.getDetailedBudget(invalidCode);
+        }, "Should throw IllegalArgumentException for code 9999");
     }
 }
