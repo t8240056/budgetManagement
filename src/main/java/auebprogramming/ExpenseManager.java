@@ -20,7 +20,8 @@ public final class ExpenseManager {
      * Constructor 1: Loads data from the expense categories CSV file.
      * Used by the main application.
      *
-     * @param categoriesFile The filename of the categories CSV (classpath resource).
+     * @param categoriesFile The filename of the categories CSV (classpath
+     *                       resource).
      */
     public ExpenseManager(final String categoriesFile) {
         // Use CsvToArray to load data from the classpath
@@ -33,7 +34,7 @@ public final class ExpenseManager {
      *
      * @param data The 2D array containing the data.
      */
-    public ExpenseManager(String[][] data) {
+    public ExpenseManager(final String[][] data) {
         this.categoriesData = data;
     }
 
@@ -73,7 +74,9 @@ public final class ExpenseManager {
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
             // Safety check for row length
-            if (categoriesData[i].length <= CATEGORY_DESCRIPTION_COLUMN) continue;
+            if (categoriesData[i].length <= CATEGORY_DESCRIPTION_COLUMN) {
+                continue;
+            }
 
             final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
             final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
@@ -92,7 +95,7 @@ public final class ExpenseManager {
 
             if (index != -1) {
                 final long[] amounts = getAmountsForRow(index);
-                
+
                 // Safety check
                 String name = "N/A";
                 if (categoriesData[index].length > CATEGORY_DESCRIPTION_COLUMN) {
@@ -144,20 +147,21 @@ public final class ExpenseManager {
         if (categoriesData != null) {
             for (int i = 1; i < categoriesData.length; i++) {
                 // Basic validation needed in case of malformed rows
-                if (categoriesData[i].length <= CATEGORY_DESCRIPTION_COLUMN) continue;
+                if (categoriesData[i].length <= CATEGORY_DESCRIPTION_COLUMN) {
+                    continue;
+                }
 
                 final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
                 final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
                 final long[] amounts = getAmountsForRow(i);
-                final long amount = amounts[0]; 
+                final long amount = amounts[0];
 
                 totalStateBudget += amount;
 
                 sb.append(String.format(Locale.GERMAN, "%-5s %-60s %,15d%n",
                         code + ".",
                         name,
-                        amount
-                ));
+                        amount));
             }
         }
 
@@ -176,11 +180,13 @@ public final class ExpenseManager {
     // ---------------------------
 
     private int findRowIndexByCode(final String code) {
-        if (categoriesData == null) return -1;
-        
+        if (categoriesData == null) {
+            return -1;
+        }
+
         for (int i = 1; i < categoriesData.length; i++) {
-            if (categoriesData[i].length > CATEGORY_CODE_COLUMN && 
-                categoriesData[i][CATEGORY_CODE_COLUMN].equals(code)) {
+            if (categoriesData[i].length > CATEGORY_CODE_COLUMN
+                    && categoriesData[i][CATEGORY_CODE_COLUMN].equals(code)) {
                 return i;
             }
         }
@@ -194,7 +200,8 @@ public final class ExpenseManager {
 
         // Check array bounds
         if (categoriesData[rowIndex].length <= CATEGORY_CODE_COLUMN) {
-             return new long[]{0, 0, 0};
+            return new long[] {
+                    0, 0, 0 };
         }
 
         final String code = categoriesData[rowIndex][CATEGORY_CODE_COLUMN];
@@ -206,8 +213,8 @@ public final class ExpenseManager {
         } else {
             try {
                 if (categoriesData[rowIndex].length > CATEGORY_STATE_BUDGET_COLUMN) {
-                    stateBudget = Long.parseLong(categoriesData[rowIndex]
-                            [CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
+                    stateBudget = Long
+                            .parseLong(categoriesData[rowIndex][CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
                     regularBudget = stateBudget;
                     investmentBudget = 0;
                 } else {
@@ -222,6 +229,7 @@ public final class ExpenseManager {
             }
         }
 
-        return new long[]{stateBudget, regularBudget, investmentBudget};
+        return new long[] {
+                stateBudget, regularBudget, investmentBudget };
     }
 }
