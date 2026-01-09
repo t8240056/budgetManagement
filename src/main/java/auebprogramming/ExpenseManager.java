@@ -21,7 +21,7 @@ public final class ExpenseManager {
      * Used by the main application.
      *
      * @param categoriesFile The filename of the categories CSV (classpath
-     *                       resource).
+     * resource).
      */
     public ExpenseManager(final String categoriesFile) {
         // Use CsvToArray to load data from the classpath
@@ -60,6 +60,11 @@ public final class ExpenseManager {
     // GUI REPORT METHODS
     // ---------------------------
 
+    /**
+     * Generates a list of all available expense categories.
+     *
+     * @return The formatted list as a String.
+     */
     public String getCategoryListReport() {
         final StringBuilder sb = new StringBuilder();
 
@@ -87,6 +92,12 @@ public final class ExpenseManager {
         return sb.toString();
     }
 
+    /**
+     * Generates details for one or more expense codes.
+     *
+     * @param codes One or more expense codes.
+     * @return The formatted details report as a String.
+     */
     public String getExpenseDetailsReport(final String... codes) {
         final StringBuilder sb = new StringBuilder();
 
@@ -132,6 +143,11 @@ public final class ExpenseManager {
         return sb.toString();
     }
 
+    /**
+     * Generates the full report of all expense categories.
+     *
+     * @return The formatted expense report as a String.
+     */
     public String getFullExpensesReport() {
         final StringBuilder sb = new StringBuilder();
         long totalStateBudget = 0;
@@ -152,7 +168,8 @@ public final class ExpenseManager {
                 }
 
                 final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
-                final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
+                final String name = categoriesData[i]
+                        [CATEGORY_DESCRIPTION_COLUMN];
                 final long[] amounts = getAmountsForRow(i);
                 final long amount = amounts[0];
 
@@ -200,8 +217,7 @@ public final class ExpenseManager {
 
         // Check array bounds
         if (categoriesData[rowIndex].length <= CATEGORY_CODE_COLUMN) {
-            return new long[] {
-                    0, 0, 0 };
+            return new long[]{0, 0, 0};
         }
 
         final String code = categoriesData[rowIndex][CATEGORY_CODE_COLUMN];
@@ -212,9 +228,10 @@ public final class ExpenseManager {
             investmentBudget = 14100000000L;
         } else {
             try {
-                if (categoriesData[rowIndex].length > CATEGORY_STATE_BUDGET_COLUMN) {
-                    stateBudget = Long
-                            .parseLong(categoriesData[rowIndex][CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
+                if (categoriesData[rowIndex].length
+                        > CATEGORY_STATE_BUDGET_COLUMN) {
+                    stateBudget = Long.parseLong(categoriesData[rowIndex]
+                            [CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
                     regularBudget = stateBudget;
                     investmentBudget = 0;
                 } else {
@@ -229,7 +246,6 @@ public final class ExpenseManager {
             }
         }
 
-        return new long[] {
-                stateBudget, regularBudget, investmentBudget };
+        return new long[]{stateBudget, regularBudget, investmentBudget};
     }
 }

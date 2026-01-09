@@ -22,9 +22,19 @@ import java.util.stream.Collectors;
  */
 public final class BudgetManager {
 
+    /** The current active user. */
     private static final String CURRENT_USER = "admin";
-    private static final String RESOURCES_PATH = "src/main/resources/";
-    private static final String SAVED_PATH = RESOURCES_PATH + "saved_budgets/";
+
+    /**
+     * The directory path where saved budgets are stored.
+     * Defined as a relative path to work alongside the executable JAR.
+     */
+    private static final String SAVED_PATH = "saved_budgets/";
+
+    /** Prefix used to identify Revenue files and separate them from Expenses. */
+    private static final String REVENUE_PREFIX = "REVENUE";
+
+    /** Date formatter for logging purposes. */
     private static final DateTimeFormatter DTF = DateTimeFormatter
             .ofPattern("dd/MM/yyyy HH:mm:ss");
 
@@ -34,7 +44,7 @@ public final class BudgetManager {
 
     // State variables
     private String currentLoadedFilePath;
-    private String currentEntityPrefix; // e.g., "1003"
+    private String currentEntityPrefix; // e.g., "1003" or "REVENUE"
     private int currentBudgetType; // 0 for Revenue, 1 for Expense
 
     /**
@@ -58,8 +68,8 @@ public final class BudgetManager {
     /**
      * Sets the budget type (Revenue or Expense).
      *
-     * @param type 0 for Revenue, 1 for Expense
-     * @throws AppException if type is invalid
+     * @param type 0 for Revenue, 1 for Expense.
+     * @throws AppException if type is invalid.
      */
     public void setBudgetType(final int type) throws AppException {
         if (type != 0 && type != 1) {
@@ -79,15 +89,18 @@ public final class BudgetManager {
     /**
      * Loads revenue data into the repository.
      *
-     * @param overrideFile optional file to load from (can be null for default)
-     * @throws AppException if file not found or load fails
+     * @param overrideFile optional file to load from (can be null for default).
+     * @throws AppException if file not found or load fails.
      */
     public void loadRevenueData(final File overrideFile) throws AppException {
+        // Set the distinct prefix for Revenue so saving/loading is isolated
+        this.currentEntityPrefix = REVENUE_PREFIX;
+
         try (Scanner fileScanner = (overrideFile != null)
                 ? new Scanner(overrideFile)
                 : openResourceScanner("revenue_categories2_2025.csv")) {
 
-            repository.clear(); // Clear previous data
+            repository.clear();
 
             while (fileScanner.hasNextLine()) {
                 final String line = fileScanner.nextLine();
@@ -127,12 +140,13 @@ public final class BudgetManager {
      * Gets the list of Ministries for display.
      * Shows ONLY Code and Name, NOT amounts.
      *
-     * @return List of strings (e.g., "1003 - Parliament")
-     * @throws AppException if file missing
+     * @return List of strings (e.g., "1003 - Parliament").
+     * @throws AppException if file missing.
      */
     public List<String> getMinistriesList() throws AppException {
         final List<String> ministries = new ArrayList<>();
-        try (Scanner csvScanner = openResourceScanner("expense_ministries_2025.csv")) {
+        try (Scanner csvScanner = openResourceScanner(
+                "expense_ministries_2025.csv")) {
 
             while (csvScanner.hasNextLine()) {
                 final String line = csvScanner.nextLine();
@@ -142,7 +156,6 @@ public final class BudgetManager {
 
                 final String[] parts = line.split(",");
                 if (parts.length >= 2) {
-                    // Format: "1003 - Parliament of Greece"
                     ministries.add(parts[0].trim() + " - " + parts[1].trim());
                 }
             }
@@ -153,28 +166,26 @@ public final class BudgetManager {
     /**
      * Loads expenses for a specific organization code.
      *
-     * @param orgCode      the organization code (e.g., "1003")
-     * @param overrideFile optional file to load from
-     * @throws AppException if loading fails
+     * @param orgCode      the organization code (e.g., "1003").
+     * @param overrideFile optional file to load from.
+     * @throws AppException if loading fails.
      */
     public void loadOrganizationExpenses(final String orgCode,
-            final File overrideFile)
+                                         final File overrideFile)
             throws AppException {
         this.currentEntityPrefix = orgCode;
         try (Scanner fileScanner = (overrideFile != null)
                 ? new Scanner(overrideFile)
                 : openResourceScanner(orgCode + ".csv")) {
 
-            repository.clear(); // Clear previous data
+            repository.clear();
 
             while (fileScanner.hasNextLine()) {
                 final String line = fileScanner.nextLine().trim();
-                // Skip empty lines or metadata lines
                 if (line.isEmpty() || !Character.isDigit(line.charAt(0))) {
                     continue;
                 }
 
-                // Regex to split by comma ignoring quotes
                 final String[] parts = line.split(
                         ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
@@ -212,18 +223,15 @@ public final class BudgetManager {
     /**
      * Returns the formatted table view of all entries.
      *
-     * @return Formatted String table
+     * @return Formatted String table.
      */
     public String getEntriesView() {
         final StringBuilder sb = new StringBuilder();
-
-        // Header
         sb.append(String.format("%-10s %-50s %20s%n",
                 "CODE", "CATEGORY", "AMOUNT (€)"));
         sb.append("------------------------------------------"
                 + "----------------------------------------\n");
 
-        // Data rows
         repository.findAll().stream()
                 .sorted(Comparator.comparing(BudgetChangesEntry::getCode))
                 .forEach(entry -> {
@@ -250,7 +258,7 @@ public final class BudgetManager {
     /**
      * Returns the raw list of entries (useful for GUI Tables).
      *
-     * @return List of BudgetChangesEntry
+     * @return List of BudgetChangesEntry.
      */
     public List<BudgetChangesEntry> getEntriesList() {
         return repository.findAll().stream()
@@ -261,7 +269,7 @@ public final class BudgetManager {
     /**
      * Returns the total calculated amount.
      *
-     * @return the total amount
+     * @return the total amount.
      */
     public BigDecimal getTotalAmount() {
         return repository.calculateTotal();
@@ -274,15 +282,15 @@ public final class BudgetManager {
     /**
      * Applies an absolute amount change.
      *
-     * @param code          Entry code
-     * @param amountStr     Amount as string
-     * @param justification Reason
-     * @return Success message
-     * @throws AppException if validation fails
+     * @param code          Entry code.
+     * @param amountStr     Amount as string.
+     * @param justification Reason for the change.
+     * @return Success message.
+     * @throws AppException if validation fails.
      */
     public String makeAbsoluteChange(final String code,
-            final String amountStr,
-            final String justification)
+                                     final String amountStr,
+                                     final String justification)
             throws AppException {
         final Optional<BudgetChangesEntry> entryOpt = repository
                 .findByCode(code);
@@ -294,7 +302,6 @@ public final class BudgetManager {
             final BigDecimal amount = new BigDecimal(amountStr);
             final BudgetChangesEntry entry = entryOpt.get();
 
-            // Pre-check
             if (entry.getAmount().add(amount)
                     .compareTo(BigDecimal.ZERO) < 0) {
                 throw new AppException(
@@ -320,15 +327,15 @@ public final class BudgetManager {
     /**
      * Applies a percentage change.
      *
-     * @param code          Entry code
-     * @param percentStr    Percentage as string (e.g. "10", "-5")
-     * @param justification Reason
-     * @return Success message
-     * @throws AppException if validation fails
+     * @param code          Entry code.
+     * @param percentStr    Percentage as string (e.g. "10", "-5").
+     * @param justification Reason for the change.
+     * @return Success message.
+     * @throws AppException if validation fails.
      */
     public String makePercentageChange(final String code,
-            final String percentStr,
-            final String justification)
+                                       final String percentStr,
+                                       final String justification)
             throws AppException {
         final Optional<BudgetChangesEntry> entryOpt = repository
                 .findByCode(code);
@@ -340,7 +347,6 @@ public final class BudgetManager {
             final double percent = Double.parseDouble(percentStr);
             final BudgetChangesEntry entry = entryOpt.get();
 
-            // Pre-check
             final BigDecimal currentAmount = entry.getAmount();
             final BigDecimal percentageDecimal = BigDecimal.valueOf(percent)
                     .divide(BigDecimal.valueOf(100));
@@ -356,7 +362,9 @@ public final class BudgetManager {
             change.apply(entry);
             changeHistory.push(change);
 
-            logAction("Percentage Change (" + percent + "%) on " + code);
+            // Added justification to log as requested
+            logAction("Percentage Change (" + percent + "%) on " + code
+                    + ". Reason: " + justification);
             return "Success! New Amount: "
                     + NumberFormat.getInstance().format(entry.getAmount())
                     + " €";
@@ -369,17 +377,17 @@ public final class BudgetManager {
     /**
      * Transfers funds between entries.
      *
-     * @param sourceCode    Source code
-     * @param targetCode    Target code
-     * @param amountStr     Amount to transfer
-     * @param justification Reason
-     * @return Success message
-     * @throws AppException if validation fails
+     * @param sourceCode    Source code.
+     * @param targetCode    Target code.
+     * @param amountStr     Amount to transfer.
+     * @param justification Reason for the transfer.
+     * @return Success message.
+     * @throws AppException if validation fails.
      */
     public String makeTransfer(final String sourceCode,
-            final String targetCode,
-            final String amountStr,
-            final String justification)
+                               final String targetCode,
+                               final String amountStr,
+                               final String justification)
             throws AppException {
         final Optional<BudgetChangesEntry> sourceOpt = repository
                 .findByCode(sourceCode);
@@ -417,8 +425,8 @@ public final class BudgetManager {
     /**
      * Undoes the last action.
      *
-     * @return Message describing what was undone
-     * @throws AppException if nothing to undo
+     * @return Message describing what was undone.
+     * @throws AppException if nothing to undo.
      */
     public String undoLastAction() throws AppException {
         if (changeHistory.isEmpty()) {
@@ -456,9 +464,10 @@ public final class BudgetManager {
 
     /**
      * Gets a list of saved scenario files for the current context.
+     * Filters files based on the active prefix (Revenue or Organization Code).
      *
-     * @return List of filenames
-     * @throws AppException if directory issues
+     * @return List of filenames.
+     * @throws AppException if directory issues occur.
      */
     public List<String> getAvailableSavedFiles() throws AppException {
         if (currentEntityPrefix == null) {
@@ -467,7 +476,7 @@ public final class BudgetManager {
 
         final File savedDir = new File(SAVED_PATH);
         if (!savedDir.exists()) {
-            return new ArrayList<>(); // Return empty list
+            return new ArrayList<>();
         }
 
         final File[] files = savedDir.listFiles(
@@ -487,8 +496,8 @@ public final class BudgetManager {
     /**
      * Loads a specific saved scenario file.
      *
-     * @param filename Name of the file in saved_budgets
-     * @throws AppException if load fails
+     * @param filename Name of the file in saved_budgets.
+     * @throws AppException if load fails.
      */
     public void loadSavedScenario(final String filename) throws AppException {
         final File file = new File(SAVED_PATH + filename);
@@ -496,7 +505,6 @@ public final class BudgetManager {
             throw new AppException("File not found: " + filename);
         }
 
-        // Clear history as we are loading a new state
         changeHistory.clear();
 
         if (currentBudgetType == 0) {
@@ -538,11 +546,9 @@ public final class BudgetManager {
                 tempName += ".csv";
             }
 
-            /*
-             * * FIX: Check if currentEntityPrefix is null before calling startsWith.
-             * This prevents NullPointerException during Revenue data saves.
-             */
-            if (currentEntityPrefix != null && !tempName.startsWith(currentEntityPrefix)) {
+            // Enforce prefix for both Revenue and Expenses
+            if (currentEntityPrefix != null
+                    && !tempName.startsWith(currentEntityPrefix)) {
                 tempName = currentEntityPrefix + "_" + tempName;
             }
 
@@ -605,9 +611,16 @@ public final class BudgetManager {
      */
     private boolean saveExpenseDataInternal(final String path) {
         final List<String> headerLines = new ArrayList<>();
-        final File sourceFile = new File(currentLoadedFilePath);
 
-        try (Scanner fileScanner = new Scanner(sourceFile)) {
+        Scanner fileScanner = null;
+        try {
+            final File physicalFile = new File(currentLoadedFilePath);
+            if (physicalFile.exists()) {
+                fileScanner = new Scanner(physicalFile);
+            } else {
+                fileScanner = openResourceScanner(currentLoadedFilePath);
+            }
+
             while (fileScanner.hasNextLine()) {
                 final String line = fileScanner.nextLine();
                 if (!line.trim().isEmpty()
@@ -616,8 +629,13 @@ public final class BudgetManager {
                 }
                 headerLines.add(line);
             }
-        } catch (final FileNotFoundException e) {
-            // Proceed without headers if source lost
+        } catch (final Exception e) {
+            System.err.println("Warning: Could not read headers from source: "
+                    + e.getMessage());
+        } finally {
+            if (fileScanner != null) {
+                fileScanner.close();
+            }
         }
 
         try (FileWriter writer = new FileWriter(path)) {
@@ -666,6 +684,13 @@ public final class BudgetManager {
                 DTF.format(LocalDateTime.now()), CURRENT_USER, detail));
     }
 
+    /**
+     * Helper to open a resource file safely.
+     *
+     * @param resourceName The name of the resource to open.
+     * @return A Scanner for the resource.
+     * @throws AppException If resource is not found.
+     */
     private Scanner openResourceScanner(final String resourceName)
             throws AppException {
 
@@ -674,9 +699,14 @@ public final class BudgetManager {
                 .getResourceAsStream(resourceName);
 
         if (stream == null) {
+            stream = BudgetManager.class
+                    .getClassLoader()
+                    .getResourceAsStream("/" + resourceName);
+        }
+
+        if (stream == null) {
             throw new AppException("Resource not found: " + resourceName);
         }
         return new Scanner(stream);
     }
-
 }
