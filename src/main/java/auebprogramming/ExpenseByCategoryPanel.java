@@ -131,7 +131,11 @@ public final class ExpenseByCategoryPanel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
+<<<<<<< HEAD
                 frame.showExpensePanel();
+=======
+                frame.switchTo("expensePanel");
+>>>>>>> Managers
             }
         });
 
@@ -169,6 +173,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * @param text the text to display
      */
     public void setDisplayText() {
+<<<<<<< HEAD
         String categoriesFile ="";
         final int selectedYear = Year.SELECTED_YEAR;
         switch (selectedYear) {
@@ -184,6 +189,10 @@ public final class ExpenseByCategoryPanel extends JPanel {
 
         ExpenseManager expenseManager = new ExpenseManager(
             categoriesFile);
+=======
+        ExpenseManager expenseManager = new ExpenseManager(
+                "expense_categories_2025.csv");
+>>>>>>> Managers
 
         displayArea.setText(expenseManager.getFullExpensesReport());
     }

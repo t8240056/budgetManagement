@@ -95,7 +95,11 @@ public final class ExpensePanel extends JPanel {
                 if (byAgencyButton.isSelected()) {
                     frame.switchTo("expenseByAgency");
                 } else if (byCategoryButton.isSelected()) {
+<<<<<<< HEAD
                     frame.showExpenseByCategoryPanel();
+=======
+                    frame.switchTo("expenseByCategory");
+>>>>>>> Managers
                 } else {
                     // GUI-friendly μήνυμα
                     JOptionPane.showMessageDialog(
@@ -163,7 +167,10 @@ public final class ExpensePanel extends JPanel {
 
             displayArea.append("=== Φορείς - ΠΔΕ ===\n");
             displayArea.append(reportMinistriesEpendyseon + "\n\n");
+<<<<<<< HEAD
             displayArea.setCaretPosition(0);
+=======
+>>>>>>> Managers
 
         } catch (final Exception e) {
             displayArea.setText(

@@ -4,7 +4,10 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+<<<<<<< HEAD
 
+=======
+>>>>>>> Managers
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -134,7 +137,11 @@ public final class ExpenseByAgencySummaryPanel extends JPanel {
 
         // Ενέργεια Επιστροφής (Πίσω στο ExpensePanel)
         backButton.addActionListener((final ActionEvent e) -> {
+<<<<<<< HEAD
             frame.showExpensePanel();
+=======
+            frame.switchTo("expensePanel");
+>>>>>>> Managers
         });
 
         // Ενέργεια Επιβεβαίωσης

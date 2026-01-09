@@ -138,7 +138,11 @@ public final class Revenue2Panel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
+<<<<<<< HEAD
                 frame.showRevenuePanel();
+=======
+                frame.switchTo("revenuePanel");
+>>>>>>> Managers
             }
         });
 

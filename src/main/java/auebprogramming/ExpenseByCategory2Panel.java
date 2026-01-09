@@ -81,6 +81,7 @@ public final class ExpenseByCategory2Panel extends JPanel {
         String[] codes = codesString.split("[, ]+");
 
         // Get formatted report
+<<<<<<< HEAD
         String categoriesFile ="";
         final int selectedYear = Year.SELECTED_YEAR;
         switch (selectedYear) {
@@ -95,6 +96,10 @@ public final class ExpenseByCategory2Panel extends JPanel {
             }
         ExpenseManager manager =
             new ExpenseManager(categoriesFile);
+=======
+        ExpenseManager manager =
+            new ExpenseManager("expense_categories_2025.csv");
+>>>>>>> Managers
 
         String report = manager.getExpenseDetailsReport(codes);
 

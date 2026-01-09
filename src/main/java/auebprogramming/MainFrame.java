@@ -19,8 +19,15 @@ public final class MainFrame extends JFrame {
     private final JPanel cardPanel;
 
     // Fixed Panels
+<<<<<<< HEAD
     private final ExpenseByAgencySummaryPanel agencySummaryPanel;
     private final AgencyDetailsPanel agencyDetailsPanel;
+=======
+    private final RevenuePanel revenuePanel;
+    private final ExpenseByAgencySummaryPanel agencySummaryPanel;
+    private final AgencyDetailsPanel agencyDetailsPanel;
+    private final ExpenseByCategoryPanel expenseByCategoryPanel;
+>>>>>>> Managers
     private final InsertChangePanel insertChangePanel;
     private AbsoluteChangePanel absoluteChangePanel;
     private TransferChangePanel transferChangePanel;
@@ -59,6 +66,11 @@ public final class MainFrame extends JFrame {
         agencySummaryPanel = new ExpenseByAgencySummaryPanel(this,
                 budgetAnalyzer);
         agencyDetailsPanel = new AgencyDetailsPanel(this, budgetAnalyzer);
+<<<<<<< HEAD
+=======
+        revenuePanel = new RevenuePanel(this);
+        expenseByCategoryPanel = new ExpenseByCategoryPanel(this);
+>>>>>>> Managers
         insertChangePanel = new InsertChangePanel(this, budgetManager);
         absoluteChangePanel = new AbsoluteChangePanel(this, budgetManager);
         transferChangePanel = new TransferChangePanel(this, budgetManager);
@@ -68,8 +80,16 @@ public final class MainFrame extends JFrame {
 
         // Add panels to CardLayout
         cardPanel.add(new MenuPanel(this), "menu");
+<<<<<<< HEAD
         cardPanel.add(agencySummaryPanel, "expenseByAgency");
         cardPanel.add(agencyDetailsPanel, "agencyDetails");
+=======
+        cardPanel.add(new ExpensePanel(this), "expensePanel");
+        cardPanel.add(agencySummaryPanel, "expenseByAgency");
+        cardPanel.add(agencyDetailsPanel, "agencyDetails");
+        cardPanel.add(revenuePanel, "revenuePanel");
+        cardPanel.add(expenseByCategoryPanel, "expenseByCategory");
+>>>>>>> Managers
 
         // Future/Placeholder panels
         cardPanel.add(new BudgetPanel(this), "budget");
@@ -100,6 +120,7 @@ public final class MainFrame extends JFrame {
     }
 
     /**
+<<<<<<< HEAD
      *Switchtes to ExpensePanel
     */
     public void showExpensePanel() {
@@ -121,6 +142,8 @@ public final class MainFrame extends JFrame {
 
 
     /**
+=======
+>>>>>>> Managers
      * Switches to the Agency Details panel and loads data.
      *
      * @param code the agency code
@@ -135,6 +158,7 @@ public final class MainFrame extends JFrame {
      *
      * @param code the revenue code
      */
+<<<<<<< HEAD
 
     /**
     * Switches to the RevenuePanel.
@@ -146,6 +170,8 @@ public final class MainFrame extends JFrame {
         switchTo("revenue");
     }
 
+=======
+>>>>>>> Managers
     public void showRevenue2(final String code) {
         // Remove old panel if exists
         if (revenue2Panel != null) {
