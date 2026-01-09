@@ -1,87 +1,47 @@
 package auebprogramming;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * JUnit tests for the ExpenseManager class.
- * Verifies code validation, report generation, and data querying capabilities.
+ * Uses in-memory mock data to verify logic without relying on file I/O.
  */
 public class ExpenseManagerTest {
 
-    private File tempCsvFile;
     private ExpenseManager manager;
 
     /**
-     * Sets up the test environment.
-     * Creates a temporary CSV file with dummy data for testing.
-     *
-     * @throws IOException if file creation fails.
+     * Sets up the test environment with mock data.
      */
     @Before
-    public void setUp() throws IOException {
-        // Create temporary CSV file
-        tempCsvFile = File.createTempFile("test_expenses", ".csv");
-        
-        try (FileWriter writer = new FileWriter(tempCsvFile)) {
-            // Write Header
-            writer.write("Skip,Code,Description,Amount\n");
-            
-            // Write Data Rows
-            // Normal row: Code 21, Salary, 1000
-            writer.write("X,21,Salary,1000\n");
-            
-            // Special row: Code 29 (should trigger special logic)
-            writer.write("X,29,Appropriations,0\n");
-            
-            // Another normal row
-            writer.write("X,24,Travel,500\n");
-        }
+    public void setUp() {
+        // Create Mock Data directly in memory (Skip file creation)
+        // Format matches CSV: [Skip, Code, Description, Amount]
+        String[][] mockData = {
+            {"Skip", "Code", "Description", "Amount"}, // Row 0: Header
+            {"X", "21", "Salary", "1000"},             // Row 1: Valid Code
+            {"X", "29", "Appropriations", "0"},        // Row 2: Special Code 29
+            {"X", "24", "Travel", "500"}               // Row 3: Another valid code
+        };
 
-        // Initialize ExpenseManager with the temp file path
-        manager = new ExpenseManager(tempCsvFile.getAbsolutePath());
+        // Initialize ExpenseManager using the new constructor for testing
+        manager = new ExpenseManager(mockData);
     }
 
-    /**
-     * Cleans up the test environment by deleting the temp file.
-     */
-    @After
-    public void tearDown() {
-        if (tempCsvFile != null && tempCsvFile.exists()) {
-            tempCsvFile.delete();
-        }
-    }
+    // No @After needed since we don't create files anymore!
 
-    /**
-     * Tests validation of a valid expense code.
-     * Should not throw any exception.
-     *
-     * @throws AppException if validation fails unexpectedly.
-     */
     @Test
     public void testValidateExpenseCodeValid() throws AppException {
         manager.validateExpenseCode("21");
     }
 
-    /**
-     * Tests validation of an invalid expense code.
-     * Should throw AppException.
-     *
-     * @throws AppException expected exception.
-     */
     @Test(expected = AppException.class)
     public void testValidateExpenseCodeInvalid() throws AppException {
         manager.validateExpenseCode("999");
     }
 
-    /**
-     * Tests generation of the category list report.
-     */
     @Test
     public void testGetCategoryListReport() {
         final String report = manager.getCategoryListReport();
@@ -92,22 +52,17 @@ public class ExpenseManagerTest {
         Assert.assertTrue("Should contain Salary", report.contains("Salary"));
     }
 
-    /**
-     * Tests generation of the expense details report for a valid code.
-     */
     @Test
     public void testGetExpenseDetailsReportValid() {
         final String report = manager.getExpenseDetailsReport("21");
         
         Assert.assertNotNull("Report should not be null", report);
         Assert.assertTrue("Should contain Code 21", report.contains("21"));
+        // Note: Formatting depends on Locale inside the class. 
+        // 1000 with Locale.GERMAN is "1.000"
         Assert.assertTrue("Should contain Amount 1.000", report.contains("1.000"));
     }
 
-    /**
-     * Tests generation of the expense details report for the special code 29.
-     * Verifies that hardcoded values are returned (e.g. 17.283.053.000).
-     */
     @Test
     public void testGetExpenseDetailsReportSpecialCode29() {
         final String report = manager.getExpenseDetailsReport("29");
@@ -118,10 +73,6 @@ public class ExpenseManagerTest {
                 report.contains("17.283.053.000"));
     }
 
-    /**
-     * Tests generation of the expense details report for an invalid code.
-     * Should return an error message in the string, not throw exception.
-     */
     @Test
     public void testGetExpenseDetailsReportInvalid() {
         final String report = manager.getExpenseDetailsReport("999");
@@ -130,18 +81,12 @@ public class ExpenseManagerTest {
                 report.contains("Μη έγκυρος κωδικός"));
     }
 
-    /**
-     * Tests the full expenses report generation.
-     */
     @Test
     public void testGetFullExpensesReport() {
         final String report = manager.getFullExpensesReport();
         
         Assert.assertNotNull("Report should not be null", report);
         Assert.assertTrue("Should contain Total", report.contains("Σύνολο"));
-        
-        // It should contain the sum of 1000 (Salary) + 500 (Travel) + 17283053000 (Cat 29)
-        // We just check that it contains one of the entries to ensure it processed rows
         Assert.assertTrue("Should contain Travel entry", report.contains("Travel"));
         Assert.assertTrue("Should contain Salary entry", report.contains("Salary"));
     }

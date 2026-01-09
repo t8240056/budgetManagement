@@ -183,11 +183,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
             }
 
         ExpenseManager expenseManager = new ExpenseManager(
-<<<<<<< HEAD
             categoriesFile);
-=======
-                "expense_categories_2025.csv");
->>>>>>> c23d9b82553a941f1b2cafe2ead24f5c1d05cf4b
 
         displayArea.setText(expenseManager.getFullExpensesReport());
     }

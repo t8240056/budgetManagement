@@ -13,17 +13,29 @@ public final class ExpenseManager {
     private static final int CATEGORY_DESCRIPTION_COLUMN = 2;
     private static final int CATEGORY_STATE_BUDGET_COLUMN = 3;
 
-    // Array for category data loaded from CSV
+    // Array for category data
     private final String[][] categoriesData;
 
     /**
-     * Constructor. Loads data from the expense categories CSV file.
+     * Constructor 1: Loads data from the expense categories CSV file.
+     * Used by the main application.
      *
-     * @param categoriesFile The filename of the categories CSV.
+     * @param categoriesFile The filename of the categories CSV (classpath
+     *                       resource).
      */
     public ExpenseManager(final String categoriesFile) {
         // Use CsvToArray to load data from the classpath
         this.categoriesData = CsvToArray.loadCsvToArray(categoriesFile);
+    }
+
+    /**
+     * Constructor 2: Accepts raw data directly.
+     * Used specifically for UNIT TESTING to avoid file I/O issues.
+     *
+     * @param data The 2D array containing the data.
+     */
+    public ExpenseManager(final String[][] data) {
+        this.categoriesData = data;
     }
 
     // ---------------------------
@@ -48,38 +60,33 @@ public final class ExpenseManager {
     // GUI REPORT METHODS
     // ---------------------------
 
-    /**
-     * Generates a list of all available expense categories with their codes
-     * as a formatted String.
-     *
-     * @return The formatted list as a String.
-     */
     public String getCategoryListReport() {
         final StringBuilder sb = new StringBuilder();
 
         // Append Header
         sb.append("ΚΩΔΙΚΟΣ\tΟΝΟΜΑ ΔΑΠΑΝΗΣ").append(System.lineSeparator());
 
+        // Check if data is loaded to avoid NullPointerException
+        if (categoriesData == null || categoriesData.length == 0) {
+            return sb.toString();
+        }
+
         // Start from the 2nd row (index 1) to skip the header.
         for (int i = 1; i < categoriesData.length; i++) {
-            final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
-            final String name = categoriesData[i]
-                    [CATEGORY_DESCRIPTION_COLUMN];
+            // Safety check for row length
+            if (categoriesData[i].length <= CATEGORY_DESCRIPTION_COLUMN) {
+                continue;
+            }
 
-            // Append row output to StringBuilder
+            final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
+            final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
+
             sb.append(String.format("%s\t%s%n", code, name));
         }
 
         return sb.toString();
     }
 
-    /**
-     * Generates details for one or more expense codes as a single formatted
-     * String.
-     *
-     * @param codes One or more expense codes (e.g., "21", "23").
-     * @return The formatted details report as a String.
-     */
     public String getExpenseDetailsReport(final String... codes) {
         final StringBuilder sb = new StringBuilder();
 
@@ -87,13 +94,14 @@ public final class ExpenseManager {
             final int index = findRowIndexByCode(code);
 
             if (index != -1) {
-                // Use getAmountsForRow to safely extract the values
                 final long[] amounts = getAmountsForRow(index);
 
-                final String name = categoriesData[index]
-                        [CATEGORY_DESCRIPTION_COLUMN];
+                // Safety check
+                String name = "N/A";
+                if (categoriesData[index].length > CATEGORY_DESCRIPTION_COLUMN) {
+                    name = categoriesData[index][CATEGORY_DESCRIPTION_COLUMN];
+                }
 
-                // Append formatted details to StringBuilder
                 sb.append(System.lineSeparator())
                         .append("==============================")
                         .append(System.lineSeparator());
@@ -105,7 +113,6 @@ public final class ExpenseManager {
                 sb.append("------------------------------")
                         .append(System.lineSeparator());
 
-                // Use Locale.GERMAN for correct thousand separators
                 sb.append(String.format(Locale.GERMAN,
                         "Κρατικός Προϋπολογισμός: %,d €%n", amounts[0]));
                 sb.append(String.format(Locale.GERMAN,
@@ -116,7 +123,6 @@ public final class ExpenseManager {
                         .append(System.lineSeparator());
 
             } else {
-                // Append error message to the report string
                 sb.append(System.lineSeparator()).append(code)
                         .append(" : Μη έγκυρος κωδικός")
                         .append(System.lineSeparator());
@@ -126,17 +132,10 @@ public final class ExpenseManager {
         return sb.toString();
     }
 
-    /**
-     * Generates the report of all expense categories with their code, name,
-     * and State Budget amount as a formatted String.
-     *
-     * @return The formatted expense report as a String.
-     */
     public String getFullExpensesReport() {
         final StringBuilder sb = new StringBuilder();
         long totalStateBudget = 0;
 
-        // Append Header
         sb.append("1. ΕΞΟΔΑ").append(System.lineSeparator());
         sb.append(System.lineSeparator());
         sb.append(String.format("%-5s %-60s %s%n",
@@ -145,25 +144,27 @@ public final class ExpenseManager {
                 + "----------------------------------------")
                 .append(System.lineSeparator());
 
-        // Print each row in the requested format
-        for (int i = 1; i < categoriesData.length; i++) {
-            final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
-            final String name = categoriesData[i]
-                    [CATEGORY_DESCRIPTION_COLUMN];
-            final long[] amounts = getAmountsForRow(i);
-            final long amount = amounts[0]; // State Budget amount
+        if (categoriesData != null) {
+            for (int i = 1; i < categoriesData.length; i++) {
+                // Basic validation needed in case of malformed rows
+                if (categoriesData[i].length <= CATEGORY_DESCRIPTION_COLUMN) {
+                    continue;
+                }
 
-            totalStateBudget += amount;
+                final String code = categoriesData[i][CATEGORY_CODE_COLUMN];
+                final String name = categoriesData[i][CATEGORY_DESCRIPTION_COLUMN];
+                final long[] amounts = getAmountsForRow(i);
+                final long amount = amounts[0];
 
-            // Append formatted row to StringBuilder
-            sb.append(String.format(Locale.GERMAN, "%-5s %-60s %,15d%n",
-                    code + ".",
-                    name,
-                    amount
-            ));
+                totalStateBudget += amount;
+
+                sb.append(String.format(Locale.GERMAN, "%-5s %-60s %,15d%n",
+                        code + ".",
+                        name,
+                        amount));
+            }
         }
 
-        // Append Total
         sb.append("------------------------------------------"
                 + "----------------------------------------")
                 .append(System.lineSeparator());
@@ -178,51 +179,49 @@ public final class ExpenseManager {
     // PRIVATE HELPER METHODS
     // ---------------------------
 
-    /**
-     * Finds the row index in the categoriesData array by expense code.
-     *
-     * @param code The expense code to search for.
-     * @return The row index, or -1 if not found.
-     */
     private int findRowIndexByCode(final String code) {
-        // Start from 1 to skip the header
+        if (categoriesData == null) {
+            return -1;
+        }
+
         for (int i = 1; i < categoriesData.length; i++) {
-            if (categoriesData[i][CATEGORY_CODE_COLUMN].equals(code)) {
+            if (categoriesData[i].length > CATEGORY_CODE_COLUMN
+                    && categoriesData[i][CATEGORY_CODE_COLUMN].equals(code)) {
                 return i;
             }
         }
         return -1;
     }
 
-    /**
-     * Extracts and calculates the three budget amounts for a given row index.
-     * Handles the special case of Code 29 logic.
-     *
-     * @param rowIndex The index of the row to process.
-     * @return A long array: [State Budget, Regular Budget, Investment Budget].
-     */
     private long[] getAmountsForRow(final int rowIndex) {
         long stateBudget;
         long regularBudget;
         long investmentBudget;
 
+        // Check array bounds
+        if (categoriesData[rowIndex].length <= CATEGORY_CODE_COLUMN) {
+            return new long[] {
+                    0, 0, 0 };
+        }
+
         final String code = categoriesData[rowIndex][CATEGORY_CODE_COLUMN];
 
-        // Logic for the special code 29 (Appropriations under distribution)
         if ("29".equals(code)) {
-            // Use the hardcoded values (since they are not in the CSV)
             stateBudget = 17283053000L;
             regularBudget = 3183053000L;
             investmentBudget = 14100000000L;
-
         } else {
-            // Normal logic: Regular = State Budget (and Investments = 0)
             try {
-                // Read the total from CSV (column 3)
-                stateBudget = Long.parseLong(categoriesData[rowIndex]
-                        [CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
-                regularBudget = stateBudget;
-                investmentBudget = 0;
+                if (categoriesData[rowIndex].length > CATEGORY_STATE_BUDGET_COLUMN) {
+                    stateBudget = Long
+                            .parseLong(categoriesData[rowIndex][CATEGORY_STATE_BUDGET_COLUMN].replace(" ", ""));
+                    regularBudget = stateBudget;
+                    investmentBudget = 0;
+                } else {
+                    stateBudget = 0;
+                    regularBudget = 0;
+                    investmentBudget = 0;
+                }
             } catch (final NumberFormatException e) {
                 stateBudget = 0;
                 regularBudget = 0;
@@ -230,6 +229,7 @@ public final class ExpenseManager {
             }
         }
 
-        return new long[]{stateBudget, regularBudget, investmentBudget};
+        return new long[] {
+                stateBudget, regularBudget, investmentBudget };
     }
 }
