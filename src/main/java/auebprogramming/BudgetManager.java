@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
@@ -23,8 +24,13 @@ import java.util.stream.Collectors;
 public final class BudgetManager {
 
     private static final String CURRENT_USER = "admin";
-    private static final String RESOURCES_PATH = "src/main/resources/";
-    private static final String SAVED_PATH = RESOURCES_PATH + "saved_budgets/";
+    
+    /* * FIX 1: Save path changed.
+     * We removed "src/main/resources/" because we cannot write inside the JAR.
+     * "./saved_budgets/" creates the folder next to the .jar file.
+     */
+    private static final String SAVED_PATH = "saved_budgets/";
+    
     private static final DateTimeFormatter DTF = DateTimeFormatter
             .ofPattern("dd/MM/yyyy HH:mm:ss");
 
@@ -537,15 +543,12 @@ public final class BudgetManager {
             if (!tempName.endsWith(".csv")) {
                 tempName += ".csv";
             }
-
-            /*
-             * * FIX: Check if currentEntityPrefix is null before calling startsWith.
-             * This prevents NullPointerException during Revenue data saves.
-             */
+            
+            // Check if currentEntityPrefix is null before calling startsWith.
             if (currentEntityPrefix != null && !tempName.startsWith(currentEntityPrefix)) {
                 tempName = currentEntityPrefix + "_" + tempName;
             }
-
+            
             filename = tempName;
         }
 
@@ -605,9 +608,23 @@ public final class BudgetManager {
      */
     private boolean saveExpenseDataInternal(final String path) {
         final List<String> headerLines = new ArrayList<>();
-        final File sourceFile = new File(currentLoadedFilePath);
+        
+        /* * FIX 2: Correctly reading headers from Source.
+         * We need to handle both cases:
+         * A) The source file is a physical file on disk (previous save).
+         * B) The source file is a Resource inside the JAR (initial load).
+         */
+        Scanner fileScanner = null;
+        try {
+            // Case A: Check if it's a physical file
+            File physicalFile = new File(currentLoadedFilePath);
+            if (physicalFile.exists()) {
+                fileScanner = new Scanner(physicalFile);
+            } else {
+                // Case B: It might be inside the JAR
+                fileScanner = openResourceScanner(currentLoadedFilePath);
+            }
 
-        try (Scanner fileScanner = new Scanner(sourceFile)) {
             while (fileScanner.hasNextLine()) {
                 final String line = fileScanner.nextLine();
                 if (!line.trim().isEmpty()
@@ -616,8 +633,13 @@ public final class BudgetManager {
                 }
                 headerLines.add(line);
             }
-        } catch (final FileNotFoundException e) {
-            // Proceed without headers if source lost
+        } catch (Exception e) {
+            // Proceed without headers if source lost or not found
+            System.err.println("Warning: Could not read headers from source: " + e.getMessage());
+        } finally {
+            if (fileScanner != null) {
+                fileScanner.close();
+            }
         }
 
         try (FileWriter writer = new FileWriter(path)) {
@@ -674,9 +696,15 @@ public final class BudgetManager {
                 .getResourceAsStream(resourceName);
 
         if (stream == null) {
+            // Try adding a leading slash if not found
+            stream = BudgetManager.class
+                    .getClassLoader()
+                    .getResourceAsStream("/" + resourceName);
+        }
+
+        if (stream == null) {
             throw new AppException("Resource not found: " + resourceName);
         }
         return new Scanner(stream);
     }
-
 }
