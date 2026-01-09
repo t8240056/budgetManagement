@@ -17,18 +17,6 @@ public final class RevenueDataManager {
      * Creates a manager and loads all CSV files.
      */
     public RevenueDataManager() {
-<<<<<<< HEAD
-
-        int year = Year.SELECTED_YEAR; // στατική μεταβλητή
-        this.codes2 = CsvToArray.loadCsvToArray(
-                "revenue_categories2_" + year + ".csv");
-        this.codes3 = CsvToArray.loadCsvToArray(
-                "revenue_categories3_" + year + ".csv");
-        this.codes5 = CsvToArray.loadCsvToArray(
-                "revenue_categories5_" + year + ".csv");
-        this.codes7 = CsvToArray.loadCsvToArray(
-                "revenue_categories7_" + year + ".csv");
-=======
         this.codes2 = CsvToArray.loadCsvToArray(
                 "revenue_categories2_2025.csv");
         this.codes3 = CsvToArray.loadCsvToArray(
@@ -37,7 +25,6 @@ public final class RevenueDataManager {
                 "revenue_categories5_2025.csv");
         this.codes7 = CsvToArray.loadCsvToArray(
                 "revenue_categories7_2025.csv");
->>>>>>> Managers
     }
 
     /**
@@ -87,7 +74,7 @@ public final class RevenueDataManager {
      * @return Array containing only rows that start with the prefix
      */
     private String[][] filterByPrefix(final String[][] data,
-                                      final String prefix) {
+            final String prefix) {
         final List<String[]> filtered = new ArrayList<>();
 
         for (final String[] row : data) {
@@ -100,9 +87,11 @@ public final class RevenueDataManager {
         return filtered.toArray(new String[0][]);
     }
 
-    /* ============================================================
-       VALIDATION METHODS
-       ============================================================ */
+    /*
+     * ============================================================
+     * VALIDATION METHODS
+     * ============================================================
+     */
 
     /**
      * Validates that the given code contains only digits and has
@@ -179,7 +168,7 @@ public final class RevenueDataManager {
      * @throws AppException if hierarchy is violated
      */
     public void validateHierarchy(final String parent,
-                                  final String child) throws AppException {
+            final String child) throws AppException {
         if (parent == null || parent.isEmpty()) {
             return; // πρώτη εισαγωγή
         }
@@ -187,7 +176,7 @@ public final class RevenueDataManager {
         if (!child.startsWith(parent)) {
             throw new AppException(
                     "Ο κωδικός " + child
-                    + " δεν ανήκει στην κατηγορία του " + parent + ".");
+                            + " δεν ανήκει στην κατηγορία του " + parent + ".");
         }
     }
 
@@ -200,13 +189,13 @@ public final class RevenueDataManager {
      * @throws AppException if length is incorrect
      */
     public void validateExpectedLength(final String code,
-                                       final int expectedLength)
+            final int expectedLength)
             throws AppException {
 
         if (code.length() != expectedLength) {
             throw new AppException(
                     "Ο κωδικός πρέπει να έχει μήκος "
-                    + expectedLength + " ψηφία.");
+                            + expectedLength + " ψηφία.");
         }
     }
 
@@ -222,8 +211,8 @@ public final class RevenueDataManager {
      * @throws AppException if any validation fails
      */
     public void validateUserInput(final String previousCode,
-                                  final String userInput,
-                                  final int expectedLength)
+            final String userInput,
+            final int expectedLength)
             throws AppException {
 
         validateCodeLength(userInput);

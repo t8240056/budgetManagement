@@ -73,7 +73,8 @@ public final class Revenue2Panel extends JPanel {
         final JPanel centerPanel = new JPanel(new FlowLayout(
                 FlowLayout.CENTER));
         final String[][] tableData = revdata.get3DigitCodes(parentCode);
-        final String[] columnNames = {"Κωδικός", "Κατηγορία", "Ποσό"};
+        final String[] columnNames = {
+                "Κωδικός", "Κατηγορία", "Ποσό" };
 
         revenueTable = new JTable(tableData, columnNames);
         // Μεγαλύτερη γραμματοσειρά για τα κελιά
@@ -138,11 +139,7 @@ public final class Revenue2Panel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-<<<<<<< HEAD
-                frame.showRevenuePanel();
-=======
                 frame.switchTo("revenuePanel");
->>>>>>> Managers
             }
         });
 

@@ -4,10 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-<<<<<<< HEAD
 
-=======
->>>>>>> Managers
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -47,11 +44,11 @@ public final class ExpenseByAgencySummaryPanel extends JPanel {
     /**
      * Κατασκευαστής.
      *
-     * @param mainFrame το κεντρικό παράθυρο της εφαρμογής.
+     * @param mainFrame      το κεντρικό παράθυρο της εφαρμογής.
      * @param budgetAnalyzer η κλάση λογικής για τα δεδομένα.
      */
     public ExpenseByAgencySummaryPanel(final MainFrame mainFrame,
-                                       final BudgetAnalyzer budgetAnalyzer) {
+            final BudgetAnalyzer budgetAnalyzer) {
         this.frame = mainFrame;
         this.analyzer = budgetAnalyzer;
         setLayout(new BorderLayout());
@@ -71,7 +68,8 @@ public final class ExpenseByAgencySummaryPanel extends JPanel {
 
         // Χειρισμός σφάλματος αν δεν υπάρχουν δεδομένα
         if (data.length < 2) {
-            final String[] emptyColumns = {"Κωδικός", "Φορέας", "Σύνολο"};
+            final String[] emptyColumns = {
+                    "Κωδικός", "Φορέας", "Σύνολο" };
             summaryTable = new JTable(new String[0][3], emptyColumns);
         } else {
             // Η πρώτη γραμμή είναι η κεφαλίδα
@@ -137,11 +135,7 @@ public final class ExpenseByAgencySummaryPanel extends JPanel {
 
         // Ενέργεια Επιστροφής (Πίσω στο ExpensePanel)
         backButton.addActionListener((final ActionEvent e) -> {
-<<<<<<< HEAD
-            frame.showExpensePanel();
-=======
             frame.switchTo("expensePanel");
->>>>>>> Managers
         });
 
         // Ενέργεια Επιβεβαίωσης

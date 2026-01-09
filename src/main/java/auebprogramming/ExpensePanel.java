@@ -95,11 +95,7 @@ public final class ExpensePanel extends JPanel {
                 if (byAgencyButton.isSelected()) {
                     frame.switchTo("expenseByAgency");
                 } else if (byCategoryButton.isSelected()) {
-<<<<<<< HEAD
-                    frame.showExpenseByCategoryPanel();
-=======
                     frame.switchTo("expenseByCategory");
->>>>>>> Managers
                 } else {
                     // GUI-friendly μήνυμα
                     JOptionPane.showMessageDialog(
@@ -132,20 +128,14 @@ public final class ExpensePanel extends JPanel {
             final String ependyseon = "ΠΡΟΥΠΟΛΟΓΙΣΜΟΣ ΔΗΜΟΣΙΩΝ ΕΠΕΝΔΥΣΕΩΝ";
 
             // 1. Αναφορές ανά δαπάνη
-            final String reportCategoriesKratikos =
-                    display.getCategoriesReport(kratikos);
-            final String reportCategoriesTaktikos =
-                    display.getCategoriesReport(taktikos);
-            final String reportCategoriesEpendyseon =
-                    display.getCategoriesReport(ependyseon);
+            final String reportCategoriesKratikos = display.getCategoriesReport(kratikos);
+            final String reportCategoriesTaktikos = display.getCategoriesReport(taktikos);
+            final String reportCategoriesEpendyseon = display.getCategoriesReport(ependyseon);
 
             // 2. Αναφορές ανά φορέα
-            final String reportMinistriesKratikos =
-                    display.getMinistriesReport(kratikos);
-            final String reportMinistriesTaktikos =
-                    display.getMinistriesReport(taktikos);
-            final String reportMinistriesEpendyseon =
-                    display.getMinistriesReport(ependyseon);
+            final String reportMinistriesKratikos = display.getMinistriesReport(kratikos);
+            final String reportMinistriesTaktikos = display.getMinistriesReport(taktikos);
+            final String reportMinistriesEpendyseon = display.getMinistriesReport(ependyseon);
 
             // 3. Εμφάνιση στο JTextArea
             displayArea.setText("");
@@ -167,10 +157,6 @@ public final class ExpensePanel extends JPanel {
 
             displayArea.append("=== Φορείς - ΠΔΕ ===\n");
             displayArea.append(reportMinistriesEpendyseon + "\n\n");
-<<<<<<< HEAD
-            displayArea.setCaretPosition(0);
-=======
->>>>>>> Managers
 
         } catch (final Exception e) {
             displayArea.setText(

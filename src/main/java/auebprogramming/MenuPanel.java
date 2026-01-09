@@ -1,9 +1,5 @@
 package auebprogramming;
 
-<<<<<<< HEAD
-import java.awt.Dimension;
-=======
->>>>>>> Managers
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -29,21 +25,21 @@ public final class MenuPanel extends JPanel {
                 "Επιλέξτε λειτουργία παρακαλώ",
                 SwingConstants.CENTER);
         titleLabel.setFont(
-            new Font("SansSerif", Font.BOLD, 20));
+                new Font("SansSerif", Font.BOLD, 20));
         add(titleLabel);
 
         final JRadioButton viewBudgetButton = new JRadioButton(
-            "1. Προβολή προϋπολογισμού");
+                "1. Προβολή προϋπολογισμού");
         viewBudgetButton.setFont(new Font("Arial", Font.PLAIN, 20));
 
         final JRadioButton insertChangeButton = new JRadioButton(
-            "2. Εισαγωγή αλλαγής");
+                "2. Εισαγωγή αλλαγής");
         insertChangeButton.setFont(new Font("Arial", Font.PLAIN, 20));
         final JRadioButton viewChangesButton = new JRadioButton(
-            "3. Προβολή Γραφημάτων");
+                "3. Προβολή Γραφημάτων");
         viewChangesButton.setFont(new Font("Arial", Font.PLAIN, 20));
         final JRadioButton exitButton = new JRadioButton(
-            "4. Έξοδος");
+                "4. Έξοδος");
         exitButton.setFont(new Font("Arial", Font.PLAIN, 20));
 
         final ButtonGroup group = new ButtonGroup();
@@ -56,21 +52,10 @@ public final class MenuPanel extends JPanel {
         add(insertChangeButton);
         add(viewChangesButton);
         add(exitButton);
-<<<<<<< HEAD
-        final JPanel bottomPanel = new JPanel();
-        bottomPanel.setLayout(new GridLayout(1, 2, 10, 0));
-        bottomPanel.setPreferredSize(new Dimension(0, 80)); // ύψος panel
-        add(bottomPanel);
-
-        final JButton confirmButton = new JButton("Επιβεβαίωση");
-        frame.confButtonColors(confirmButton);
-        bottomPanel.add(confirmButton);
-=======
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
         add(confirmButton);
->>>>>>> Managers
 
         confirmButton.addActionListener(new ActionListener() {
             @Override
@@ -88,18 +73,5 @@ public final class MenuPanel extends JPanel {
                 }
             }
         });
-<<<<<<< HEAD
-        final JButton backButton = new JButton("Επιστροφή Επιλογής Έτους");
-        frame.backButtonColors(backButton);
-        bottomPanel.add(backButton);
-
-        backButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(final ActionEvent e) {
-                frame.switchTo("yearSelection");
-            }
-        });
-=======
->>>>>>> Managers
     }
 }

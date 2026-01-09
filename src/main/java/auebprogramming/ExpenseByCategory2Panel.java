@@ -50,11 +50,11 @@ public final class ExpenseByCategory2Panel extends JPanel {
     /**
      * Constructs an ExpenseByCategory2Panel.
      *
-     * @param ownerFrame the main frame
+     * @param ownerFrame  the main frame
      * @param codesString the raw code string entered by the user
      */
     public ExpenseByCategory2Panel(final MainFrame ownerFrame,
-                                   final String codesString) {
+            final String codesString) {
 
         this.frame = ownerFrame;
         setLayout(new BorderLayout());
@@ -75,31 +75,13 @@ public final class ExpenseByCategory2Panel extends JPanel {
     private void initializeCenterPanel(final String codesString) {
         displayArea.setEditable(false);
         displayArea.setFont(
-            new Font("Monospaced", Font.PLAIN, FONT_SIZE));
+                new Font("Monospaced", Font.PLAIN, FONT_SIZE));
 
         // Convert user input to array
         String[] codes = codesString.split("[, ]+");
 
         // Get formatted report
-<<<<<<< HEAD
-        String categoriesFile ="";
-        final int selectedYear = Year.SELECTED_YEAR;
-        switch (selectedYear) {
-                case 2025 -> {
-                    categoriesFile = "expense_categories_2025.csv";
-                }
-                case 2026 -> {
-                    categoriesFile = "expense_categories_2026.csv";
-                }
-                default -> AppException.showError(
-                        "Λάθος στην φόρτωση δεδομένων του επιλεγμένου έτους");
-            }
-        ExpenseManager manager =
-            new ExpenseManager(categoriesFile);
-=======
-        ExpenseManager manager =
-            new ExpenseManager("expense_categories_2025.csv");
->>>>>>> Managers
+        ExpenseManager manager = new ExpenseManager("expense_categories_2025.csv");
 
         String report = manager.getExpenseDetailsReport(codes);
 
@@ -115,13 +97,12 @@ public final class ExpenseByCategory2Panel extends JPanel {
      * Initializes the bottom panel containing a single Back button.
      */
     private void initializeBottomPanel() {
-        final JPanel bottomPanel =
-            new JPanel(new GridLayout(GRID_ROWS, GRID_COLS,
-                                      GRID_GAP, GRID_GAP));
+        final JPanel bottomPanel = new JPanel(new GridLayout(GRID_ROWS, GRID_COLS,
+                GRID_GAP, GRID_GAP));
 
         bottomPanel.setBorder(
-            BorderFactory.createEmptyBorder(
-                PADDING, PADDING, PADDING, PADDING));
+                BorderFactory.createEmptyBorder(
+                        PADDING, PADDING, PADDING, PADDING));
 
         bottomPanel.setPreferredSize(new Dimension(0, BOTTOM_HEIGHT));
 

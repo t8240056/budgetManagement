@@ -131,11 +131,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
         backButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(final ActionEvent event) {
-<<<<<<< HEAD
-                frame.showExpensePanel();
-=======
                 frame.switchTo("expensePanel");
->>>>>>> Managers
             }
         });
 
@@ -148,7 +144,7 @@ public final class ExpenseByCategoryPanel extends JPanel {
                 } else {
                     AppException.showError(
                             "Πατήστε το κουμπί επιστροφής ή "
-                            + "πληκτρολογήστε κωδικό");
+                                    + "πληκτρολογήστε κωδικό");
                 }
             }
         });
@@ -173,26 +169,8 @@ public final class ExpenseByCategoryPanel extends JPanel {
      * @param text the text to display
      */
     public void setDisplayText() {
-<<<<<<< HEAD
-        String categoriesFile ="";
-        final int selectedYear = Year.SELECTED_YEAR;
-        switch (selectedYear) {
-                case 2025 -> {
-                    categoriesFile = "expense_categories_2025.csv";
-                }
-                case 2026 -> {
-                    categoriesFile = "expense_categories_2026.csv";
-                }
-                default -> AppException.showError(
-                        "Λάθος στην φόρτωση δεδομένων του επιλεγμένου έτους");
-            }
-
-        ExpenseManager expenseManager = new ExpenseManager(
-            categoriesFile);
-=======
         ExpenseManager expenseManager = new ExpenseManager(
                 "expense_categories_2025.csv");
->>>>>>> Managers
 
         displayArea.setText(expenseManager.getFullExpensesReport());
     }
