@@ -362,7 +362,9 @@ public final class BudgetManager {
             change.apply(entry);
             changeHistory.push(change);
 
-            logAction("Percentage Change (" + percent + "%) on " + code);
+            // Added justification to log as requested
+            logAction("Percentage Change (" + percent + "%) on " + code
+                    + ". Reason: " + justification);
             return "Success! New Amount: "
                     + NumberFormat.getInstance().format(entry.getAmount())
                     + " €";
