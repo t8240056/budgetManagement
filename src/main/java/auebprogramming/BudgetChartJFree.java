@@ -36,75 +36,74 @@ import org.jfree.data.category.DefaultCategoryDataset;
 
 public class BudgetChartJFree extends JPanel {
 
-    // Components για το GUI
+    // GUI Components
     private ChartPanel chartPanel;
     private JFreeChart chart;
     private CategoryDataset dataset;
     private Map<String, Integer> categoryToIndexMap = new HashMap<>();
     private Object[][] budgetData;
 
-    // Constructor που δέχεται τον πίνακα με τα δεδομένα
-    public BudgetChartJFree(final Object[][] data) { // Αλλαγή: budgetData -> data
+    // Constructor that accepts the data array
+    public BudgetChartJFree(final Object[][] data) {
         super(new BorderLayout());
-        this.budgetData = data; // Εδώ δεν υπάρχει hiding, γιατί χρησιμοποιούμε this.
+        this.budgetData = data;
 
         if (data == null || data.length == 0) {
-            throw new IllegalArgumentException("Ο πίνακας δεδομένων δεν μπορεί να είναι κενός!");
+            throw new IllegalArgumentException("Data array cannot be empty!");
         }
 
         initializeComponents();
     }
 
-    // Αρχικοποίηση όλων των components
+    // Initialize all components
     private void initializeComponents() {
-        // Δημιουργία dataset
+        // Create dataset
         dataset = createDataset();
 
-        // Δημιουργία chart
+        // Create chart
         chart = createChart(dataset);
 
-        // Δημιουργία chart panel
+        // Create chart panel
         chartPanel = new ChartPanel(chart);
         chartPanel.setPreferredSize(new Dimension(1200, calculateHeight(budgetData.length)));
         chartPanel.setMouseZoomable(true, false);
         chartPanel.setDisplayToolTips(true);
 
-        // Προσθήκη custom tooltips και interactivity
+        // Add custom tooltips and interactivity
         addCustomTooltips(chartPanel, dataset);
 
-        // Προσθήκη στο panel
+        // Add to panel
         add(chartPanel, BorderLayout.CENTER);
     }
 
-    // Μέθοδος για να πάρει κάποιος το ChartPanel (για να το προσθέσει σε άλλο
-    // container)
+    // Method to get the ChartPanel (for adding to another container)
     public final ChartPanel getChartPanel() {
         return chartPanel;
     }
 
-    // Μέθοδος για να πάρει κάποιος το JFreeChart
+    // Method to get the JFreeChart
     public final JFreeChart getChart() {
         return chart;
     }
 
-    // Μέθοδος για να ενημερώσει τα δεδομένα
+    // Method to update data
     public final void updateData(final Object[][] newData) {
         this.budgetData = newData;
         categoryToIndexMap.clear();
         dataset = createDataset();
 
-        // Ενημέρωση του chart
+        // Update chart
         chart.getCategoryPlot().setDataset(dataset);
 
-        // Ενημέρωση tooltips
+        // Update tooltips
         addCustomTooltips(chartPanel, dataset);
 
-        // Ανανέωση του panel
+        // Refresh panel
         revalidate();
         repaint();
     }
 
-    // Μέθοδος για αλλαγή τίτλου
+    // Method to change title
     public final void setChartTitle(final String title) {
         TextTitle mainTitle = new TextTitle(
                 title,
@@ -113,9 +112,9 @@ public class BudgetChartJFree extends JPanel {
         chart.setTitle(mainTitle);
     }
 
-    // Μέθοδος για αλλαγή υποτίτλου
+    // Method to change subtitle
     public final void setChartSubtitle(final String subtitle) {
-        // Αφαίρεση υπάρχοντος υποτίτλου αν υπάρχει
+        // Remove existing subtitle if exists
         if (chart.getSubtitleCount() > 0) {
             chart.removeSubtitle(chart.getSubtitle(0));
         }
@@ -127,23 +126,23 @@ public class BudgetChartJFree extends JPanel {
         chart.addSubtitle(subTitle);
     }
 
-    // Μέθοδος για αλλαγή μεγέθους
+    // Method to change size
     public final void setChartSize(final int width, final int height) {
         chartPanel.setPreferredSize(new Dimension(width, height));
         chartPanel.revalidate();
     }
 
-    // Μέθοδος για να πάρει τα τρέχοντα δεδομένα
+    // Method to get current data
     public final Object[][] getCurrentData() {
         return budgetData;
     }
 
-    // Μέθοδος για να πάρει τον αριθμό των κατηγοριών
+    // Method to get category count
     public final int getCategoryCount() {
         return budgetData.length;
     }
 
-    // Μέθοδος για να πάρει το συνολικό ποσό
+    // Method to get total amount
     public final double getTotalAmount() {
         return getTotalBudget();
     }
@@ -160,46 +159,46 @@ public class BudgetChartJFree extends JPanel {
     }
 
     private CategoryDataset createDataset() {
-        DefaultCategoryDataset newDataset = new DefaultCategoryDataset(); // Αλλαγή: dataset -> newDataset
+        DefaultCategoryDataset newDataset = new DefaultCategoryDataset();
 
-        // Καθαρισμός του map
+        // Clear map
         categoryToIndexMap.clear();
 
-        // Προσθήκη δεδομένων από τον πίνακα στο dataset
+        // Add data from array to dataset
         for (int i = 0; i < budgetData.length; i++) {
             Object[] item = budgetData[i];
 
-            // Επαλήθευση ότι ο πίνακας έχει 3 στήλες
+            // Verify that array has 3 columns
             if (item.length < 3) {
                 throw new IllegalArgumentException(
-                        "Κάθε γραμμή πρέπει να έχει 3 στοιχεία: [Κωδικός, Κατηγορία, Ποσό]");
+                        "Each row must have 3 elements: [Code, Category, Amount]");
             }
 
-            String kodikos = item[0].toString();
-            String kathgoria = item[1].toString();
-            double poso;
+            String code = item[0].toString();
+            String category = item[1].toString();
+            double amount;
 
-            // Μετατροπή του ποσού σε double
+            // Convert amount to double
             try {
                 if (item[2] instanceof Number) {
-                    poso = ((Number) item[2]).doubleValue();
+                    amount = ((Number) item[2]).doubleValue();
                 } else {
-                    poso = Double.parseDouble(item[2].toString());
+                    amount = Double.parseDouble(item[2].toString());
                 }
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException(
-                        "Το ποσό στη γραμμή " + (i + 1) + " δεν είναι έγκυρος αριθμός: " + item[2]);
+                        "Amount in row " + (i + 1) + " is not a valid number: " + item[2]);
             }
 
-            // Μετατροπή σε δισεκατομμύρια για καλύτερη εμφάνιση
-            double chartValue = Math.max(poso, 1_000_000);
+            // Convert to billions for better display
+            double chartValue = Math.max(amount, 1_000_000);
 
-            // Συντομευμένο όνομα για καλύτερη εμφάνιση στον άξονα
-            String displayName = kodikos + " - " + getShortName(kathgoria, 35);
+            // Shortened name for better display on axis
+            String displayName = code + " - " + getShortName(category, 35);
 
-            newDataset.addValue(chartValue, "Προϋπολογισμός", displayName);
+            newDataset.addValue(chartValue, "Budget", displayName);
 
-            // Αποθήκευση αντιστοιχίας για γρήγορη αναζήτηση
+            // Store mapping for quick lookup
             categoryToIndexMap.put(displayName, i);
         }
 
@@ -213,34 +212,34 @@ public class BudgetChartJFree extends JPanel {
         return fullName.substring(0, maxLength - 3) + "...";
     }
 
-    private JFreeChart createChart(final CategoryDataset dataSet) { // Αλλαγή: dataset -> dataSet
-        // Δημιουργία οριζόντιου bar chart
-        JFreeChart newChart = ChartFactory.createBarChart(// Αλλαγή: chart -> newChart
-                null, // Χωρίς τίτλο (θα βάλουμε custom)
-                null, // Χωρίς label για τον κάθετο άξονα
-                "Ποσό (€ – λογαριθμική κλίμακα)", // Label για οριζόντιο άξονα
+    private JFreeChart createChart(final CategoryDataset dataSet) {
+        // Create horizontal bar chart
+        JFreeChart newChart = ChartFactory.createBarChart(
+                null, // No title (we'll add custom)
+                null, // No label for vertical axis
+                "Amount (€ - logarithmic scale)", // Label for horizontal axis
                 dataSet,
                 PlotOrientation.HORIZONTAL,
                 false, // No legend
-                true, // Tooltips
-                false // URLs
+                true,  // Tooltips
+                false  // URLs
         );
 
-        // Προσαρμογή εμφάνισης
+        // Customize appearance
         CategoryPlot plot = (CategoryPlot) newChart.getPlot();
 
-        // Προσαρμογή renderer
+        // Customize renderer
         BarRenderer renderer = (BarRenderer) plot.getRenderer();
 
-        // Gradient χρώματα από πράσινο προς μπλε
+        // Gradient colors from green to blue
         Color[] colors = createColorGradient(dataSet.getColumnCount());
 
-        // Εφαρμογή χρωμάτων
+        // Apply colors
         for (int i = 0; i < dataSet.getColumnCount(); i++) {
             renderer.setSeriesPaint(i, colors[i]);
         }
 
-        // Προσθήκη τιμών στα μπάρ
+        // Add values on bars
         DecimalFormat df = new DecimalFormat("#,##0.00");
         renderer.setDefaultItemLabelGenerator(new StandardCategoryItemLabelGenerator(
                 "{2}", df));
@@ -250,7 +249,7 @@ public class BudgetChartJFree extends JPanel {
         renderer.setDefaultPositiveItemLabelPosition(
                 new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.CENTER_LEFT));
 
-        // Ρύθμιση μπάρ (αυτόματη ρύθμιση βάσει αριθμού γραμμών)
+        // Configure bars (automatic adjustment based on row count)
         int rowCount = budgetData.length;
         double itemMargin = Math.max(0.05, Math.min(0.20, 0.20 - (rowCount * 0.005)));
         double maxBarWidth = Math.max(0.03, Math.min(0.08, 0.08 - (rowCount * 0.001)));
@@ -258,28 +257,28 @@ public class BudgetChartJFree extends JPanel {
         renderer.setItemMargin(itemMargin);
         renderer.setMaximumBarWidth(maxBarWidth);
 
-        // Προσαρμογή άξονα κατηγοριών (κάθετος)
+        // Configure category axis (vertical)
         CategoryAxis domainAxis = plot.getDomainAxis();
         double categoryMargin = Math.max(0.10, Math.min(0.30, 0.30 - (rowCount * 0.01)));
         domainAxis.setCategoryMargin(categoryMargin);
 
-        // Προσαρμογή μεγέθους γραμματοσειράς βάσει αριθμού γραμμών
+        // Configure font size based on row count
         int fontSize = Math.max(8, 11 - (rowCount / 20));
         domainAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, fontSize));
         domainAxis.setTickLabelPaint(new Color(60, 60, 60));
         domainAxis.setTickLabelInsets(new RectangleInsets(2, 2, 2, 2));
 
-        // Προσαρμογή άξονα τιμών (οριζόντιος)
-        LogAxis rangeAxis = new LogAxis("Ποσό (€ - λογαριθμική κλίμακα)");
+        // Configure value axis (horizontal)
+        LogAxis rangeAxis = new LogAxis("Amount (€ - logarithmic scale)");
         rangeAxis.setBase(10);
-        rangeAxis.setSmallestValue(1_000_000); // 1 εκ. ελάχιστο
+        rangeAxis.setSmallestValue(1_000_000); // Minimum 1 million
         rangeAxis.setNumberFormatOverride(new DecimalFormat("###,###"));
         rangeAxis.setTickLabelFont(new Font("Arial", Font.PLAIN, 12));
         rangeAxis.setTickLabelPaint(new Color(70, 70, 70));
 
         plot.setRangeAxis(rangeAxis);
 
-        // Προσαρμογή background
+        // Configure background
         plot.setBackgroundPaint(new Color(250, 250, 250));
         plot.setDomainGridlinePaint(new Color(220, 220, 220));
         plot.setRangeGridlinePaint(new Color(220, 220, 220));
@@ -309,20 +308,19 @@ public class BudgetChartJFree extends JPanel {
         return colors;
     }
 
-    private void addCustomTooltips(final ChartPanel panel, final CategoryDataset dataSet) { // Αλλαγή: chartPanel ->
-                                                                                            // panel, dataset -> dataSet
+    private void addCustomTooltips(final ChartPanel panel, final CategoryDataset dataSet) {
         // Custom tooltip generator
         StandardCategoryToolTipGenerator toolTipGenerator = new StandardCategoryToolTipGenerator() {
             @Override
             public String generateToolTip(final CategoryDataset dataSet, final int row, final int column) {
                 String category = (String) dataSet.getColumnKey(column);
                 String[] parts = category.split(" - ", 2);
-                String kodikos = parts.length > 0 ? parts[0].trim() : "";
-                String kathgoria = parts.length > 1 ? parts[1].trim() : "";
+                String code = parts.length > 0 ? parts[0].trim() : "";
+                String categoryName = parts.length > 1 ? parts[1].trim() : "";
 
-                String fullKathgoria = findFullCategoryName(kodikos);
+                String fullCategoryName = findFullCategoryName(code);
 
-                Object[] itemData = findItemData(kodikos);
+                Object[] itemData = findItemData(code);
 
                 double originalValue = 0.0;
                 if (itemData != null) {
@@ -347,29 +345,29 @@ public class BudgetChartJFree extends JPanel {
                                 + "background:#f9f9f9;border:1px solid #ccc;'>"
                                 + "<div style='color:#2C3E50;font-weight:bold;"
                                 + "font-size:13px;margin-bottom:8px;'>"
-                                + "Κωδικός: <span style='color:#2980B9;'>%s</span>"
+                                + "Code: <span style='color:#2980B9;'>%s</span>"
                                 + "</div>"
                                 + "<div style='margin-bottom:6px;'>"
-                                + "<b>Κατηγορία:</b><br>%s</div>"
+                                + "<b>Category:</b><br>%s</div>"
                                 + "<hr style='border:none;border-top:1px dashed #ccc;"
                                 + "margin:8px 0;'>"
                                 + "<table style='width:100%%;border-collapse:collapse;'>"
                                 + "<tr><td style='padding:4px;'>"
-                                + "<b>Ποσό:</b></td>"
+                                + "<b>Amount:</b></td>"
                                 + "<td style='padding:4px;color:#27AE60;"
-                                + "font-weight:bold;'>%s δις €</td></tr>"
+                                + "font-weight:bold;'>%s billion €</td></tr>"
                                 + "<tr><td style='padding:4px;'>"
-                                + "<b>Πλήρες Ποσό:</b></td>"
+                                + "<b>Full Amount:</b></td>"
                                 + "<td style='padding:4px;color:#2C3E50;'>"
                                 + "%s €</td></tr>"
                                 + "</table>"
                                 + "<div style='margin-top:8px;font-size:11px;"
                                 + "color:#7F8C8D;font-style:italic;'>"
-                                + "Κάντε κλικ για περισσότερες λεπτομέρειες"
+                                + "Click for more details"
                                 + "</div>"
                                 + "</div></html>",
-                        kodikos,
-                        fullKathgoria != null ? fullKathgoria : kathgoria,
+                        code,
+                        fullCategoryName != null ? fullCategoryName : categoryName,
                         formattedBillions,
                         formattedOriginal);
 
@@ -390,9 +388,9 @@ public class BudgetChartJFree extends JPanel {
                     if (columnKey instanceof String) {
                         String category = (String) columnKey;
                         String[] parts = category.split(" - ", 2);
-                        String kodikos = parts.length > 0 ? parts[0].trim() : "";
+                        String code = parts.length > 0 ? parts[0].trim() : "";
 
-                        Object[] itemData = findItemData(kodikos);
+                        Object[] itemData = findItemData(code);
                         if (itemData != null) {
                             showDetailsDialog(itemData);
                         }
@@ -402,7 +400,7 @@ public class BudgetChartJFree extends JPanel {
         });
     }
 
-    private int findColumnIndex(final CategoryDataset dataSet, final String category) { // Αλλαγή: dataset -> dataSet
+    private int findColumnIndex(final CategoryDataset dataSet, final String category) {
         int columnCount = dataSet.getColumnCount();
         for (int i = 0; i < columnCount; i++) {
             Comparable<?> key = dataSet.getColumnKey(i);
@@ -413,18 +411,18 @@ public class BudgetChartJFree extends JPanel {
         return -1;
     }
 
-    private String findFullCategoryName(final String kodikos) {
+    private String findFullCategoryName(final String code) {
         for (Object[] item : budgetData) {
-            if (item[0].toString().equals(kodikos)) {
+            if (item[0].toString().equals(code)) {
                 return item[1].toString();
             }
         }
         return null;
     }
 
-    private Object[] findItemData(final String kodikos) {
+    private Object[] findItemData(final String code) {
         for (Object[] item : budgetData) {
-            if (item[0].toString().equals(kodikos)) {
+            if (item[0].toString().equals(code)) {
                 return item;
             }
         }
@@ -432,24 +430,24 @@ public class BudgetChartJFree extends JPanel {
     }
 
     private void showDetailsDialog(final Object[] itemData) {
-        String kodikos = itemData[0].toString();
-        String kathgoria = itemData[1].toString();
-        double poso;
+        String code = itemData[0].toString();
+        String category = itemData[1].toString();
+        double amount;
 
         try {
             if (itemData[2] instanceof Number) {
-                poso = ((Number) itemData[2]).doubleValue();
+                amount = ((Number) itemData[2]).doubleValue();
             } else {
-                poso = Double.parseDouble(itemData[2].toString());
+                amount = Double.parseDouble(itemData[2].toString());
             }
         } catch (NumberFormatException e) {
-            poso = 0.0;
+            amount = 0.0;
         }
 
-        double posoInBillions = poso / 1_000_000_000;
-        double posoInMillions = poso / 1_000_000;
+        double amountInBillions = amount / 1_000_000_000;
+        double amountInMillions = amount / 1_000_000;
 
-        String percentage = String.format("%.1f%%", (poso / getTotalBudget()) * 100);
+        String percentage = String.format("%.1f%%", (amount / getTotalBudget()) * 100);
 
         String message = String.format(
                 "<html>"
@@ -457,40 +455,40 @@ public class BudgetChartJFree extends JPanel {
                         + "<div style='background:#2C3E50;color:white;"
                         + "padding:10px;margin:-10px -10px 10px -10px;'>"
                         + "<h3 style='margin:0;'>"
-                        + "ΛΕΠΤΟΜΕΡΕΙΕΣ ΚΑΤΗΓΟΡΙΑΣ"
+                        + "CATEGORY DETAILS"
                         + "</h3></div>"
                         + "<table style='width:100%%;border-collapse:collapse;"
                         + "margin:10px 0;'>"
                         + "<tr style='background:#f8f9fa;'>"
                         + "<td style='padding:8px;border:1px solid #ddd;"
-                        + "width:120px;'><b>Κωδικός:</b></td>"
-                        + "<td style='padding:8px;border:1px solid #7b1515ff;'>"
+                        + "width:120px;'><b>Code:</b></td>"
+                        + "<td style='padding:8px;border:1px solid #ddd;'>"
                         + "<span style='color:#2980B9;font-weight:bold;"
                         + "font-size:14px;'>%s</span></td></tr>"
                         + "<tr><td style='padding:8px;border:1px solid #ddd;'>"
-                        + "<b>Κατηγορία:</b></td>"
+                        + "<b>Category:</b></td>"
                         + "<td style='padding:8px;border:1px solid #ddd;'>%s</td>"
                         + "</tr>"
                         + "<tr style='background:#f8f9fa;'>"
                         + "<td style='padding:8px;border:1px solid #ddd;'>"
-                        + "<b>Ποσό:</b></td>"
+                        + "<b>Amount:</b></td>"
                         + "<td style='padding:8px;border:1px solid #ddd;"
                         + "color:#27AE60;font-weight:bold;font-size:14px;'>"
                         + "%,.0f €</td></tr>"
                         + "<tr style='background:#f8f9fa;'>"
                         + "<td style='padding:8px;border:1px solid #ddd;'>"
-                        + "<b>Σε δισεκατομμύρια:</b></td>"
+                        + "<b>In billions:</b></td>"
                         + "<td style='padding:8px;border:1px solid #ddd;"
-                        + "color:#2980B9;font-weight:bold;'>%,.2f δις €</td>"
+                        + "color:#2980B9;font-weight:bold;'>%,.2f billion €</td>"
                         + "</tr>"
                         + "<tr style='background:#f8f9fa;'>"
                         + "<td style='padding:8px;border:1px solid #ddd;'>"
-                        + "<b>Σε εκατομμύρια:</b></td>"
+                        + "<b>In millions:</b></td>"
                         + "<td style='padding:8px;border:1px solid #ddd;"
-                        + "color:#8E44AD;font-weight:bold;'>%,.0f εκ €</td>"
+                        + "color:#8E44AD;font-weight:bold;'>%,.0f million €</td>"
                         + "</tr>"
                         + "<tr><td style='padding:8px;border:1px solid #ddd;'>"
-                        + "<b>Ποσοστό Σύνολου:</b></td>"
+                        + "<b>Percentage of Total:</b></td>"
                         + "<td style='padding:8px;border:1px solid #ddd;"
                         + "color:#E74C3C;font-weight:bold;font-size:14px;'>"
                         + "%s</td></tr>"
@@ -498,19 +496,19 @@ public class BudgetChartJFree extends JPanel {
                         + "<div style='margin-top:15px;padding:10px;"
                         + "background:#ECF0F1;border-left:4px solid #3498DB;'>"
                         + "<span style='font-size:11px;color:#7F8C8D;'>"
-                        + "Πηγή: Υπουργείο Οικονομικών - Προϋπολογισμός 2025"
+                        + "Source: Ministry of Finance - Budget 2025"
                         + "</span></div>"
                         + "</div></html>",
-                kodikos,
-                kathgoria,
-                poso,
-                posoInBillions,
-                posoInMillions,
+                code,
+                category,
+                amount,
+                amountInBillions,
+                amountInMillions,
                 percentage);
 
         JOptionPane.showMessageDialog(this,
                 new JLabel(message),
-                "ΛΕΠΤΟΜΕΡΕΙΕΣ ΠΡΟΥΠΟΛΟΓΙΣΜΟΥ",
+                "BUDGET DETAILS",
                 JOptionPane.INFORMATION_MESSAGE);
     }
 
@@ -524,7 +522,7 @@ public class BudgetChartJFree extends JPanel {
                     total += Double.parseDouble(item[2].toString());
                 }
             } catch (NumberFormatException e) {
-                // Αγνοούμε μη έγκυρα ποσά
+                // Ignore invalid amounts
             }
         }
         return total;
