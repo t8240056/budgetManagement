@@ -55,6 +55,7 @@ public final class MenuPanel extends JPanel {
 
         final JButton confirmButton = new JButton("Επιβεβαίωση");
         frame.confButtonColors(confirmButton);
+        confirmButton.setFont(new Font("Arial", Font.BOLD, 15));
         add(confirmButton);
 
         confirmButton.addActionListener(new ActionListener() {
