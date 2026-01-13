@@ -121,15 +121,14 @@
             <goals>
               <goal>report</goal>
             </goals>
-            <configuration>
-              <sourceDirectories>
-                <sourceDirectory>src/main/java</sourceDirectory>
-              </sourceDirectories>
-            </configuration>
           </execution>
         </executions>
         <configuration>
-          <sourceEncoding>UTF-8</sourceEncoding>
+          <excludes>
+            <exclude>**/*Panel*</exclude>
+            <exclude>**/*Frame*</exclude>
+            <exclude>**/*Dialog*</exclude>
+          </excludes>
         </configuration>
       </plugin>
       <plugin>

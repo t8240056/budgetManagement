@@ -1,10 +1,11 @@
 package auebprogramming;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -30,16 +31,24 @@ public class BudgetChangeTest {
         }
 
         @Override
-        public BigDecimal apply(final BudgetChangesEntry entry) { return BigDecimal.ZERO; }
+        public BigDecimal apply(final BudgetChangesEntry entry) {
+            return BigDecimal.ZERO;
+        }
 
         @Override
-        public BigDecimal undo(final BudgetChangesEntry entry) { return BigDecimal.ZERO; }
+        public BigDecimal undo(final BudgetChangesEntry entry) {
+            return BigDecimal.ZERO;
+        }
 
         @Override
-        public BigDecimal getDifference() { return BigDecimal.ZERO; }
+        public BigDecimal getDifference() {
+            return BigDecimal.ZERO;
+        }
 
         @Override
-        public ChangeType getType() { return ChangeType.ABSOLUTE_INCREASE; }
+        public ChangeType getType() {
+            return ChangeType.ABSOLUTE_INCREASE;
+        }
     }
 
     /**
@@ -70,8 +79,8 @@ public class BudgetChangeTest {
     @Test
     @DisplayName("Test toString Format")
     public void testToString() {
-        final String expected = String.format("%s [%s]: %s", 
-            stubChange.getType(), testCode, testReason);
+        final String expected = String.format("%s [%s]: %s",
+                stubChange.getType(), testCode, testReason);
         assertEquals(expected, stubChange.toString());
     }
 
