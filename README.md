@@ -1,122 +1,118 @@
-# ΠΡΩΘΥΠΟΥΡΓΟΣ ΓΙΑ ΜΙΑ ΗΜΕΡΑ
+# PRIME MINISTER FOR A DAY
 
-## Σύστημα Διαχείρισης Κρατικού Προϋπολογισμού 
+## State Budget Management System
 
-Η παρούσα εφαρμογή είναι ένα ολοκληρωμένο πληροφοριακό σύστημα σε περιβάλλον **Java Swing** για την παρακολούθηση, ανάλυση και τροποποίηση των δεδομένων του ελληνικού κρατικού προϋπολογισμού για το έτος 2025. Επιτρέπει την ιεραρχική πλοήγηση σε έσοδα και έξοδα, καθώς και την εκτέλεση προσομοιώσεων αλλαγών μέσω ανακατανομής ποσού.
+This application is a comprehensive information system developed in **Java Swing** for monitoring, analyzing, and modifying the Greek state budget data for the year 2025. It enables hierarchical navigation through revenues and expenses, as well as the execution of change simulations via fund reallocation.
 
-## Αρχιτεκτονική & Σχεδιαστικά Πρότυπα 
+## Architecture & Design Patterns
 
-* **MVC (Model-View-Controller):** Πλήρης διαχωρισμός δεδομένων (CSV), διεπαφής (Panels) και λογικής ελέγχου (Manager).
-* **Command Pattern:** Κάθε αλλαγή (BudgetChange) αντιμετωπίζεται ως αυτόνομο αντικείμενο, επιτρέποντας λειτουργίες Undo/Redo και τήρηση ιστορικού.
-* **Facade Pattern:** Η κλάση ChangeManager απλοποιεί την επικοινωνία μεταξύ του GUI και των σύνθετων οικονομικών πράξεων.
-* **Hierarchy Pattern:** Διαχείριση εσόδων σε 4 επίπεδα (2-ψήφιοι έως 7-ψήφιοι κωδικοί) με αυστηρή επικύρωση πατρικών-θυγατρικών σχέσεων.
+* **MVC (Model-View-Controller):** Complete separation of data (CSV), interface (Panels), and control logic (Managers).
+* **Command Pattern:** Each modification (BudgetChange) is treated as an autonomous object, enabling Undo/Redo operations and history tracking.
+* **Facade Pattern:** The ChangeManager class simplifies communication between the GUI and complex financial operations.
+* **Hierarchy Pattern:** Management of revenues across 4 levels (from 2-digit to 7-digit codes) with strict validation of parent-child relationships.
 
-### Διάγραμμα UML
-Το διάγραμμα UML αποτυπώνει τη δομή των κλάσεων και τη μεταξύ τους αλληλεπίδραση:
+### UML Diagram
+The UML diagram captures the class structure and their interactions:
 
 ![UML Diagram](docs/diagrams/uml_diagram.png)
 
-## Δομές Δεδομένων & Αλγόριθμοι
+## Data Structures & Algorithms
 
-* **ArrayList:** Διαχείριση και δυναμικό φιλτράρισμα των αποτελεσμάτων αναζήτησης.
-* **Αλγόριθμος Drill-down:** Ιεραρχική πλοήγηση στα αρχεία εσόδων μέσω των RevenueDataManager και ExpenseManager.
-* **Validation Logic:** Χρήση της ChangeValidator για τη διασφάλιση οικονομικών κανόνων (αποφυγή αρνητικών υπολοίπων).
+* **ArrayList:** Used for managing and dynamically filtering search results.
+* **Drill-down Algorithm:** Hierarchical navigation through revenue files via RevenueDataManager and ExpenseManager.
+* **Validation Logic:** Utilization of ChangeValidator to ensure financial rules (e.g., prevention of negative balances).
 
-## Δομή Αποθετηρίου
+## Repository Structure
 
-* src/main/java/auebprogramming/: Πηγαίος κώδικας εφαρμογής.
+* `src/main/java/auebprogramming/`: Application source code.
+* `src/test/java/auebprogramming/`: Test classes (Unit & Integration Tests).
+* `src/main/resources/`: CSV data files (2025) and saved scenarios.
+* `docs/diagrams/`: Technical UML diagrams (umlDiagram.puml).
+* `pom.xml`: Maven configuration and dependencies (JFreeChart, JUnit 5).
 
-* src/test/java/auebprogramming/: Κλάσεις ελέγχου (Unit & Integration Tests).
+## Class Documentation
 
-* src/main/resources/: Αρχεία δεδομένων CSV (2025) και αποθηκευμένα σενάρια.
+### 1. Interface Layer (GUI Layer - Panels)
+* **MainFrame.java:** The central frame of the application managing screen transitions via CardLayout.
+* **RevenuePanel.java (1, 2, 3, 4):** A series of panels (Revenue2Panel, Revenue3Panel, etc.) implementing the revenue hierarchy drill-down.
+* **ViewEntriesPanel.java:** A panel displaying current budget entries in a table format.
+* **PercentageChangePanel.java & TransferChangePanel.java:** Specialized input forms for performing percentage-based changes and fund transfers.
+* **ViewAuditLogPanel.java:** Screen for viewing the action history (audit log).
 
-* docs/diagrams/: Τεχνικά διαγράμματα UML (umlDiagram.puml).
+### 2. Data & Display Management
+* **BudgetChangesEntry.java:** The core entity representing a budget line (Code, Description, Amount).
+* **ExpenseManager.java + RevenueDataManager.java:** Handle the loading of revenue and expense CSVs and the validation of their hierarchical structure.
+* **BudgetRepository.java:** In-memory data store for fast access and processing of entries.
 
-* pom.xml: Ρυθμίσεις Maven και εξαρτήσεις (JFreeChart, JUnit 5).
+### 3. Business Logic (Changes)
+* **BudgetChange.java (Abstract):** The base for all change commands (Absolute, Percentage, Transfer).
+* **ChangeManager:** A simplified interface for executing absolute and percentage change operations, as well as transfers.
+* **ChangeValidator.java:** A validity checker ensuring changes do not violate financial rules (e.g., avoiding negative balances).
+* **BudgetIOHandler:** Facilitates the conversion of data from files into dynamic data structures for reallocation operations.
 
-## Τεκμηρίωση Κλάσεων 
+## Key Features
+1. **Hierarchical Navigation:** Revenue reporting using hierarchical drill-down navigation.
+2. **Dynamic Changes:** Support for absolute, percentage changes, and transfers between codes.
+3. **Audit Logging:** Full recording of every modification (absolute, percentage, transfer) for transparency purposes.
 
-### 1. Στρώμα Διεπαφής (GUI Layer - Panels)
-* **MainFrame.java:** Ο κεντρικός σκελετός της εφαρμογής που διαχειρίζεται την εναλλαγή των οθονών μέσω CardLayout.
-* **RevenuePanel.java (1, 2, 3, 4):** Σειρά από panels (Revenue2Panel, Revenue3Panel, κλπ.) που υλοποιούν το drill-down της ιεραρχίας των εσόδων.
-* **ViewEntriesPanel.java:** Panel που προβάλλει τις τρέχουσες εγγραφές του προϋπολογισμού σε μορφή πίνακα.
-* **PercentageChangePanel.java & TransferChangePanel.java:** Εξειδικευμένες φόρμες εισαγωγής για την πραγματοποίηση ποσοστιαίων αλλαγών και μεταφορών πιστώσεων.
-* **ViewAuditLogPanel.java:** Οθόνη προβολής του ιστορικού ενεργειών (audit log).
-
-### 2. Διαχείριση Δεδομένων & Προβολής / Data & Display
-* **BudgetChangesEntry.java:** Η βασική οντότητα που αντιπροσωπεύει μια γραμμή προϋπολογισμού (Κωδικός, Περιγραφή, Ποσό).
-* **ExpenseManager.java + RevenueDataManager.java:** Διαχειρίζονται τη φόρτωση των CSV των εσόδων και των εξόδων, καθώς και την επικύρωση της ιεραρχικής τους δομής.
-* **BudgetRepository.java:** In-memory αποθήκη δεδομένων για γρήγορη πρόσβαση και επεξεργασία των εγγραφών.
-
-### 3. Λογική Αλλαγών / Business Logic (Changes)
-* **BudgetChange.java (Abstract):** Η βάση για όλες τις εντολές αλλαγής (Absolute, Percentage, Transfer).
-* **ChangeManager:** Πρόκειται για μια απλοποιημένη διεπαφή για την εκτέλεση απόλυτων και ποσοστιαίων λειτουργιών αλλαγής, καθώς και για μεταφορές.
-* **ChangeValidator.java:** Ελεγκτής εγκυρότητας που διασφαλίζει ότι οι αλλαγές δεν παραβιάζουν οικονομικούς κανόνες (π.χ. αποφυγή αρνητικών υπολοίπων).
-* **BudgetIOHandler:** Διευκολύνει τη μετατροπή των δεδομένων από αρχεία σε δυναμικές δομές δεδομένων για τις λειτουργίες ανακατανομής.
-
-## Λειτουργίες / Key Features
-1.  **Ιεραρχική Πλοήγηση (Hierarchical Navigation):** Αναφορά εσόδων με χρήση ιεραρχικής πλοήγησης (Drill-down).
-2.  **Δυναμικές Αλλαγές (Dynamic Changes):** Υποστήριξη απόλυτων, ποσοστιαίων αλλαγών και μεταφορών μεταξύ κωδικών.
-3.  **Ιστορικό Ενεργειών (Audit Logging):** Πλήρης καταγραφή κάθε μεταβολής (απόλυτη, ποσοστιαία, μεταφορά) για λόγους διαφάνειας.
 ---
 
-## Οδηγίες Χρήσης Εφαρμογής
+## User Manual
 
-Η εφαρμογή προσφέρει ένα φιλικό περιβάλλον εργασίας για την πλήρη διαχείριση του κρατικού προϋπολογισμού. Ακολουθήστε τα παρακάτω βήματα για την πλοήγηση:
+The application provides a user-friendly environment for full state budget management. Follow these steps for navigation:
 
-### 1. Κεντρικό Μενού
-Κατά την εκκίνηση, έχετε τις εξής βασικές επιλογές:
-* **Προβολή προϋπολογισμού:** Για αναλυτική περιήγηση στα οικονομικά στοιχεία.
-* **Εισαγωγή αλλαγής:** Για εκτέλεση προσομοιώσεων και ανακατανομών.
-* **Προβολή Γραφημάτων:** Για οπτικοποίηση των δεδομένων.
+### 1. Main Menu
+Upon startup, the following basic options are available:
+* **View Budget:** For detailed browsing of financial data.
+* **Insert Change:** For performing simulations and reallocations.
+* **View Charts:** For data visualization.
 
-### 2. Επιλογή Δεδομένων (Έσοδα/Έξοδα)
-Πριν από κάθε λειτουργία, επιλέξτε τον τύπο δεδομένων που επιθυμείτε να διαχειριστείτε (π.χ. **Έσοδα** ή **Έξοδα**).
+### 2. Data Selection (Revenue/Expense)
+Before any operation, select the data type you wish to manage (e.g., **Revenue** or **Expense**).
 
-### 3. Πλοήγηση & Drill-down
-* Δείτε τα δεδομένα σε μορφή πίνακα με τους αντίστοιχους **Κωδικούς**, **Κατηγορίες** και τα **Ποσά**.
-* Επιλέξτε συγκεκριμένους 2-ψήφιους κωδικούς για περαιτέρω ιεραρχική ανάλυση (Drill-down) πατώντας το κουμπί εισαγωγής στο πάνω μέρος της οθόνης και έπειτα πληκτρολογώντας στην μπάρα που θα εμφανιστεί.
+### 3. Navigation & Drill-down
+* View data in table format with corresponding **Codes**, **Categories**, and **Amounts**.
+* Select specific 2-digit codes for further hierarchical analysis (Drill-down) by clicking the input button at the top and typing in the search bar.
 
-### 4. Λειτουργίες Επεξεργασίας
-Στο μενού "Επιλογή Λειτουργίας", μπορείτε να εκτελέσετε:
-* **Αλλαγή Ποσού (Απόλυτη/Ποσοστιαία):** Τροποποίηση συγκεκριμένων κωδικών.
-* **Μεταφορά Ποσού:** Μετακίνηση πιστώσεων μεταξύ διαφορετικών κατηγοριών.
-* **Αναίρεση (Undo):** Ακύρωση της τελευταίας αλλαγής.
-* **Αποθήκευση/Φόρτωση:** Διαχείριση των σεναρίων σας σε αρχεία CSV.
+### 4. Editing Operations
+In the "Select Operation" menu, you can perform:
+* **Amount Change (Absolute/Percentage):** Modification of specific codes.
+* **Fund Transfer:** Moving credits between different categories.
+* **Undo:** Canceling the last change.
+* **Save/Load:** Managing your scenarios in CSV files.
 
-### 5. Οπτικοποίηση (Charts)
-Επιλέξτε τον τύπο γραφήματος που επιθυμείτε:
-* **Γράφημα Εσόδων ανά Κατηγορία.**
-* **Γράφημα Εξόδων ανά Φορέα.**
-## Οδηγίες Μεταγλώττισης & Εκτέλεσης
+### 5. Visualization (Charts)
+Select the desired chart type:
+* **Revenue Chart by Category.**
+* **Expense Chart by Agency.**
 
-### Απαιτήσεις
-* **Java JDK 17** ή νεότερη έκδοση.
-* **Maven 3.6** ή νεότερη έκδοση.
+---
 
-### Setup δεδομένων
-Βεβαιωθείτε ότι όλα τα αρχεία .csv βρίσκονται στον φάκελο resources.
+## Build & Run Instructions
 
-### Μεταγλώττιση (Build)
-Για να καθαρίσετε το project και να δημιουργήσετε το εκτελέσιμο αρχείο (.jar) εκτελώντας παράλληλα τους ελέγχους ποιότητας:
+### Requirements
+* **Java JDK 17** or newer.
+* **Maven 3.6** or newer.
 
-### Εκτέλεση (Run)
+### Data Setup
+Ensure all `.csv` files are located in the `src/main/resources` folder.
 
-Μπορείτε να εκτελέσετε την εφαρμογή μέσω του παραγόμενου JAR: 
+### Run
+You can run the application via the generated JAR:
 
 mvn clean package
 
 java -jar target/budget-management-2.0.jar
 
 
-### Τεχνική Τεκμηρίωση & Ποιότητα
+### Technical Documentation & Quality
 
-Unit Testing: Εκτενής κάλυψη με JUnit 5 και Mockito (βλ. φάκελο src/test/java).
+Unit Testing: Extensive coverage with JUnit 5 and Mockito (see src/test/java folder).
 
-Στατική Ανάλυση: Συμμόρφωση με κανόνες Checkstyle και SpotBugs (μέσω Maven plugins).
+Static Analysis: Compliance with Checkstyle and SpotBugs rules (via Maven plugins).
 
-JavaDoc: Πλήρης τεκμηρίωση του κώδικα διαθέσιμη στις δημόσιες μεθόδους και το package-info.java.
+JavaDoc: Full code documentation available in public methods and package-info.java.
 
-Precision: Χρήση της κλάσης BigDecimal για απόλυτη ακρίβεια στους οικονομικούς υπολογισμούς.
+Precision: Use of the BigDecimal class for absolute precision in financial calculations.
 
-Extensibility: Η αρχιτεκτονική επιτρέπει την εύκολη προσθήκη νέων panels και λειτουργιών.
+Extensibility: The architecture allows for easy addition of new panels and features.
